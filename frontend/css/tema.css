@@ -1,0 +1,100 @@
+/*
+  IDENTIDAD VISUAL DE NOVA SOUND
+  Aquí viven los colores, la letra y los componentes que se repiten en todas las pantallas.
+  Si algo debe verse distinto en TODO el sistema, se cambia aquí y nada más.
+  (Este archivo lo carga js/tema.js; Tailwind lo lee al abrir la página.)
+*/
+
+@theme {
+  /* Colores de marca */
+  --color-marca: #1B5C7A;
+  --color-marca-osc: #134056;
+  --color-marca-claro: #E3EEF3;
+  --color-fondo: #F4F6F8;
+
+  /* Colores con significado */
+  --color-exito: #2E7D32;
+  --color-aviso: #FBDA00;
+  --color-peligro: #C62828;
+
+  /* Texto y bordes */
+  --color-texto: #1F2933;
+  --color-suave: #5B6773;
+  --color-borde: #D5DCE2;
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html { background: var(--color-fondo); }
+  body { @apply bg-fondo font-sans text-sm text-texto antialiased; }
+  h1 { @apply text-xl font-bold text-marca-osc; }
+  h2 { @apply text-base font-semibold text-texto; }
+}
+
+@layer components {
+  /* ---------- Botones ---------- */
+  .btn {
+    @apply inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border-[1.5px] border-transparent px-4 text-sm font-semibold transition-colors;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marca;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-principal  { @apply bg-marca text-white hover:bg-marca-osc; }
+  .btn-confirmar  { @apply bg-exito text-white hover:bg-[#256528]; }
+  .btn-validar    { @apply bg-aviso text-texto hover:bg-[#E5C500]; }
+  .btn-peligro    { @apply bg-peligro text-white hover:bg-[#A82121]; }
+  .btn-secundario { @apply border-marca bg-white text-marca hover:bg-marca-claro; }
+  .btn-enlace     { @apply h-auto border-0 bg-transparent px-1 py-0 text-marca underline-offset-2 hover:underline; }
+
+  /* ---------- Tarjetas y zonas ---------- */
+  .tarjeta { @apply rounded-lg border border-borde bg-white; }
+
+  /* ---------- Formularios ---------- */
+  .etiqueta { @apply mb-1 block text-xs font-semibold text-suave; }
+  .campo {
+    @apply h-9 w-full rounded-md border border-[#B8C2CC] bg-white px-3 text-sm text-texto;
+    @apply placeholder:text-[#8A96A3] focus:border-marca focus:outline-2 focus:outline-marca/30;
+    @apply disabled:bg-fondo disabled:text-suave read-only:bg-fondo read-only:text-suave;
+  }
+  textarea.campo { @apply h-auto py-2; }
+  .campo-error { @apply border-peligro; }
+  .texto-error { @apply mt-1 text-xs font-medium text-peligro; }
+
+  /* ---------- Tablas ---------- */
+  .tabla { @apply w-full border-collapse text-sm; }
+  .tabla th { @apply bg-marca-claro px-3.5 py-2.5 text-left text-xs font-bold text-marca-osc; }
+  .tabla td { @apply border-t border-[#E6EBEF] px-3.5 py-2.5 align-middle; }
+  .tabla tbody tr:hover td { @apply bg-[#F8FAFB]; }
+  .tabla .num { @apply text-right tabular-nums; }
+
+  /* ---------- Etiquetas de estado ---------- */
+  .chip { @apply inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  /* Estados de la unidad */
+  .chip-probada   { @apply bg-[#DCEBF7] text-[#0C447C]; }
+  .chip-liberada  { @apply bg-[#DDF1DE] text-[#1B5E20]; }
+  .chip-retencion { @apply bg-[#FFF3B0] text-[#6B4E00]; }
+  .chip-retrabajo { @apply bg-[#FFE0C2] text-[#7A3B00]; }
+  .chip-scrap     { @apply bg-[#F9D6D5] text-[#8E1B1B]; }
+  .chip-empacada  { @apply bg-[#D6E8EF] text-[#134056]; }
+  .chip-embarcada { @apply bg-[#E3E7EB] text-[#3B4650]; }
+  /* Estados generales (tickets, usuarios, autorizaciones…) */
+  .chip-exito   { @apply bg-[#DDF1DE] text-[#1B5E20]; }
+  .chip-aviso   { @apply bg-[#FFF3B0] text-[#6B4E00]; }
+  .chip-peligro { @apply bg-[#F9D6D5] text-[#8E1B1B]; }
+  .chip-neutro  { @apply bg-[#E3E7EB] text-[#3B4650]; }
+  .chip-info    { @apply bg-marca-claro text-marca-osc; }
+
+  /* ---------- Avisos ---------- */
+  .aviso { @apply rounded-md border px-3.5 py-2.5 text-sm; }
+  .aviso-info    { @apply border-[#B9D3DF] bg-marca-claro text-marca-osc; }
+  .aviso-exito   { @apply border-[#B8DDBA] bg-[#EAF6EB] text-[#1B5E20]; }
+  .aviso-aviso   { @apply border-[#EBD36B] bg-[#FFF8D1] text-[#6B4E00]; }
+  .aviso-peligro { @apply border-[#E6B1B0] bg-[#FCEBEA] text-[#8E1B1B]; }
+
+  /* ---------- Cuadro de diálogo ---------- */
+  dialog.dialogo {
+    @apply w-[min(32rem,calc(100vw-2rem))] rounded-xl border border-borde bg-white p-0 text-texto shadow-2xl;
+    margin: auto;
+  }
+  dialog.dialogo::backdrop { background: rgb(19 64 86 / 0.45); }
+}

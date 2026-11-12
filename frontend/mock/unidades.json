@@ -1,0 +1,481 @@
+[
+ {
+  "serie": "NS-2026-004821",
+  "modelo": "NS-PRO",
+  "color": "Negro",
+  "orden": "OP-1042",
+  "cliente": "Cadena Sur",
+  "lote": "L-151",
+  "linea": "L2",
+  "turno": 1,
+  "dia": 2,
+  "hora": "08:41",
+  "estado": "EMBARCADA",
+  "historial": [
+   {
+    "dia": 2,
+    "hora": "08:41",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 2,
+    "hora": "09:05",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 2,
+    "hora": "10:30",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Liberada",
+    "usuario": "Andrea Salgado"
+   },
+   {
+    "dia": 2,
+    "hora": "13:12",
+    "area": "Empaque",
+    "evento": "Agregada a la caja C-0318",
+    "resultado": "Registrada",
+    "usuario": "Julián Ortega"
+   },
+   {
+    "dia": 1,
+    "hora": "09:50",
+    "area": "Empaque",
+    "evento": "Caja C-0318 cerrada",
+    "resultado": "Cerrada (6 de 6)",
+    "usuario": "Julián Ortega"
+   },
+   {
+    "dia": 1,
+    "hora": "15:20",
+    "area": "Embarques",
+    "evento": "Salida de embarque EMB-0087",
+    "resultado": "Embarcada · Cadena Sur",
+    "usuario": "Julián Ortega"
+   }
+  ],
+  "caja": {
+   "id": "C-0318",
+   "estado": "Cerrada",
+   "capacidad": 6,
+   "unidades": [
+    "NS-2026-004815",
+    "NS-2026-004817",
+    "NS-2026-004819",
+    "NS-2026-004820",
+    "NS-2026-004821",
+    "NS-2026-004824"
+   ]
+  },
+  "embarque": {
+   "referencia": "EMB-0087",
+   "cliente": "Cadena Sur",
+   "fechaSalidaDias": 1
+  }
+ },
+ {
+  "serie": "NS-2026-004822",
+  "modelo": "NS-PRO",
+  "color": "Negro",
+  "orden": "OP-1042",
+  "cliente": "Cadena Sur",
+  "lote": "L-151",
+  "linea": "L2",
+  "turno": 1,
+  "dia": 2,
+  "hora": "08:41",
+  "estado": "EMPACADA",
+  "historial": [
+   {
+    "dia": 2,
+    "hora": "08:44",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 2,
+    "hora": "09:07",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 2,
+    "hora": "10:33",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Liberada",
+    "usuario": "Andrea Salgado"
+   },
+   {
+    "dia": 1,
+    "hora": "08:15",
+    "area": "Empaque",
+    "evento": "Agregada a la caja C-0331",
+    "resultado": "Registrada",
+    "usuario": "Julián Ortega"
+   }
+  ],
+  "caja": {
+   "id": "C-0331",
+   "estado": "Abierta",
+   "capacidad": 6,
+   "unidades": [
+    "NS-2026-004822",
+    "NS-2026-004823"
+   ]
+  },
+  "embarque": null
+ },
+ {
+  "serie": "NS-2026-004823",
+  "modelo": "NS-MINI",
+  "color": "Negro",
+  "orden": "OP-1041",
+  "cliente": "Cadena Centro",
+  "lote": "L-167",
+  "linea": "L1",
+  "turno": 2,
+  "dia": 1,
+  "hora": "16:20",
+  "estado": "LIBERADA",
+  "historial": [
+   {
+    "dia": 1,
+    "hora": "16:20",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 1,
+    "hora": "16:48",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 1,
+    "hora": "18:02",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Liberada",
+    "usuario": "Andrea Salgado"
+   }
+  ],
+  "caja": null,
+  "embarque": null
+ },
+ {
+  "serie": "NS-2026-004824",
+  "modelo": "NS-MAX",
+  "color": "Gris",
+  "orden": "OP-1043",
+  "cliente": "Cadena Centro",
+  "lote": "L-177",
+  "linea": "L3",
+  "turno": 1,
+  "dia": 0,
+  "hora": "08:41",
+  "estado": "EN_RETENCION",
+  "historial": [
+   {
+    "dia": 0,
+    "hora": "08:41",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 0,
+    "hora": "09:15",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 0,
+    "hora": "10:02",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "En retención · falla de carga",
+    "usuario": "Andrea Salgado"
+   }
+  ],
+  "caja": null,
+  "embarque": null
+ },
+ {
+  "serie": "NS-2026-004825",
+  "modelo": "NS-SPORT",
+  "color": "Azul",
+  "orden": "OP-1044",
+  "cliente": "Cadena Norte",
+  "lote": "L-174",
+  "linea": "L1",
+  "turno": 1,
+  "dia": 0,
+  "hora": "08:41",
+  "estado": "RETRABAJO",
+  "historial": [
+   {
+    "dia": 0,
+    "hora": "08:50",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 0,
+    "hora": "09:22",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 0,
+    "hora": "10:11",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Retrabajo · carcasa mal cerrada",
+    "usuario": "Andrea Salgado"
+   }
+  ],
+  "caja": null,
+  "embarque": null
+ },
+ {
+  "serie": "NS-2026-004826",
+  "modelo": "NS-SPORT",
+  "color": "Rojo",
+  "orden": "OP-1046",
+  "cliente": "Cadena Norte",
+  "lote": "L-148",
+  "linea": "L3",
+  "turno": 2,
+  "dia": 3,
+  "hora": "16:20",
+  "estado": "SCRAP",
+  "historial": [
+   {
+    "dia": 3,
+    "hora": "16:30",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 3,
+    "hora": "17:01",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 3,
+    "hora": "18:40",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Scrap · golpe en la carcasa sin reparación",
+    "usuario": "Andrea Salgado"
+   }
+  ],
+  "caja": null,
+  "embarque": null
+ },
+ {
+  "serie": "NS-2026-004827",
+  "modelo": "NS-MINI",
+  "color": "Blanco",
+  "orden": "OP-1045",
+  "cliente": "Distribuidor Metro",
+  "lote": "L-182",
+  "linea": "L2",
+  "turno": 2,
+  "dia": 0,
+  "hora": "16:20",
+  "estado": "PROBADA",
+  "historial": [
+   {
+    "dia": 0,
+    "hora": "16:25",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 0,
+    "hora": "16:58",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   }
+  ],
+  "caja": null,
+  "embarque": null
+ },
+ {
+  "serie": "NS-2026-004828",
+  "modelo": "NS-MINI",
+  "color": "Negro",
+  "orden": "OP-1041",
+  "cliente": "Cadena Centro",
+  "lote": "L-137",
+  "linea": "L1",
+  "turno": 1,
+  "dia": 3,
+  "hora": "08:41",
+  "estado": "EMBARCADA",
+  "historial": [
+   {
+    "dia": 3,
+    "hora": "08:38",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 3,
+    "hora": "09:04",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 3,
+    "hora": "10:20",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Retrabajo · etiqueta equivocada",
+    "usuario": "Andrea Salgado"
+   },
+   {
+    "dia": 3,
+    "hora": "12:45",
+    "area": "Producción",
+    "evento": "Retrabajo finalizado",
+    "resultado": "Etiqueta corregida",
+    "usuario": "Marco Ibarra"
+   },
+   {
+    "dia": 3,
+    "hora": "13:30",
+    "area": "Calidad",
+    "evento": "Nueva inspección",
+    "resultado": "Liberada",
+    "usuario": "Andrea Salgado"
+   },
+   {
+    "dia": 2,
+    "hora": "08:10",
+    "area": "Empaque",
+    "evento": "Agregada a la caja C-0302",
+    "resultado": "Registrada",
+    "usuario": "Julián Ortega"
+   },
+   {
+    "dia": 2,
+    "hora": "10:00",
+    "area": "Empaque",
+    "evento": "Caja C-0302 cerrada",
+    "resultado": "Cerrada (12 de 12)",
+    "usuario": "Julián Ortega"
+   },
+   {
+    "dia": 2,
+    "hora": "15:05",
+    "area": "Embarques",
+    "evento": "Salida de embarque EMB-0084",
+    "resultado": "Embarcada · Cadena Centro",
+    "usuario": "Julián Ortega"
+   }
+  ],
+  "caja": {
+   "id": "C-0302",
+   "estado": "Cerrada",
+   "capacidad": 12,
+   "unidades": [
+    "NS-2026-004810",
+    "NS-2026-004811",
+    "NS-2026-004812",
+    "NS-2026-004813",
+    "NS-2026-004814",
+    "NS-2026-004815",
+    "NS-2026-004816",
+    "NS-2026-004817",
+    "NS-2026-004818",
+    "NS-2026-004819",
+    "NS-2026-004828",
+    "NS-2026-004829"
+   ]
+  },
+  "embarque": {
+   "referencia": "EMB-0084",
+   "cliente": "Cadena Centro",
+   "fechaSalidaDias": 2
+  }
+ },
+ {
+  "serie": "NS-2026-004829",
+  "modelo": "NS-MAX",
+  "color": "Gris",
+  "orden": "OP-1043",
+  "cliente": "Cadena Centro",
+  "lote": "L-183",
+  "linea": "L3",
+  "turno": 2,
+  "dia": 0,
+  "hora": "16:20",
+  "estado": "LIBERADA",
+  "historial": [
+   {
+    "dia": 0,
+    "hora": "16:22",
+    "area": "Producción",
+    "evento": "Unidad ensamblada",
+    "resultado": "Registrada",
+    "usuario": "Luis Hernández"
+   },
+   {
+    "dia": 0,
+    "hora": "16:55",
+    "area": "Prueba funcional",
+    "evento": "Prueba funcional",
+    "resultado": "Aprobada · se asignó número de serie",
+    "usuario": "Karla Domínguez"
+   },
+   {
+    "dia": 0,
+    "hora": "17:20",
+    "area": "Calidad",
+    "evento": "Inspección final",
+    "resultado": "Liberada",
+    "usuario": "Andrea Salgado"
+   }
+  ],
+  "caja": null,
+  "embarque": null
+ }
+]

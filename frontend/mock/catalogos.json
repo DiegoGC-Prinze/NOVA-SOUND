@@ -1,0 +1,34 @@
+{
+  "modelos": {"nombre": "Modelos", "items": [
+    {"codigo": "NS-MINI", "nombre": "NS-MINI", "estado": "Activo"},
+    {"codigo": "NS-SPORT", "nombre": "NS-SPORT", "estado": "Activo"},
+    {"codigo": "NS-PRO", "nombre": "NS-PRO", "estado": "Activo"},
+    {"codigo": "NS-MAX", "nombre": "NS-MAX", "estado": "Activo"}]},
+  "lineas": {"nombre": "Líneas de producción", "items": [
+    {"codigo": "L1", "nombre": "Línea 1", "estado": "Activo"},
+    {"codigo": "L2", "nombre": "Línea 2", "estado": "Activo"},
+    {"codigo": "L3", "nombre": "Línea 3", "estado": "Activo"}]},
+  "turnos": {"nombre": "Turnos", "items": [
+    {"codigo": "T1", "nombre": "Turno 1 (06:00 a 14:00)", "estado": "Activo"},
+    {"codigo": "T2", "nombre": "Turno 2 (14:00 a 22:00)", "estado": "Activo"}]},
+  "categorias": {"nombre": "Categorías de defecto", "items": [
+    {"codigo": "APA", "nombre": "Apariencia", "estado": "Activo"},
+    {"codigo": "FUN", "nombre": "Funcional", "estado": "Activo"},
+    {"codigo": "IDE", "nombre": "Identificación", "estado": "Activo"},
+    {"codigo": "EMP", "nombre": "Empaque", "estado": "Activo"}]},
+  "defectos": {"nombre": "Defectos", "items": [
+    {"codigo": "APA-01", "nombre": "Rayón", "estado": "Activo"},
+    {"codigo": "APA-02", "nombre": "Golpe", "estado": "Activo"},
+    {"codigo": "APA-03", "nombre": "Carcasa mal cerrada", "estado": "Activo"},
+    {"codigo": "FUN-01", "nombre": "No enciende", "estado": "Activo"},
+    {"codigo": "FUN-02", "nombre": "No carga", "estado": "Activo"},
+    {"codigo": "FUN-03", "nombre": "Falla Bluetooth", "estado": "Activo"},
+    {"codigo": "FUN-04", "nombre": "Distorsión de audio", "estado": "Activo"},
+    {"codigo": "IDE-01", "nombre": "Etiqueta equivocada", "estado": "Activo"},
+    {"codigo": "EMP-01", "nombre": "Accesorio faltante", "estado": "Activo"}]},
+  "clientes": {"nombre": "Clientes", "items": [
+    {"codigo": "CEN", "nombre": "Cadena Centro", "estado": "Activo"},
+    {"codigo": "NOR", "nombre": "Cadena Norte", "estado": "Activo"},
+    {"codigo": "SUR", "nombre": "Cadena Sur", "estado": "Activo"},
+    {"codigo": "MET", "nombre": "Distribuidor Metro", "estado": "Activo"}]}
+}
