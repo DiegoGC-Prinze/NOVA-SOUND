@@ -8,17 +8,20 @@ import { guardarSesion, obtenerSesion, cerrarSesion } from '../session.js';
 import { campo, marcarError, mostrarAviso } from '../componentes.js';
 import { esc } from '../ui.js';
 
-
 const contenido = document.getElementById('contenido');
 
+// Iconos del botón para mostrar u ocultar la contraseña (ojo / ojo tachado)
+const OJO = '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>';
+const OJO_TACHADO = '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>';
+
 contenido.innerHTML = `
-    <div class="flex w-full max-w-md flex-col gap-4">
-        <img src="${rutaA('img/logo.png')}" alt="Nova Sound" class="mx-auto h-28 w-auto">
+  <div class="flex w-full max-w-md flex-col gap-4">
+    <img src="${rutaA('img/logo.png')}" alt="Nova Sound" class="mx-auto h-28 w-auto">
     <div id="sesion-activa"></div>
 
-    <form id="form-login" class="tarjeta bg-white/85 p-6 backdrop-blur-sm" novalidate>
-      <h1>Iniciar sesión</h1>
-      <p class="mt-1 text-suave">Entra con tu número de empleado. Cada persona usa su propia cuenta.</p>
+    <form id="form-login" class="tarjeta bg-white/85 p-6 shadow-xl shadow-black/25 backdrop-blur-sm" novalidate>
+      <h1 class="text-center">Iniciar sesión</h1>
+      <p class="mt-1 text-center text-suave">Entra con tu número de empleado. Cada persona usa su propia cuenta.</p>
 
       <div id="error-general" class="aviso aviso-peligro mt-4 hidden" role="alert"></div>
 
@@ -26,9 +29,10 @@ contenido.innerHTML = `
         ${campo({ id: 'numEmpleado', etiqueta: 'Número de empleado', placeholder: 'Ej. 5002', requerido: true, extra: 'autocomplete="username" inputmode="numeric" autofocus' })}
         <div>
           <label class="etiqueta" for="contrasena">Contraseña <span class="text-peligro" aria-hidden="true">*</span></label>
-          <div class="flex gap-2">
-            <input id="contrasena" name="contrasena" type="password" class="campo" autocomplete="current-password" required aria-describedby="contrasena-error">
-            <button type="button" id="ver-contrasena" class="btn btn-secundario" aria-pressed="false">Ver</button>
+          <div class="relative">
+            <input id="contrasena" name="contrasena" type="password" class="campo pr-11" autocomplete="current-password" required aria-describedby="contrasena-error">
+            <button type="button" id="ver-contrasena" aria-pressed="false" aria-label="Mostrar contraseña" title="Mostrar contraseña"
+                    class="absolute right-1 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded text-suave transition duration-150 hover:bg-marca-claro hover:text-marca focus-visible:outline-2 focus-visible:outline-marca">${OJO}</button>
           </div>
           <p id="contrasena-error" class="texto-error hidden" role="alert"></p>
         </div>
@@ -67,8 +71,11 @@ botonVer.addEventListener('click', () => {
   const campoContrasena = document.getElementById('contrasena');
   const oculta = campoContrasena.type === 'password';
   campoContrasena.type = oculta ? 'text' : 'password';
-  botonVer.textContent = oculta ? 'Ocultar' : 'Ver';
+  const texto = oculta ? 'Ocultar contraseña' : 'Mostrar contraseña';
+  botonVer.innerHTML = oculta ? OJO_TACHADO : OJO;
   botonVer.setAttribute('aria-pressed', String(oculta));
+  botonVer.setAttribute('aria-label', texto);
+  botonVer.title = texto;
 });
 
 // ---------- Enviar
@@ -106,7 +113,7 @@ formulario.addEventListener('submit', async (e) => {
 if (USE_MOCKS) {
   usuariosDeEjemplo().then((lista) => {
     document.getElementById('ejemplos').innerHTML = `
-      <details class="tarjeta bg-white/85 text-sm backdrop-blur-sm">
+      <details class="tarjeta bg-white/85 text-sm shadow-md shadow-black/20 backdrop-blur-sm">
         <summary class="cursor-pointer px-4 py-3 font-semibold text-marca-osc">Usuarios de ejemplo (solo para pruebas)</summary>
         <div class="border-t border-borde px-4 py-3">
           <p class="mb-2 text-xs text-suave">Toca uno para llenar el formulario. La contraseña de todos es <strong>nova123</strong>.</p>
