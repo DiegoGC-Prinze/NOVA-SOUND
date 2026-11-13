@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Sound - Formar Caja</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        nova: {
+                            darkest: '#05120d',
+                            dark: '#0a2218',
+                            DEFAULT: '#0f3826',
+                            light: '#165239',
+                            accent: '#1db954',
+                            glow: '#26d07c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #0a2218 0%, #05120d 100%);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-gray-800 bg-gray-100 flex flex-col overflow-hidden">
+
+    <!-- Top Bar / Header -->
+    <header class="h-16 bg-[#071912] border-b border-[#165239]/40 px-6 flex items-center justify-between z-20 shrink-0 text-white">
+        <div class="flex items-center space-x-4">
+            <button id="sidebar-toggle" class="text-gray-300 hover:text-white text-xl p-2 rounded-lg hover:bg-[#165239]/40 transition">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#1db954] to-[#0f3826] flex items-center justify-center shadow-lg shadow-emerald-950/50">
+                    <i class="fa-solid fa-volume-high text-white text-sm"></i>
+                </div>
+                <div>
+                    <span class="font-bold tracking-wider text-white text-lg">nova</span>
+                    <span class="font-light tracking-widest text-[#26d07c] text-sm block -mt-1">SOUND</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8 text-sm text-gray-300">
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-clock text-[#26d07c]"></i>
+                <span>Hora: <strong id="live-clock" class="text-white">18:52:10</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-calendar text-[#26d07c]"></i>
+                <span>Fecha: <strong id="live-date" class="text-white">12 Nov 2026</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-solid fa-shield-halved text-[#26d07c]"></i>
+                <span>Turno: <strong class="text-white">Turno 2</strong></span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden sm:block">
+                <div class="text-sm font-medium text-white">Elena Montiel</div>
+                <div class="text-xs text-[#26d07c]">Gerente de Empaque</div>
+            </div>
+            <button onclick="showNotification('Sesión finalizada correctamente', 'info')" class="bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 px-3 py-1.5 rounded-lg text-sm transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden sm:inline">Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 sidebar-gradient border-r border-[#165239]/40 flex flex-col justify-between transition-all duration-300 z-10 shrink-0 text-gray-200">
+            <div class="py-4 px-3 space-y-1 overflow-y-auto">
+                <div class="px-3 pb-2 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">Área Operativa</div>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-house w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Inicio</span>
+                </a>
+                
+                <a href="../produccion/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-industry w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Producción</span>
+                </a>
+                
+                <a href="../prueba/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-flask-vial w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Prueba Funcional</span>
+                </a>
+                
+                <a href="../calidad/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-award w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Calidad</span>
+                </a>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#165239] to-[#0f3826] text-white shadow-md shadow-black/40 border-l-4 border-[#26d07c]">
+                    <i class="fa-solid fa-box-open w-5 text-[#26d07c]"></i>
+                    <span class="font-semibold text-sm">Empaque</span>
+                </a>
+                
+                <a href="../empaque/lista.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-boxes-stacked w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Empaques</span>
+                </a>
+                
+                <a href="../gerencia/dashboard.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-chart-pie w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Gerencia</span>
+                </a>
+                
+                <a href="../sistemas/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-server w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Sistemas</span>
+                </a>
+            </div>
+
+            <div class="p-3 border-t border-[#165239]/30">
+                <button onclick="toggleSidebar()" class="w-full flex items-center justify-center space-x-2 py-2 rounded-lg bg-[#071912] hover:bg-[#165239]/50 text-xs text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-chevron-left" id="collapse-icon"></i>
+                    <span id="collapse-text">Ocultar menú</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Content Area (White Background Center) -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-white text-gray-800">
+            
+            <div class="mb-6">
+                <div class="text-xs uppercase tracking-widest text-[#165239] font-bold mb-1">EMPAQUE</div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">FORMAR CAJA</h1>
+            </div>
+
+            <!-- Información de Pedido -->
+            <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-sm font-bold text-[#165239] uppercase tracking-wider mb-4 flex items-center space-x-2">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Información de Pedido</span>
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 mb-1">Orden:</label>
+                        <select id="select-orden" onchange="actualizarPedido()" class="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-gray-800 font-medium focus:outline-none focus:border-[#165239]">
+                            <option>ORD-2026-A1</option>
+                            <option>ORD-2026-B2</option>
+                            <option>ORD-2026-C3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-1">Cliente:</span>
+                        <div id="lbl-cliente" class="font-bold text-gray-900 py-2">CLIENTE A</div>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-1">Modelo:</span>
+                        <div id="lbl-modelo" class="font-bold text-gray-900 py-2">MODELO X (Boombox Pro)</div>
+                    </div>
+                    <div>
+                        <span class="block text-xs font-semibold text-gray-500 mb-1">Capacidad:</span>
+                        <div id="lbl-capacidad" class="font-bold text-gray-900 py-2">10 Unidades / Caja</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de Caja Actual y Unidades Disponibles -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                
+                <!-- Panel de Caja -->
+                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-[#165239] uppercase tracking-wider mb-3 flex items-center justify-between">
+                            <span>Caja Activa</span>
+                            <i class="fa-solid fa-box text-lg"></i>
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="bg-white border border-gray-200 rounded-xl p-3 flex justify-between items-center">
+                                <span class="text-xs text-gray-500 font-semibold">ID CAJA:</span>
+                                <span class="font-mono font-bold text-gray-900 text-sm" id="caja-id-display">CX05-B</span>
+                            </div>
+                            <div class="bg-white border border-gray-200 rounded-xl p-3 flex justify-between items-center">
+                                <span class="text-xs text-gray-500 font-semibold">PROGRESO:</span>
+                                <span class="font-bold text-emerald-700 text-sm" id="caja-progreso-texto">2 / 10 unidades</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                                <div id="barra-progreso" class="bg-[#165239] h-full rounded-full transition-all duration-300" style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-xs text-gray-500 flex items-center space-x-1">
+                        <i class="fa-solid fa-circle-info text-[#165239]"></i>
+                        <span>Escanee o seleccione unidades disponibles para llenar la caja.</span>
+                    </div>
+                </div>
+
+                <!-- Panel de Unidades Disponibles -->
+                <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-sm font-bold text-[#165239] uppercase tracking-wider mb-3 flex items-center justify-between">
+                        <span>Unidades Disponibles</span>
+                        <i class="fa-solid fa-barcode text-lg"></i>
+                    </h3>
+                    <div class="relative mb-3">
+                        <input type="text" id="input-escanear" placeholder="Buscar / Escanear N° Serie..." class="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 pl-9 text-sm text-gray-800 focus:outline-none focus:border-[#165239]">
+                        <i class="fa-solid fa-qrcode absolute left-3 top-3 text-gray-400 text-xs"></i>
+                    </div>
+                    <div class="space-y-2 max-h-40 overflow-y-auto pr-1" id="lista-unidades-disponibles">
+                        <!-- Inyectado por JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Contenido de la Caja (Tabla) -->
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">Contenido de la Caja</h3>
+                    <span class="text-xs font-semibold text-gray-500" id="contador-items-tabla">2 ítems registrados</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider border-b border-gray-200">
+                                <th class="py-3 px-6 font-semibold">N° Serie</th>
+                                <th class="py-3 px-6 font-semibold">Modelo</th>
+                                <th class="py-3 px-6 font-semibold">Color</th>
+                                <th class="py-3 px-6 font-semibold">Estado</th>
+                                <th class="py-3 px-6 font-semibold text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-contenido-caja" class="divide-y divide-gray-200 text-sm text-gray-700">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Botones de Acción Final -->
+            <div class="flex items-center justify-end space-x-4 mb-6">
+                <button onclick="cancelarFormacion()" class="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm font-semibold transition">
+                    CANCELAR
+                </button>
+                <button onclick="abrirResumenCierre()" class="px-8 py-3 rounded-xl bg-[#165239] hover:bg-[#0f3826] text-white text-sm font-bold shadow-lg transition flex items-center space-x-2">
+                    <i class="fa-solid fa-box-archive"></i>
+                    <span>CERRAR CAJA</span>
+                </button>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal: Resumen de Cierre de Caja (Estilo Solicitado) -->
+    <div id="modal-cierre" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#0a2218] border border-[#165239] text-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-[#165239]/50 flex items-center justify-between bg-[#05120d]">
+                <h3 class="text-lg font-bold tracking-wide text-white">RESUMEN DE CAJA</h3>
+                <button onclick="cerrarModalCierre()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-sm">
+                <div class="space-y-1.5 text-gray-300">
+                    <div>Id de caja: <strong id="resumen-id" class="text-[#26d07c]">CX05-B</strong></div>
+                    <div>Orden: <strong id="resumen-orden" class="text-white">ORD-2026-A1</strong></div>
+                    <div>Cliente: <strong id="resumen-cliente" class="text-white">CLIENTE A</strong></div>
+                    <div>Modelo: <strong id="resumen-modelo" class="text-white">MODELO X (Boombox Pro)</strong></div>
+                    <div>Unidades: <strong id="resumen-unidades" class="text-amber-400">2/10</strong></div>
+                </div>
+
+                <div class="pt-2 border-t border-[#165239]/50">
+                    <div class="font-bold text-gray-200 mb-2">Validaciones</div>
+                    <div class="space-y-2 text-xs text-gray-300">
+                        <label class="flex items-center space-x-2 cursor-pointer hover:text-white">
+                            <input type="checkbox" id="val-1" class="w-4 h-4 rounded bg-[#05120d] border-[#165239] text-[#165239] focus:ring-0">
+                            <span>Unidades liberadas por calidad</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer hover:text-white">
+                            <input type="checkbox" id="val-2" class="w-4 h-4 rounded bg-[#05120d] border-[#165239] text-[#165239] focus:ring-0">
+                            <span>Modelo correcto</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer hover:text-white">
+                            <input type="checkbox" id="val-3" class="w-4 h-4 rounded bg-[#05120d] border-[#165239] text-[#165239] focus:ring-0">
+                            <span>Capacidad respetada</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer hover:text-white">
+                            <input type="checkbox" id="val-4" class="w-4 h-4 rounded bg-[#05120d] border-[#165239] text-[#165239] focus:ring-0">
+                            <span>Reglas del cliente verificadas</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="text-[11px] text-gray-400 italic pt-2">
+                    Al confirmar, la caja quedara cerrada y se registraran usuario, fecha y hora
+                </div>
+
+                <div class="pt-4 flex justify-between space-x-4">
+                    <button type="button" onclick="cerrarModalCierre()" class="flex-1 py-2.5 rounded-xl border border-[#165239] text-gray-300 hover:bg-[#165239]/30 text-xs font-bold transition">
+                        VOLVER
+                    </button>
+                    <button type="button" onclick="confirmarCierreDefinitivo()" class="flex-1 py-2.5 rounded-xl bg-[#165239] hover:bg-[#26d07c] text-white text-xs font-bold transition shadow-lg">
+                        CONFIRMAR CIERRE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 bg-[#0a2218] border border-[#26d07c] text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-[#26d07c] text-lg"></i>
+        <div>
+            <div class="font-semibold text-sm" id="toast-title">Éxito</div>
+            <div class="text-xs text-gray-300" id="toast-desc">Operación realizada correctamente.</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('live-date').innerText = now.toLocaleDateString('es-ES', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        let unidadesDisponibles = [
+            { serie: "SN-8001", modelo: "MODELO X", color: "AZUL LIBERADA", estado: "OK" },
+            { serie: "SN-8002", modelo: "MODELO X", color: "AZUL LIBERADA", estado: "OK" },
+            { serie: "SN-8003", modelo: "MODELO X", color: "AZUL LIBERADA", estado: "OK" },
+            { serie: "SN-8004", modelo: "MODELO X", color: "NEGRO MATE", estado: "OK" },
+            { serie: "SN-8005", modelo: "MODELO X", color: "AZUL LIBERADA", estado: "NOK" }
+        ];
+
+        let contenidoCaja = [
+            { serie: "SN-7998", modelo: "MODELO X", color: "AZUL LIBERADA", estado: "OK" },
+            { serie: "SN-7999", modelo: "MODELO X", color: "AZUL LIBERADA", estado: "OK" }
+        ];
+
+        const capacidadMaxima = 10;
+
+        function renderizarTodo() {
+            const listaDiv = document.getElementById('lista-unidades-disponibles');
+            listaDiv.innerHTML = '';
+            
+            unidadesDisponibles.forEach((unidad) => {
+                const item = document.createElement('div');
+                item.className = "bg-white border border-gray-200 hover:border-[#165239] p-2.5 rounded-xl flex items-center justify-between text-xs cursor-pointer transition shadow-xs";
+                item.onclick = () => agregarACaja(unidad.serie);
+                item.innerHTML = `
+                    <div>
+                        <strong class="text-gray-900 font-mono">${unidad.serie}</strong>
+                        <span class="text-gray-500 ml-2">${unidad.color}</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded font-bold ${unidad.estado === 'OK' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${unidad.estado}</span>
+                `;
+                listaDiv.appendChild(item);
+            });
+
+            const tbody = document.getElementById('tabla-contenido-caja');
+            tbody.innerHTML = '';
+            
+            contenidoCaja.forEach((c) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition border-b border-gray-100";
+                tr.innerHTML = `
+                    <td class="py-3 px-6 font-mono font-bold text-gray-900">${c.serie}</td>
+                    <td class="py-3 px-6 text-gray-700">${c.modelo}</td>
+                    <td class="py-3 px-6 text-gray-700">${c.color}</td>
+                    <td class="py-3 px-6">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${c.estado === 'OK' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${c.estado}
+                        </span>
+                    </td>
+                    <td class="py-3 px-6 text-right">
+                        <button onclick="removerDeCaja('${c.serie}')" class="text-gray-400 hover:text-rose-600 transition p-1" title="Quitar de caja"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const total = contenidoCaja.length;
+            document.getElementById('caja-progreso-texto').innerText = `${total} / ${capacidadMaxima} unidades`;
+            document.getElementById('contador-items-tabla').innerText = `${total} ítems registrados`;
+            const porcentaje = (total / capacidadMaxima) * 100;
+            document.getElementById('barra-progreso').style.width = `${porcentaje}%`;
+        }
+
+        function agregarACaja(serie) {
+            const index = unidadesDisponibles.findIndex(u => u.serie === serie);
+            if(index !== -1) {
+                const unidad = unidadesDisponibles.splice(index, 1)[0];
+                contenidoCaja.push(unidad);
+                renderizarTodo();
+                showNotification('Unidad ' + serie + ' agregada a la caja', 'success');
+            }
+        }
+
+        function removerDeCaja(serie) {
+            const index = contenidoCaja.findIndex(c => c.serie === serie);
+            if(index !== -1) {
+                const unidad = contenidoCaja.splice(index, 1)[0];
+                unidadesDisponibles.push(unidad);
+                renderizarTodo();
+                showNotification('Unidad ' + serie + ' removida de la caja', 'info');
+            }
+        }
+
+        function actualizarPedido() {
+            const orden = document.getElementById('select-orden').value;
+            if(orden.includes('A1')) {
+                document.getElementById('lbl-cliente').innerText = 'CLIENTE A';
+                document.getElementById('lbl-modelo').innerText = 'MODELO X (Boombox Pro)';
+            } else if(orden.includes('B2')) {
+                document.getElementById('lbl-cliente').innerText = 'CLIENTE B';
+                document.getElementById('lbl-modelo').innerText = 'MODELO S (SoundBar Mini)';
+            } else {
+                document.getElementById('lbl-cliente').innerText = 'CLIENTE C';
+                document.getElementById('lbl-modelo').innerText = 'MODELO MAX (Party Bass)';
+            }
+            showNotification('Pedido actualizado: ' + orden, 'info');
+        }
+
+        function abrirResumenCierre() {
+            if(contenidoCaja.length === 0) {
+                showNotification('La caja está vacía, agregue unidades antes de cerrar', 'error');
+                return;
+            }
+            // Rellenar datos dinámicos en el modal
+            document.getElementById('resumen-orden').innerText = document.getElementById('select-orden').value;
+            document.getElementById('resumen-cliente').innerText = document.getElementById('lbl-cliente').innerText;
+            document.getElementById('resumen-modelo').innerText = document.getElementById('lbl-modelo').innerText;
+            document.getElementById('resumen-unidades').innerText = `${contenidoCaja.length}/${capacidadMaxima}`;
+
+            // Marcar checkboxes por defecto o limpiar
+            document.querySelectorAll('#modal-cierre input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            document.getElementById('modal-cierre').classList.remove('hidden');
+            document.getElementById('modal-cierre').classList.add('flex');
+        }
+
+        function cerrarModalCierre() {
+            document.getElementById('modal-cierre').classList.add('hidden');
+            document.getElementById('modal-cierre').classList.remove('flex');
+        }
+
+        function confirmarCierreDefinitivo() {
+            // Validar que todas las casillas estén marcadas
+            const c1 = document.getElementById('val-1').checked;
+            const c2 = document.getElementById('val-2').checked;
+            const c3 = document.getElementById('val-3').checked;
+            const c4 = document.getElementById('val-4').checked;
+
+            if(!c1 || !c2 || !c3 || !c4) {
+                showNotification('Debe marcar todas las validaciones de calidad antes de confirmar', 'error');
+                return;
+            }
+
+            showNotification('¡Caja cerrada exitosamente! Usuario, fecha y hora registrados.', 'success');
+            setTimeout(() => {
+                window.location.href = '../empaque/ini.html';
+            }, 1500);
+        }
+
+        function cancelarFormacion() {
+            showNotification('Formación de caja cancelada', 'info');
+            setTimeout(() => {
+                window.location.href = '../empaque/ini.html';
+            }, 1000);
+        }
+
+        let sidebarExpanded = true;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const collapseText = document.getElementById('collapse-text');
+            const collapseIcon = document.getElementById('collapse-icon');
+            
+            sidebarExpanded = !sidebarExpanded;
+            if (sidebarExpanded) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                collapseText.innerText = 'Ocultar menú';
+                collapseIcon.className = 'fa-solid fa-chevron-left';
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                collapseText.innerText = '';
+                collapseIcon.className = 'fa-solid fa-chevron-right';
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-desc').innerText = message;
+            document.getElementById('toast-title').innerText = type === 'success' ? 'Éxito' : (type === 'error' ? 'Error' : 'Aviso');
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+
+        renderizarTodo();
+    </script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Sound - Consultar Caja</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        nova: {
+                            darkest: '#05120d',
+                            dark: '#0a2218',
+                            DEFAULT: '#0f3826',
+                            light: '#165239',
+                            accent: '#1db954',
+                            glow: '#26d07c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #0a2218 0%, #05120d 100%);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-gray-800 bg-gray-100 flex flex-col overflow-hidden">
+
+    <!-- Top Bar / Header -->
+    <header class="h-16 bg-[#071912] border-b border-[#165239]/40 px-6 flex items-center justify-between z-20 shrink-0 text-white">
+        <div class="flex items-center space-x-4">
+            <button id="sidebar-toggle" class="text-gray-300 hover:text-white text-xl p-2 rounded-lg hover:bg-[#165239]/40 transition">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#1db954] to-[#0f3826] flex items-center justify-center shadow-lg shadow-emerald-950/50">
+                    <i class="fa-solid fa-volume-high text-white text-sm"></i>
+                </div>
+                <div>
+                    <span class="font-bold tracking-wider text-white text-lg">nova</span>
+                    <span class="font-light tracking-widest text-[#26d07c] text-sm block -mt-1">SOUND</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8 text-sm text-gray-300">
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-clock text-[#26d07c]"></i>
+                <span>Hora: <strong id="live-clock" class="text-white">18:52:10</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-calendar text-[#26d07c]"></i>
+                <span>Fecha: <strong id="live-date" class="text-white">12 Nov 2026</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-solid fa-shield-halved text-[#26d07c]"></i>
+                <span>Turno: <strong class="text-white">Turno 2</strong></span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden sm:block">
+                <div class="text-sm font-medium text-white">Elena Montiel</div>
+                <div class="text-xs text-[#26d07c]">Gerente de Empaque</div>
+            </div>
+            <button onclick="showNotification('Sesión finalizada correctamente', 'info')" class="bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 px-3 py-1.5 rounded-lg text-sm transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden sm:inline">Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 sidebar-gradient border-r border-[#165239]/40 flex flex-col justify-between transition-all duration-300 z-10 shrink-0 text-gray-200">
+            <div class="py-4 px-3 space-y-1 overflow-y-auto">
+                <div class="px-3 pb-2 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">Área Operativa</div>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-house w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Inicio</span>
+                </a>
+                
+                <a href="../produccion/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-industry w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Producción</span>
+                </a>
+                
+                <a href="../prueba/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-flask-vial w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Prueba Funcional</span>
+                </a>
+                
+                <a href="../calidad/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-award w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Calidad</span>
+                </a>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#165239] to-[#0f3826] text-white shadow-md shadow-black/40 border-l-4 border-[#26d07c]">
+                    <i class="fa-solid fa-box-open w-5 text-[#26d07c]"></i>
+                    <span class="font-semibold text-sm">Empaque</span>
+                </a>
+                
+                <a href="../empaque/lista.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-boxes-stacked w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Empaques</span>
+                </a>
+                
+                <a href="../gerencia/dashboard.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-chart-pie w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Gerencia</span>
+                </a>
+                
+                <a href="../sistemas/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-server w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Sistemas</span>
+                </a>
+            </div>
+
+            <div class="p-3 border-t border-[#165239]/30">
+                <button onclick="toggleSidebar()" class="w-full flex items-center justify-center space-x-2 py-2 rounded-lg bg-[#071912] hover:bg-[#165239]/50 text-xs text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-chevron-left" id="collapse-icon"></i>
+                    <span id="collapse-text">Ocultar menú</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Content Area (White Background Center) -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-white text-gray-800">
+            
+            <div class="mb-6">
+                <div class="text-xs uppercase tracking-widest text-[#165239] font-bold mb-1">EMPAQUE</div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">CONSULTAR CAJA</h1>
+            </div>
+
+            <!-- Buscador por ID de Caja -->
+            <div class="bg-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
+                <h2 class="text-sm font-bold text-[#165239] uppercase tracking-wider mb-3">Buscar por ID de caja</h2>
+                <div class="flex space-x-3">
+                    <input type="text" id="input-buscar-id" placeholder="Introducir ID... (Ej. CX01-A)" class="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#165239]">
+                    <button onclick="buscarCaja()" class="bg-[#165239] hover:bg-[#0f3826] text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-md transition">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resultados y Detalles de la Caja -->
+            <div id="resultado-container" class="hidden space-y-6">
+                
+                <!-- Tarjeta de Detalles de la Caja -->
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
+                        <h3 class="text-lg font-bold text-gray-900 font-mono" id="card-caja-id">CAJA C-XXXXX</h3>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide" id="card-estado">ESTADO: CERRADA</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                            <span class="block text-xs font-semibold text-gray-500 mb-1">Orden:</span>
+                            <div class="font-bold text-gray-900" id="card-orden">XX-XXXX</div>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-semibold text-gray-500 mb-1">Cliente:</span>
+                            <div class="font-bold text-gray-900" id="card-cliente">--------</div>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-semibold text-gray-500 mb-1">Modelo:</span>
+                            <div class="font-bold text-gray-900" id="card-modelo">--------</div>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-semibold text-gray-500 mb-1">Contenido:</span>
+                            <div class="font-bold text-[#165239]" id="card-contenido-unidades">8 unidades</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Contenido de la Caja -->
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">Contenido de la Caja</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider border-b border-gray-200">
+                                    <th class="py-3 px-6 font-semibold">N. Serie</th>
+                                    <th class="py-3 px-6 font-semibold">Modelo</th>
+                                    <th class="py-3 px-6 font-semibold">Color</th>
+                                    <th class="py-3 px-6 font-semibold">Calidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-contenido-detalle" class="divide-y divide-gray-200 text-sm text-gray-700">
+                                <!-- Inyectado por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Botones de Acción inferior -->
+                <div class="flex items-center justify-between flex-wrap gap-4 pt-2">
+                    <button onclick="verHistorial()" class="px-6 py-3 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 text-sm font-bold shadow-xs transition flex items-center space-x-2">
+                        <i class="fa-solid fa-clock-rotate-left text-[#165239]"></i>
+                        <span>VER HISTORIAL</span>
+                    </button>
+                    <button onclick="abrirModalReabrir()" class="px-6 py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold shadow-md transition flex items-center space-x-2">
+                        <i class="fa-solid fa-unlock-keyhole"></i>
+                        <span>REABRIR CAJA *</span>
+                    </button>
+                </div>
+                <div class="text-[11px] text-gray-500 italic">
+                    *Solo disponible para usuarios autorizados y cajas elegibles
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal: Reapertura de Caja -->
+    <div id="modal-reabrir" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#0a2218] border border-[#165239] text-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-[#165239]/50 flex items-center justify-between bg-[#05120d]">
+                <h3 class="text-lg font-bold tracking-wide text-white">REAPERTURA DE CAJA</h3>
+                <button onclick="cerrarModalReabrir()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <span class="text-xs text-gray-400 block">CAJA:</span>
+                    <strong id="modal-reabrir-id" class="text-lg text-[#26d07c]">X-XXXX</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-400 block">ESTADO:</span>
+                    <strong class="text-sm text-amber-400">CERRADA</strong>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">MOTIVO:</label>
+                    <textarea id="reabrir-motivo" placeholder="Especifique el motivo de reapertura..." rows="2" class="w-full bg-[#05120d] border-b border-gray-500 text-white focus:outline-none focus:border-[#26d07c] px-2 py-1 text-sm resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">AUTORIZADO DE SUPERVISOR:</label>
+                    <input type="text" id="reabrir-supervisor" placeholder="Nombre o clave del supervisor..." class="w-full bg-[#05120d] border-b border-gray-500 text-white focus:outline-none focus:border-[#26d07c] px-2 py-1 text-sm">
+                </div>
+                <div class="pt-4 flex justify-between space-x-4">
+                    <button type="button" onclick="cerrarModalReabrir()" class="flex-1 py-2.5 rounded-xl border border-[#165239] text-gray-300 hover:bg-[#165239]/30 text-xs font-bold transition">CANCELAR</button>
+                    <button type="button" onclick="confirmarReapertura()" class="flex-1 py-2.5 rounded-xl bg-[#165239] hover:bg-[#26d07c] text-white text-xs font-bold transition shadow-lg">AUTORIZAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 bg-[#0a2218] border border-[#26d07c] text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-[#26d07c] text-lg"></i>
+        <div>
+            <div class="font-semibold text-sm" id="toast-title">Éxito</div>
+            <div class="text-xs text-gray-300" id="toast-desc">Operación realizada correctamente.</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('live-date').innerText = now.toLocaleDateString('es-ES', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        let cajaActualBuscada = null;
+
+        // Función asíncrona para consultar la API conectada a tu BD de Python/PostgreSQL
+        async function buscarCaja() {
+            const idBuscado = document.getElementById('input-buscar-id').value.trim().toUpperCase();
+            const contenedor = document.getElementById('resultado-container');
+
+            if(!idBuscado) {
+                showNotification('Ingrese un ID de caja válido', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8000/api/cajas/${idBuscado}`);
+                
+                if (!response.ok) {
+                    throw new Error('Caja no encontrada');
+                }
+
+                const caja = await response.json();
+                cajaActualBuscada = caja;
+                contenedor.classList.remove('hidden');
+
+                document.getElementById('card-caja-id').innerText = `CAJA ${caja.id}`;
+                document.getElementById('card-estado').innerText = `ESTADO: ${caja.estado}`;
+                document.getElementById('card-estado').className = caja.estado === 'CERRADA' 
+                    ? 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-100 text-blue-800' 
+                    : 'px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-100 text-emerald-800';
+
+                document.getElementById('card-orden').innerText = caja.orden;
+                document.getElementById('card-cliente').innerText = caja.cliente;
+                document.getElementById('card-modelo').innerText = caja.modelo;
+                document.getElementById('card-contenido-unidades').innerText = `${caja.contenido.length} unidades`;
+
+                const tbody = document.getElementById('tabla-contenido-detalle');
+                tbody.innerHTML = '';
+                caja.contenido.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition border-b border-gray-100";
+                    tr.innerHTML = `
+                        <td class="py-3 px-6 font-mono font-bold text-gray-900">${item.serie}</td>
+                        <td class="py-3 px-6 text-gray-700">${item.modelo}</td>
+                        <td class="py-3 px-6 text-gray-700">${item.color}</td>
+                        <td class="py-3 px-6">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">${item.calidad}</span>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                showNotification('Caja encontrada exitosamente', 'success');
+            } catch (error) {
+                contenedor.classList.add('hidden');
+                showNotification('No se encontró ninguna caja con el ID "' + idBuscado + '"', 'error');
+            }
+        }
+
+        function abrirModalReabrir() {
+            if(!cajaActualBuscada) return;
+            document.getElementById('modal-reabrir-id').innerText = cajaActualBuscada.id;
+            document.getElementById('reabrir-motivo').value = '';
+            document.getElementById('reabrir-supervisor').value = '';
+            document.getElementById('modal-reabrir').classList.remove('hidden');
+            document.getElementById('modal-reabrir').classList.add('flex');
+        }
+
+        function cerrarModalReabrir() {
+            document.getElementById('modal-reabrir').classList.add('hidden');
+            document.getElementById('modal-reabrir').classList.remove('flex');
+        }
+
+        async function confirmarReapertura() {
+            const motivo = document.getElementById('reabrir-motivo').value.trim();
+            const supervisor = document.getElementById('reabrir-supervisor').value.trim();
+
+            if(!motivo || !supervisor) {
+                showNotification('Debe ingresar el motivo y la autorización del supervisor', 'error');
+                return;
+            }
+
+            if(cajaActualBuscada) {
+                try {
+                    // Aquí puedes agregar un fetch POST/PUT a tu API de Python si deseas guardarlo en PostgreSQL
+                    cajaActualBuscada.estado = 'EN PROCESO';
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+
+            cerrarModalReabrir();
+            buscarCaja(); 
+            showNotification('Caja ' + cajaActualBuscada.id + ' reabierta correctamente', 'success');
+        }
+
+        function verHistorial() {
+            window.location.href = 'historial.html';
+        }
+
+        let sidebarExpanded = true;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const collapseText = document.getElementById('collapse-text');
+            const collapseIcon = document.getElementById('collapse-icon');
+            
+            sidebarExpanded = !sidebarExpanded;
+            if (sidebarExpanded) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                collapseText.innerText = 'Ocultar menú';
+                collapseIcon.className = 'fa-solid fa-chevron-left';
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                collapseText.innerText = '';
+                collapseIcon.className = 'fa-solid fa-chevron-right';
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-desc').innerText = message;
+            document.getElementById('toast-title').innerText = type === 'success' ? 'Éxito' : (type === 'error' ? 'Error' : 'Aviso');
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
