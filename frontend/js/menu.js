@@ -60,13 +60,13 @@ export const PANTALLAS = [
   {"id": "gerencia/autorizaciones", "area": "gerencia", "nombre": "Autorizaciones", "ruta": "pages/gerencia/autorizaciones.html", "lista": true, "enMenu": true},
   {"id": "gerencia/trazabilidad", "area": "gerencia", "nombre": "Trazabilidad", "ruta": "pages/gerencia/trazabilidad.html", "lista": true, "enMenu": true},
   {"id": "gerencia/cierres-de-turno", "area": "gerencia", "nombre": "Cierres de turno", "ruta": "pages/gerencia/cierres-de-turno.html", "lista": true, "enMenu": true},
-  {"id": "sistemas/area-de-tickets", "area": "sistemas", "nombre": "Área de tickets", "ruta": "pages/sistemas/area-de-tickets.html", "lista": false, "enMenu": true},
-  {"id": "sistemas/ver-ticket", "area": "sistemas", "nombre": "Ver ticket", "ruta": "pages/sistemas/ver-ticket.html", "lista": false, "enMenu": false, "padre": "sistemas/area-de-tickets"},
-  {"id": "sistemas/usuarios", "area": "sistemas", "nombre": "Usuarios", "ruta": "pages/sistemas/usuarios.html", "lista": false, "enMenu": true},
-  {"id": "sistemas/nuevo-o-editar-usuario", "area": "sistemas", "nombre": "Nuevo o editar usuario", "ruta": "pages/sistemas/nuevo-o-editar-usuario.html", "lista": false, "enMenu": false, "padre": "sistemas/usuarios"},
-  {"id": "sistemas/roles-y-permisos", "area": "sistemas", "nombre": "Roles y permisos", "ruta": "pages/sistemas/roles-y-permisos.html", "lista": false, "enMenu": true},
-  {"id": "sistemas/catalogos", "area": "sistemas", "nombre": "Catálogos", "ruta": "pages/sistemas/catalogos.html", "lista": false, "enMenu": true},
-  {"id": "sistemas/parametros", "area": "sistemas", "nombre": "Parámetros", "ruta": "pages/sistemas/parametros.html", "lista": false, "enMenu": true},
+  {"id": "sistemas/area-de-tickets", "area": "sistemas", "nombre": "Área de tickets", "ruta": "pages/sistemas/area-de-tickets.html", "lista": true, "enMenu": true},
+  {"id": "sistemas/ver-ticket", "area": "sistemas", "nombre": "Ver ticket", "ruta": "pages/sistemas/ver-ticket.html", "lista": true, "enMenu": false, "padre": "sistemas/area-de-tickets"},
+  {"id": "sistemas/usuarios", "area": "sistemas", "nombre": "Usuarios", "ruta": "pages/sistemas/usuarios.html", "lista": true, "enMenu": true},
+  {"id": "sistemas/nuevo-o-editar-usuario", "area": "sistemas", "nombre": "Nuevo o editar usuario", "ruta": "pages/sistemas/nuevo-o-editar-usuario.html", "lista": true, "enMenu": false, "padre": "sistemas/usuarios"},
+  {"id": "sistemas/roles-y-permisos", "area": "sistemas", "nombre": "Roles y permisos", "ruta": "pages/sistemas/roles-y-permisos.html", "lista": true, "enMenu": true},
+  {"id": "sistemas/catalogos", "area": "sistemas", "nombre": "Catálogos", "ruta": "pages/sistemas/catalogos.html", "lista": true, "enMenu": true},
+  {"id": "sistemas/parametros", "area": "sistemas", "nombre": "Parámetros", "ruta": "pages/sistemas/parametros.html", "lista": true, "enMenu": true},
 ];
 
 export function buscarPantalla(id) {
