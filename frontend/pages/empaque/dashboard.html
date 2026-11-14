@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Sound - Dashboard de Empaque</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        nova: {
+                            darkest: '#05120d',
+                            dark: '#0a2218',
+                            DEFAULT: '#0f3826',
+                            light: '#165239',
+                            accent: '#1db954',
+                            glow: '#26d07c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #0a2218 0%, #05120d 100%);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-gray-800 bg-gray-100 flex flex-col overflow-hidden">
+
+    <!-- Top Bar / Header -->
+    <header class="h-16 bg-[#071912] border-b border-[#165239]/40 px-6 flex items-center justify-between z-20 shrink-0 text-white">
+        <div class="flex items-center space-x-4">
+            <button id="sidebar-toggle" class="text-gray-300 hover:text-white text-xl p-2 rounded-lg hover:bg-[#165239]/40 transition">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#1db954] to-[#0f3826] flex items-center justify-center shadow-lg shadow-emerald-950/50">
+                    <i class="fa-solid fa-volume-high text-white text-sm"></i>
+                </div>
+                <div>
+                    <span class="font-bold tracking-wider text-white text-lg">nova</span>
+                    <span class="font-light tracking-widest text-[#26d07c] text-sm block -mt-1">SOUND</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8 text-sm text-gray-300">
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-clock text-[#26d07c]"></i>
+                <span>Hora: <strong id="live-clock" class="text-white">18:52:10</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-calendar text-[#26d07c]"></i>
+                <span>Fecha: <strong id="live-date" class="text-white">12 Nov 2026</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-solid fa-shield-halved text-[#26d07c]"></i>
+                <span>Turno: <strong class="text-white">Turno 2</strong></span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden sm:block">
+                <div class="text-sm font-medium text-white">Elena Montiel</div>
+                <div class="text-xs text-[#26d07c]">Gerente de Empaque</div>
+            </div>
+            <button onclick="showNotification('Sesión finalizada correctamente', 'info')" class="bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 px-3 py-1.5 rounded-lg text-sm transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden sm:inline">Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 sidebar-gradient border-r border-[#165239]/40 flex flex-col justify-between transition-all duration-300 z-10 shrink-0 text-gray-200">
+            <div class="py-4 px-3 space-y-1 overflow-y-auto">
+                <div class="px-3 pb-2 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">Área Operativa</div>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-house w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Inicio</span>
+                </a>
+                
+                <a href="../produccion/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-industry w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Producción</span>
+                </a>
+                
+                <a href="../prueba/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-flask-vial w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Prueba Funcional</span>
+                </a>
+                
+                <a href="../calidad/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-award w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Calidad</span>
+                </a>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#165239] to-[#0f3826] text-white shadow-md shadow-black/40 border-l-4 border-[#26d07c]">
+                    <i class="fa-solid fa-box-open w-5 text-[#26d07c]"></i>
+                    <span class="font-semibold text-sm">Empaque</span>
+                </a>
+                
+                <a href="../empaque/lista.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-boxes-stacked w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Empaques</span>
+                </a>
+                
+                <a href="../gerencia/dashboard.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-chart-pie w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Gerencia</span>
+                </a>
+                
+                <a href="../sistemas/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-server w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Sistemas</span>
+                </a>
+            </div>
+
+            <div class="p-3 border-t border-[#165239]/30">
+                <button onclick="toggleSidebar()" class="w-full flex items-center justify-center space-x-2 py-2 rounded-lg bg-[#071912] hover:bg-[#165239]/50 text-xs text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-chevron-left" id="collapse-icon"></i>
+                    <span id="collapse-text">Ocultar menú</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Content Area (White Background Center) -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-white text-gray-800 space-y-6">
+            
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <div class="text-xs uppercase tracking-widest text-[#165239] font-bold mb-1">EMPAQUE</div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Reportes y Dashboard</h1>
+                </div>
+                <button onclick="window.location.href='ini.html'" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-xl text-xs font-bold border border-gray-300 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Volver a Inicio</span>
+                </button>
+            </div>
+
+            <!-- Barra de Periodo y Turno -->
+            <div class="bg-gray-50 border border-gray-200 rounded-2xl p-4 shadow-sm flex items-center justify-between flex-wrap gap-4">
+                <span class="text-sm font-bold text-gray-700 uppercase">Filtros de Reporte</span>
+                <div class="flex items-center space-x-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500 font-semibold">Periodo:</span>
+                        <select class="bg-white border border-gray-300 rounded-xl px-3 py-1.5 text-gray-800 font-medium focus:outline-none focus:border-[#165239]">
+                            <option>Hoy</option>
+                            <option>Esta semana</option>
+                            <option>Este mes</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-gray-500 font-semibold">Turno:</span>
+                        <select class="bg-white border border-gray-300 rounded-xl px-3 py-1.5 text-gray-800 font-medium focus:outline-none focus:border-[#165239]">
+                            <option>Todos</option>
+                            <option>Turno 1</option>
+                            <option>Turno 2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Tarjetas de Métricas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Cajas Cerradas</div>
+                    <div class="text-3xl font-black text-gray-900">47</div>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Cajas en Proceso</div>
+                    <div class="text-3xl font-black text-gray-900">6</div>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Unidades Empacadas</div>
+                    <div class="text-3xl font-black text-[#165239]">376</div>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+                    <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Reaperturas</div>
+                    <div class="text-3xl font-black text-amber-600">2</div>
+                </div>
+            </div>
+
+            <!-- Sección de Gráfica -->
+            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Rendimiento de Empaque por Hora</h3>
+                <div class="h-64 flex items-end justify-around border-b border-l border-gray-300 p-4 relative">
+                    <div class="w-12 bg-[#165239]/40 rounded-t-lg h-[40%] flex items-end justify-center pb-2 text-xs font-bold text-gray-700">8h</div>
+                    <div class="w-12 bg-[#165239]/70 rounded-t-lg h-[65%] flex items-end justify-center pb-2 text-xs font-bold text-gray-700">10h</div>
+                    <div class="w-12 bg-[#165239] rounded-t-lg h-[90%] flex items-end justify-center pb-2 text-xs font-bold text-white">12h</div>
+                    <div class="w-12 bg-[#165239]/80 rounded-t-lg h-[75%] flex items-end justify-center pb-2 text-xs font-bold text-white">14h</div>
+                </div>
+            </div>
+
+            <!-- Incidencias Registradas -->
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wide">Incidencias Registradas</h3>
+                    <p class="text-xs text-gray-500">Sistemas / Caja / Tipo de incidencia / Estado</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider border-b border-gray-200">
+                                <th class="py-3 px-6">Timestamp</th>
+                                <th class="py-3 px-6">Caja</th>
+                                <th class="py-3 px-6">Tipo de Incidencia</th>
+                                <th class="py-3 px-6 text-right">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 text-gray-700">
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-3.5 px-6 font-mono text-xs">--/--</td>
+                                <td class="py-3.5 px-6 font-bold font-mono">C-XXXX</td>
+                                <td class="py-3.5 px-6">Reapertura</td>
+                                <td class="py-3.5 px-6 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Registrada</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="py-3.5 px-6 font-mono text-xs">--/--</td>
+                                <td class="py-3.5 px-6 font-bold font-mono">C-XXXX</td>
+                                <td class="py-3.5 px-6">Error de validación</td>
+                                <td class="py-3.5 px-6 text-right"><span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Registrada</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 bg-[#0a2218] border border-[#26d07c] text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-[#26d07c] text-lg"></i>
+        <div>
+            <div class="font-semibold text-sm" id="toast-title">Éxito</div>
+            <div class="text-xs text-gray-300" id="toast-desc">Operación realizada correctamente.</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('live-date').innerText = now.toLocaleDateString('es-ES', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        let sidebarExpanded = true;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const collapseText = document.getElementById('collapse-text');
+            const collapseIcon = document.getElementById('collapse-icon');
+            
+            sidebarExpanded = !sidebarExpanded;
+            if (sidebarExpanded) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                collapseText.innerText = 'Ocultar menú';
+                collapseIcon.className = 'fa-solid fa-chevron-left';
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                collapseText.innerText = '';
+                collapseIcon.className = 'fa-solid fa-chevron-right';
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-desc').innerText = message;
+            document.getElementById('toast-title').innerText = type === 'success' ? 'Éxito' : 'Aviso';
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>

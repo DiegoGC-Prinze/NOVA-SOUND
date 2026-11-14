@@ -1,0 +1,93 @@
+[
+ {
+  "numEmpleado": "1001",
+  "nombre": "Luis Hernández",
+  "rol": "Operador",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "1002",
+  "nombre": "Karla Domínguez",
+  "rol": "Operador",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "1003",
+  "nombre": "Tomás Reyes",
+  "rol": "Operador",
+  "estado": "Bloqueado",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "2001",
+  "nombre": "Marco Ibarra",
+  "rol": "Líder de línea",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "2002",
+  "nombre": "Sofía Cárdenas",
+  "rol": "Líder de línea",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "2003",
+  "nombre": "Rosa Quintero",
+  "rol": "Líder de línea",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "3001",
+  "nombre": "Andrea Salgado",
+  "rol": "Inspector de Calidad",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "4001",
+  "nombre": "Julián Ortega",
+  "rol": "Almacén/Empaque",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "4002",
+  "nombre": "Patricia Luna",
+  "rol": "Supervisor de almacén",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "5001",
+  "nombre": "Ricardo Fuentes",
+  "rol": "Subgerente de Producción",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "5002",
+  "nombre": "Elena Montiel",
+  "rol": "Gerente de Producción",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "6001",
+  "nombre": "Héctor Aguilar",
+  "rol": "Gerente de Planta",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ },
+ {
+  "numEmpleado": "9001",
+  "nombre": "Daniela Rivas",
+  "rol": "Administrador",
+  "estado": "Activo",
+  "contrasena": "nova123"
+ }
+]

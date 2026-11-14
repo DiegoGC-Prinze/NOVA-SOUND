@@ -1,0 +1,411 @@
+{
+  "roles": [
+    {
+      "nombre": "Operador",
+      "descripcion": "Consulta su orden y línea; registra producción o incidencias permitidas. No modifica cierres.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "produccion/tablero-de-produccion-del-turno": "acciona",
+        "produccion/registrar-produccion": "acciona",
+        "produccion/registrar-incidencia": "acciona",
+        "prueba-funcional/escanear-pieza-o-lote": "acciona",
+        "prueba-funcional/registro-de-pruebas-funcionales": "acciona",
+        "prueba-funcional/unidades-por-probar": "acciona",
+        "prueba-funcional/historial-de-pruebas": "ver"
+      },
+      "acciones": [
+        "registrar-produccion",
+        "registrar-resultado-de-prueba-funcional"
+      ]
+    },
+    {
+      "nombre": "Líder de línea",
+      "descripcion": "Ve producción del turno, objetivos y diferencias; solicita ajustes y cierra el turno.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "produccion/tablero-de-produccion-del-turno": "ver",
+        "produccion/registrar-incidencia": "ver",
+        "produccion/tablero-de-linea-lider": "acciona",
+        "produccion/solicitar-ajuste": "acciona",
+        "produccion/cierre-de-turno": "acciona",
+        "prueba-funcional/unidades-por-probar": "ver",
+        "prueba-funcional/historial-de-pruebas": "ver"
+      },
+      "acciones": [
+        "solicitar-ajuste-de-produccion-o-de-cierre",
+        "guardar-cierre-de-turno"
+      ]
+    },
+    {
+      "nombre": "Inspector de Calidad",
+      "descripcion": "Registra inspección, defecto y disposición; libera o retiene unidades.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "prueba-funcional/historial-de-pruebas": "ver",
+        "calidad/resumen-de-calidad": "acciona",
+        "calidad/inspeccion-de-unidad": "acciona",
+        "calidad/retenciones": "acciona",
+        "calidad/retrabajos": "acciona",
+        "calidad/historial-de-la-unidad": "ver",
+        "calidad/reportes-de-calidad": "acciona"
+      },
+      "acciones": [
+        "dar-disposicion-de-calidad-liberar-retener-retrabajo-scrap"
+      ]
+    },
+    {
+      "nombre": "Almacén/Empaque",
+      "descripcion": "Crea cajas, agrega unidades liberadas, cierra cajas y prepara embarques.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "empaque/inicio-de-empaque-panel-de-control": "acciona",
+        "empaque/formar-caja": "acciona",
+        "empaque/confirmar-cierre-de-caja": "acciona",
+        "empaque/consultar-caja": "ver",
+        "empaque/historial-de-cajas": "ver",
+        "empaque/reportes-de-empaque": "ver",
+        "embarques/armar-embarque": "acciona",
+        "embarques/paquetes-en-embarcacion": "acciona",
+        "embarques/estado-del-embarque": "ver",
+        "embarques/rastreo-de-contenedor": "ver",
+        "embarques/grafica-de-embarques": "ver"
+      },
+      "acciones": [
+        "cerrar-caja",
+        "confirmar-salida-de-embarque"
+      ]
+    },
+    {
+      "nombre": "Subgerente de Producción",
+      "descripcion": "Consulta todas las líneas y órdenes; revisa avance y autoriza ajustes.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "gerencia/dashboard": "ver",
+        "gerencia/discrepancias": "ver",
+        "gerencia/autorizaciones": "acciona",
+        "gerencia/trazabilidad": "ver",
+        "gerencia/cierres-de-turno": "ver"
+      },
+      "acciones": [
+        "aprobar-o-rechazar-ajustes-y-reaperturas"
+      ]
+    },
+    {
+      "nombre": "Gerente de Producción",
+      "descripcion": "Consulta indicadores, históricos y cierres; autoriza reaperturas de turno.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "gerencia/dashboard": "ver",
+        "gerencia/discrepancias": "ver",
+        "gerencia/autorizaciones": "acciona",
+        "gerencia/trazabilidad": "ver",
+        "gerencia/cierres-de-turno": "ver"
+      },
+      "acciones": [
+        "aprobar-o-rechazar-ajustes-y-reaperturas"
+      ]
+    },
+    {
+      "nombre": "Gerente de Planta",
+      "descripcion": "Consulta tableros, cumplimiento, defectos y embarques. No captura producción.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "gerencia/dashboard": "ver",
+        "gerencia/discrepancias": "ver",
+        "gerencia/autorizaciones": "ver",
+        "gerencia/trazabilidad": "ver",
+        "gerencia/cierres-de-turno": "ver"
+      },
+      "acciones": []
+    },
+    {
+      "nombre": "Administrador",
+      "descripcion": "Gestiona usuarios, roles, catálogos y parámetros. No es un puesto operativo.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "sistemas/area-de-tickets": "acciona",
+        "sistemas/ver-ticket": "acciona",
+        "sistemas/usuarios": "acciona",
+        "sistemas/nuevo-o-editar-usuario": "acciona",
+        "sistemas/roles-y-permisos": "acciona",
+        "sistemas/catalogos": "acciona",
+        "sistemas/parametros": "acciona"
+      },
+      "acciones": [
+        "administrar-usuarios-roles-catalogos-y-parametros"
+      ]
+    },
+    {
+      "nombre": "Supervisor de almacén",
+      "descripcion": "Reabre cajas cerradas (queda auditoría). Propuesto como 9.º rol (C9).",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "empaque/inicio-de-empaque-panel-de-control": "ver",
+        "empaque/consultar-caja": "acciona",
+        "empaque/historial-de-cajas": "ver",
+        "empaque/reportes-de-empaque": "ver"
+      },
+      "acciones": [
+        "reabrir-caja"
+      ]
+    }
+  ],
+  "pantallas": [
+    {
+      "id": "produccion/tablero-de-produccion-del-turno",
+      "area": "produccion",
+      "nombre": "Tablero de producción del turno"
+    },
+    {
+      "id": "produccion/registrar-produccion",
+      "area": "produccion",
+      "nombre": "Registrar producción"
+    },
+    {
+      "id": "produccion/registrar-incidencia",
+      "area": "produccion",
+      "nombre": "Registrar incidencia"
+    },
+    {
+      "id": "produccion/tablero-de-linea-lider",
+      "area": "produccion",
+      "nombre": "Tablero de línea (líder)"
+    },
+    {
+      "id": "produccion/solicitar-ajuste",
+      "area": "produccion",
+      "nombre": "Solicitar ajuste"
+    },
+    {
+      "id": "produccion/cierre-de-turno",
+      "area": "produccion",
+      "nombre": "Cierre de turno"
+    },
+    {
+      "id": "prueba-funcional/escanear-pieza-o-lote",
+      "area": "prueba-funcional",
+      "nombre": "Escanear pieza o lote"
+    },
+    {
+      "id": "prueba-funcional/registro-de-pruebas-funcionales",
+      "area": "prueba-funcional",
+      "nombre": "Registro de pruebas funcionales"
+    },
+    {
+      "id": "prueba-funcional/unidades-por-probar",
+      "area": "prueba-funcional",
+      "nombre": "Unidades por probar"
+    },
+    {
+      "id": "prueba-funcional/historial-de-pruebas",
+      "area": "prueba-funcional",
+      "nombre": "Historial de pruebas"
+    },
+    {
+      "id": "calidad/resumen-de-calidad",
+      "area": "calidad",
+      "nombre": "Resumen de calidad"
+    },
+    {
+      "id": "calidad/inspeccion-de-unidad",
+      "area": "calidad",
+      "nombre": "Inspección de unidad"
+    },
+    {
+      "id": "calidad/retenciones",
+      "area": "calidad",
+      "nombre": "Retenciones"
+    },
+    {
+      "id": "calidad/retrabajos",
+      "area": "calidad",
+      "nombre": "Retrabajos"
+    },
+    {
+      "id": "calidad/historial-de-la-unidad",
+      "area": "calidad",
+      "nombre": "Historial de la unidad"
+    },
+    {
+      "id": "calidad/reportes-de-calidad",
+      "area": "calidad",
+      "nombre": "Reportes de calidad"
+    },
+    {
+      "id": "empaque/inicio-de-empaque-panel-de-control",
+      "area": "empaque",
+      "nombre": "Inicio de empaque (panel de control)"
+    },
+    {
+      "id": "empaque/formar-caja",
+      "area": "empaque",
+      "nombre": "Formar caja"
+    },
+    {
+      "id": "empaque/confirmar-cierre-de-caja",
+      "area": "empaque",
+      "nombre": "Confirmar cierre de caja"
+    },
+    {
+      "id": "empaque/consultar-caja",
+      "area": "empaque",
+      "nombre": "Consultar caja"
+    },
+    {
+      "id": "empaque/historial-de-cajas",
+      "area": "empaque",
+      "nombre": "Historial de cajas"
+    },
+    {
+      "id": "empaque/reportes-de-empaque",
+      "area": "empaque",
+      "nombre": "Reportes de empaque"
+    },
+    {
+      "id": "embarques/armar-embarque",
+      "area": "embarques",
+      "nombre": "Armar embarque"
+    },
+    {
+      "id": "embarques/paquetes-en-embarcacion",
+      "area": "embarques",
+      "nombre": "Paquetes en embarcación"
+    },
+    {
+      "id": "embarques/cierre-de-caja-escaneo",
+      "area": "embarques",
+      "nombre": "Cierre de caja (escaneo)"
+    },
+    {
+      "id": "embarques/confirmacion-de-cierre-de-caja",
+      "area": "embarques",
+      "nombre": "Confirmación de cierre de caja"
+    },
+    {
+      "id": "embarques/estado-del-embarque",
+      "area": "embarques",
+      "nombre": "Estado del embarque"
+    },
+    {
+      "id": "embarques/rastreo-de-contenedor",
+      "area": "embarques",
+      "nombre": "Rastreo de contenedor"
+    },
+    {
+      "id": "embarques/grafica-de-embarques",
+      "area": "embarques",
+      "nombre": "Gráfica de embarques"
+    },
+    {
+      "id": "gerencia/dashboard",
+      "area": "gerencia",
+      "nombre": "Dashboard"
+    },
+    {
+      "id": "gerencia/discrepancias",
+      "area": "gerencia",
+      "nombre": "Discrepancias"
+    },
+    {
+      "id": "gerencia/autorizaciones",
+      "area": "gerencia",
+      "nombre": "Autorizaciones"
+    },
+    {
+      "id": "gerencia/trazabilidad",
+      "area": "gerencia",
+      "nombre": "Trazabilidad"
+    },
+    {
+      "id": "gerencia/cierres-de-turno",
+      "area": "gerencia",
+      "nombre": "Cierres de turno"
+    },
+    {
+      "id": "sistemas/area-de-tickets",
+      "area": "sistemas",
+      "nombre": "Área de tickets"
+    },
+    {
+      "id": "sistemas/ver-ticket",
+      "area": "sistemas",
+      "nombre": "Ver ticket"
+    },
+    {
+      "id": "sistemas/usuarios",
+      "area": "sistemas",
+      "nombre": "Usuarios"
+    },
+    {
+      "id": "sistemas/nuevo-o-editar-usuario",
+      "area": "sistemas",
+      "nombre": "Nuevo o editar usuario"
+    },
+    {
+      "id": "sistemas/roles-y-permisos",
+      "area": "sistemas",
+      "nombre": "Roles y permisos"
+    },
+    {
+      "id": "sistemas/catalogos",
+      "area": "sistemas",
+      "nombre": "Catálogos"
+    },
+    {
+      "id": "sistemas/parametros",
+      "area": "sistemas",
+      "nombre": "Parámetros"
+    }
+  ],
+  "acciones": [
+    {
+      "id": "registrar-produccion",
+      "nombre": "Registrar producción"
+    },
+    {
+      "id": "solicitar-ajuste-de-produccion-o-de-cierre",
+      "nombre": "Solicitar ajuste de producción o de cierre"
+    },
+    {
+      "id": "guardar-cierre-de-turno",
+      "nombre": "Guardar cierre de turno"
+    },
+    {
+      "id": "aprobar-o-rechazar-ajustes-y-reaperturas",
+      "nombre": "Aprobar o rechazar ajustes y reaperturas"
+    },
+    {
+      "id": "registrar-resultado-de-prueba-funcional",
+      "nombre": "Registrar resultado de prueba funcional"
+    },
+    {
+      "id": "dar-disposicion-de-calidad-liberar-retener-retrabajo-scrap",
+      "nombre": "Dar disposición de Calidad (liberar, retener, retrabajo, scrap)"
+    },
+    {
+      "id": "cerrar-caja",
+      "nombre": "Cerrar caja"
+    },
+    {
+      "id": "reabrir-caja",
+      "nombre": "Reabrir caja"
+    },
+    {
+      "id": "confirmar-salida-de-embarque",
+      "nombre": "Confirmar salida de embarque"
+    },
+    {
+      "id": "administrar-usuarios-roles-catalogos-y-parametros",
+      "nombre": "Administrar usuarios, roles, catálogos y parámetros"
+    }
+  ]
+}

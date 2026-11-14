@@ -1,0 +1,4 @@
+{
+  "capacidadCaja": {"NS-MINI": 12, "NS-SPORT": 8, "NS-PRO": 6, "NS-MAX": 4},
+  "ultimoCambio": {"por": "Daniela Rivas", "dia": 5, "hora": "10:20", "motivo": "Carga inicial de la capacidad estándar del caso."}
+}

@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Sound - Panel de Empaque</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        nova: {
+                            darkest: '#05120d',
+                            dark: '#0a2218',
+                            DEFAULT: '#0f3826',
+                            light: '#165239',
+                            accent: '#1db954',
+                            glow: '#26d07c'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #0a2218 0%, #05120d 100%);
+        }
+    </style>
+</head>
+<body class="h-full font-sans text-gray-800 bg-gray-100 flex flex-col overflow-hidden">
+
+    <!-- Top Bar / Header -->
+    <header class="h-16 bg-[#071912] border-b border-[#165239]/40 px-6 flex items-center justify-between z-20 shrink-0 text-white">
+        <div class="flex items-center space-x-4">
+            <button id="sidebar-toggle" class="text-gray-300 hover:text-white text-xl p-2 rounded-lg hover:bg-[#165239]/40 transition">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#1db954] to-[#0f3826] flex items-center justify-center shadow-lg shadow-emerald-950/50">
+                    <i class="fa-solid fa-volume-high text-white text-sm"></i>
+                </div>
+                <div>
+                    <span class="font-bold tracking-wider text-white text-lg">nova</span>
+                    <span class="font-light tracking-widest text-[#26d07c] text-sm block -mt-1">SOUND</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center space-x-8 text-sm text-gray-300">
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-clock text-[#26d07c]"></i>
+                <span>Hora: <strong id="live-clock" class="text-white">18:52:10</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-regular fa-calendar text-[#26d07c]"></i>
+                <span>Fecha: <strong id="live-date" class="text-white">12 Nov 2026</strong></span>
+            </div>
+            <div class="flex items-center space-x-2 bg-[#0a2218] px-3 py-1.5 rounded-full border border-[#165239]/40">
+                <i class="fa-solid fa-shield-halved text-[#26d07c]"></i>
+                <span>Turno: <strong class="text-white">Turno 2</strong></span>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="text-right hidden sm:block">
+                <div class="text-sm font-medium text-white">Elena Montiel</div>
+                <div class="text-xs text-[#26d07c]">Gerente de Empaque</div>
+            </div>
+            <button onclick="showNotification('Sesión finalizada correctamente', 'info')" class="bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 px-3 py-1.5 rounded-lg text-sm transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span class="hidden sm:inline">Salir</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 sidebar-gradient border-r border-[#165239]/40 flex flex-col justify-between transition-all duration-300 z-10 shrink-0 text-gray-200">
+            <div class="py-4 px-3 space-y-1 overflow-y-auto">
+                <div class="px-3 pb-2 text-[11px] font-semibold tracking-wider text-gray-400 uppercase">Área Operativa</div>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-house w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Inicio</span>
+                </a>
+                
+                <a href="../produccion/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-industry w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Producción</span>
+                </a>
+                
+                <a href="../prueba/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-flask-vial w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Prueba Funcional</span>
+                </a>
+                
+                <a href="../calidad/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-award w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Calidad</span>
+                </a>
+                
+                <a href="../empaque/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-[#165239] to-[#0f3826] text-white shadow-md shadow-black/40 border-l-4 border-[#26d07c]">
+                    <i class="fa-solid fa-box-open w-5 text-[#26d07c]"></i>
+                    <span class="font-semibold text-sm">Empaque</span>
+                </a>
+                
+                <a href="../empaque/lista.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-boxes-stacked w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Empaques</span>
+                </a>
+                
+                <a href="../gerencia/dashboard.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-chart-pie w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Gerencia</span>
+                </a>
+                
+                <a href="../sistemas/ini.html" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl text-gray-300 hover:bg-[#165239]/30 hover:text-white transition group">
+                    <i class="fa-solid fa-server w-5 text-gray-400 group-hover:text-[#26d07c] transition"></i>
+                    <span class="font-medium text-sm">Sistemas</span>
+                </a>
+            </div>
+
+            <div class="p-3 border-t border-[#165239]/30">
+                <button onclick="toggleSidebar()" class="w-full flex items-center justify-center space-x-2 py-2 rounded-lg bg-[#071912] hover:bg-[#165239]/50 text-xs text-gray-400 hover:text-white transition">
+                    <i class="fa-solid fa-chevron-left" id="collapse-icon"></i>
+                    <span id="collapse-text">Ocultar menú</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Content Area (White Background Center) -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 bg-white text-gray-800">
+            
+            <div class="mb-6">
+                <div class="text-xs uppercase tracking-widest text-[#165239] font-bold mb-1">EMPAQUE</div>
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight flex items-center space-x-3">
+                        <span>INICIO / PANEL DE CONTROL</span>
+                    </h1>
+                    <!-- Botón Dashboard Independiente -->
+                        <div class="flex items-center space-x-3">
+                    <!-- Botón Dashboard Independiente -->
+                        <button onclick="window.location.href='dashboard.html'" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-2.5 rounded-xl font-medium shadow-md transition flex items-center space-x-2 text-sm">
+                                <i class="fa-solid fa-chart-pie text-[#26d07c]"></i>
+                                <span>DASHBOARD</span>
+                        </button>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="window.location.href='formar.html'" class="bg-[#165239] hover:bg-[#0f3826] text-white px-4 py-2.5 rounded-xl font-medium shadow-md transition flex items-center space-x-2 text-sm">
+                                <i class="fa-solid fa-plus-circle text-[#26d07c]"></i>
+                                <span>+ FORMAR CAJA</span>
+                        </button>
+                        <button onclick="window.location.href='consultar.html'" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2.5 rounded-xl font-medium border border-gray-300 transition flex items-center space-x-2 text-sm">
+                            <i class="fa-solid fa-magnifying-glass text-[#165239]"></i>
+                            <span>¿CONSULTAR CAJA?</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metric Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div onclick="filterTable('cerradas')" class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-[#165239] rounded-2xl p-6 shadow-sm transition cursor-pointer group relative overflow-hidden">
+                    <div class="text-gray-500 font-semibold text-sm mb-2 flex items-center justify-between">
+                        <span>Cajas Cerradas</span>
+                        <i class="fa-solid fa-box-archive text-[#165239] text-lg"></i>
+                    </div>
+                    <div class="text-4xl font-black text-gray-900 tracking-tight" id="count-cerradas">47</div>
+                    <div class="mt-3 text-xs text-emerald-700 font-medium flex items-center space-x-1">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                        <span>+12% vs turno anterior</span>
+                    </div>
+                </div>
+
+                <div onclick="filterTable('proceso')" class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-[#165239] rounded-2xl p-6 shadow-sm transition cursor-pointer group relative overflow-hidden">
+                    <div class="text-gray-500 font-semibold text-sm mb-2 flex items-center justify-between">
+                        <span>Cajas en Proceso</span>
+                        <i class="fa-solid fa-spinner text-amber-600 text-lg"></i>
+                    </div>
+                    <div class="text-4xl font-black text-gray-900 tracking-tight" id="count-proceso">6</div>
+                    <div class="mt-3 text-xs text-amber-700 font-medium flex items-center space-x-1">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>En línea de ensamble</span>
+                    </div>
+                </div>
+
+                <div onclick="filterTable('pendientes')" class="bg-white hover:bg-gray-50 border border-gray-200 hover:border-[#165239] rounded-2xl p-6 shadow-sm transition cursor-pointer group relative overflow-hidden">
+                    <div class="text-gray-500 font-semibold text-sm mb-2 flex items-center justify-between">
+                        <span>Pendientes de Empaque</span>
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600 text-lg"></i>
+                    </div>
+                    <div class="text-4xl font-black text-gray-900 tracking-tight" id="count-pendientes">12</div>
+                    <div class="mt-3 text-xs text-rose-700 font-medium flex items-center space-x-1">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>Requieren verificación</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Section -->
+            <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden mb-8">
+                <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between flex-wrap gap-4 bg-gray-50">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-900 tracking-wide">Cajas en Procesos</h2>
+                        <p class="text-xs text-gray-500">Monitoreo en tiempo real de unidades en empaque</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <input type="text" id="table-search" placeholder="Buscar caja o cliente..." onkeyup="filterTableSearch()" class="bg-white border border-gray-300 text-sm rounded-xl px-3.5 py-2 pl-9 text-gray-800 focus:outline-none focus:border-[#165239] w-60">
+                            <i class="fa-solid fa-search absolute left-3 top-3 text-gray-400 text-xs"></i>
+                        </div>
+                        <button onclick="loadTableData()" class="bg-white hover:bg-gray-100 text-gray-700 p-2 rounded-xl border border-gray-300 transition text-sm">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wider border-b border-gray-200">
+                                <th class="py-3.5 px-6 font-semibold">Caja</th>
+                                <th class="py-3.5 px-6 font-semibold">Cliente</th>
+                                <th class="py-3.5 px-6 font-semibold">Modelo</th>
+                                <th class="py-3.5 px-6 font-semibold">Progreso</th>
+                                <th class="py-3.5 px-6 font-semibold">Estado</th>
+                                <th class="py-3.5 px-6 font-semibold text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cajas-table-body" class="divide-y divide-gray-200 text-sm text-gray-700">
+                            <!-- Populated via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between text-xs text-gray-500">
+                    <span id="table-count-info">Mostrando 4 de 4 registros</span>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-1 rounded bg-white border border-gray-300 hover:bg-gray-100 text-gray-700">Anterior</button>
+                        <button class="px-3 py-1 rounded bg-[#165239] text-white font-medium">1</button>
+                        <button class="px-3 py-1 rounded bg-white border border-gray-300 hover:bg-gray-100 text-gray-700">2</button>
+                        <button class="px-3 py-1 rounded bg-white border border-gray-300 hover:bg-gray-100 text-gray-700">Siguiente</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Modal: Formar Caja -->
+    <div id="modal-formar" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white border border-gray-200 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden transform transition-all text-gray-800">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-box text-[#165239]"></i>
+                    <span>Formar Nueva Caja de Empaque</span>
+                </h3>
+                <button onclick="closeModal('modal-formar')" class="text-gray-400 hover:text-gray-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="handleFormarCaja(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Código de Caja / Lote</label>
+                    <input type="text" id="input-caja-codigo" required value="CX05-B" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-[#165239]">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Cliente</label>
+                    <select id="input-caja-cliente" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-[#165239]">
+                        <option>CLIENTE A</option>
+                        <option>CLIENTE B</option>
+                        <option>CLIENTE C</option>
+                        <option>CLIENTE D</option>
+                        <option>CLIENTE VIP INTERNACIONAL</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Modelo de Producto (Nova Sound)</label>
+                    <select id="input-caja-modelo" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-[#165239]">
+                        <option>MODELO X (Boombox Pro)</option>
+                        <option>MODELO S (SoundBar Mini)</option>
+                        <option>MODELO MAX (Party Bass)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Progreso Inicial (%)</label>
+                        <input type="number" id="input-caja-progreso" min="0" max="100" value="10" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-[#165239]">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Estado</label>
+                        <select id="input-caja-estado" class="w-full bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-[#165239]">
+                            <option>Empacando</option>
+                            <option>En espera</option>
+                            <option>Cerrada</option>
+                            <option>Verificación</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="pt-4 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal('modal-formar')" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-[#165239] text-white hover:bg-[#0f3826] text-sm font-medium shadow-md">Crear Caja</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Consultar Caja (Actualizado con flujo de Reapertura) -->
+    <div id="modal-consultar" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white border border-gray-200 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden text-gray-800">
+            <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-gray-50">
+                <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-magnifying-glass text-[#165239]"></i>
+                    <span>Consultar Estado de Caja</span>
+                </h3>
+                <button onclick="closeModal('modal-consultar')" class="text-gray-400 hover:text-gray-700"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Ingrese ID de Caja o Código de Barras</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="consulta-input" placeholder="Ej. CX01-A" class="flex-1 bg-white border border-gray-300 rounded-xl px-4 py-2.5 text-gray-800 focus:outline-none focus:border-[#165239]">
+                        <button onclick="realizarConsulta()" class="bg-[#165239] hover:bg-[#0f3826] text-white px-4 py-2.5 rounded-xl font-medium transition">Buscar</button>
+                    </div>
+                </div>
+                <div id="resultado-consulta" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm space-y-3">
+                    <!-- Dynamic result with Reabrir button if closed -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reapertura de Caja (Nuevo Requerimiento) -->
+    <div id="modal-reabrir" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#0a2218] border border-[#165239] text-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-[#165239]/50 flex items-center justify-between bg-[#05120d]">
+                <h3 class="text-lg font-bold text-white tracking-wide">REAPERTURA DE CAJA</h3>
+                <button onclick="closeModal('modal-reabrir')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <span class="text-xs text-gray-400 block">CAJA:</span>
+                    <strong id="reabrir-caja-id" class="text-lg text-[#26d07c]">X-XXXX</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-gray-400 block">ESTADO:</span>
+                    <strong class="text-sm text-amber-400">CERRADA</strong>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">MOTIVO:</label>
+                    <textarea id="reabrir-motivo" placeholder="Especifique el motivo de reapertura..." rows="2" class="w-full bg-[#05120d] border-b border-gray-500 text-white focus:outline-none focus:border-[#26d07c] px-2 py-1 text-sm resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">AUTORIZADO DE SUPERVISOR:</label>
+                    <input type="text" id="reabrir-supervisor" placeholder="Nombre o clave del supervisor..." class="w-full bg-[#05120d] border-b border-gray-500 text-white focus:outline-none focus:border-[#26d07c] px-2 py-1 text-sm">
+                </div>
+                <div class="pt-4 flex justify-between space-x-4">
+                    <button type="button" onclick="closeModal('modal-reabrir')" class="flex-1 py-2.5 rounded-xl border border-[#165239] text-gray-300 hover:bg-[#165239]/30 text-sm font-semibold transition">CANCELAR</button>
+                    <button type="button" onclick="autorizarReapertura()" class="flex-1 py-2.5 rounded-xl bg-[#165239] hover:bg-[#26d07c] text-white text-sm font-semibold transition shadow-lg">AUTORIZAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 transition-all duration-300 bg-[#0a2218] border border-[#26d07c] text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center space-x-3">
+        <i class="fa-solid fa-circle-check text-[#26d07c] text-lg"></i>
+        <div>
+            <div class="font-semibold text-sm" id="toast-title">Éxito</div>
+            <div class="text-xs text-gray-300" id="toast-desc">Operación realizada correctamente.</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
+            const options = { day: '2-digit', month: 'short', year: 'numeric' };
+            document.getElementById('live-date').innerText = now.toLocaleDateString('es-ES', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        let cajasData = [
+            { id: "CX01-A", cliente: "CLIENTE A", modelo: "MODELO X", progreso: 80, estado: "Empacando" },
+            { id: "CX02-A", cliente: "CLIENTE A", modelo: "MODELO X", progreso: 60, estado: "Cerrada" },
+            { id: "CX02-B", cliente: "CLIENTE C", modelo: "MODELO X", progreso: 100, estado: "Cerrada" },
+            { id: "CX03-C", cliente: "CLIENTE D", modelo: "MODELO X", progreso: 40, estado: "En espera" }
+        ];
+
+        let cajaSeleccionadaParaReabrir = null;
+
+        function renderTable(data = cajasData) {
+            const tbody = document.getElementById('cajas-table-body');
+            tbody.innerHTML = '';
+            
+            data.forEach((caja) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition border-b border-gray-100";
+                
+                let badgeColor = caja.estado === 'Empacando' ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : (caja.estado === 'Cerrada' ? 'bg-blue-100 text-blue-800 border-blue-300' : 'bg-amber-100 text-amber-800 border-amber-300');
+                
+                tr.innerHTML = `
+                    <td class="py-3.5 px-6 font-bold text-gray-900">${caja.id}</td>
+                    <td class="py-3.5 px-6 text-gray-700">${caja.cliente}</td>
+                    <td class="py-3.5 px-6 text-gray-700">${caja.modelo}</td>
+                    <td class="py-3.5 px-6">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-xs font-bold text-gray-800">${caja.progreso}%</span>
+                            <div class="w-24 bg-gray-200 rounded-full h-2 overflow-hidden border border-gray-300">
+                                <div class="bg-[#165239] h-full rounded-full" style="width: ${caja.progreso}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-6">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold border ${badgeColor}">
+                            ${caja.estado}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-6 text-right">
+                        <button onclick="editarCaja('${caja.id}')" class="text-gray-400 hover:text-[#165239] p-1.5 transition" title="Editar"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="eliminarCaja('${caja.id}')" class="text-gray-400 hover:text-rose-600 p-1.5 transition" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('table-count-info').innerText = `Mostrando ${data.length} de ${cajasData.length} registros`;
+        }
+
+        renderTable();
+
+        let sidebarExpanded = true;
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const collapseText = document.getElementById('collapse-text');
+            const collapseIcon = document.getElementById('collapse-icon');
+            
+            sidebarExpanded = !sidebarExpanded;
+            if (sidebarExpanded) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                collapseText.innerText = 'Ocultar menú';
+                collapseIcon.className = 'fa-solid fa-chevron-left';
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                collapseText.innerText = '';
+                collapseIcon.className = 'fa-solid fa-chevron-right';
+            }
+        }
+
+        function openFormarCajaModal() {
+            document.getElementById('modal-formar').classList.remove('hidden');
+            document.getElementById('modal-formar').classList.add('flex');
+        }
+
+        function openConsultarModal() {
+            document.getElementById('modal-consultar').classList.remove('hidden');
+            document.getElementById('modal-consultar').classList.add('flex');
+            document.getElementById('resultado-consulta').classList.add('hidden');
+            document.getElementById('consulta-input').value = '';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.getElementById(modalId).classList.remove('flex');
+        }
+
+        function handleFormarCaja(e) {
+            e.preventDefault();
+            const codigo = document.getElementById('input-caja-codigo').value;
+            const cliente = document.getElementById('input-caja-cliente').value;
+            const modelo = document.getElementById('input-caja-modelo').value;
+            const progreso = parseInt(document.getElementById('input-caja-progreso').value);
+            const estado = document.getElementById('input-caja-estado').value;
+
+            cajasData.unshift({ id: codigo, cliente, modelo, progreso, estado });
+            renderTable();
+            closeModal('modal-formar');
+            showNotification('Caja ' + codigo + ' creada exitosamente', 'success');
+        }
+
+        function realizarConsulta() {
+            const val = document.getElementById('consulta-input').value.trim().toUpperCase();
+            const resDiv = document.getElementById('resultado-consulta');
+            const found = cajasData.find(c => c.id === val);
+
+            resDiv.classList.remove('hidden');
+            if (found) {
+                cajaSeleccionadaParaReabrir = found.id;
+                let reabrirBtnHtml = found.estado === 'Cerrada' 
+                    ? `<button onclick="abrirModalReabrir('${found.id}')" class="mt-2 w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5"><i class="fa-solid fa-unlock-keyhole"></i><span>REABRIR CAJA</span></button>`
+                    : '';
+
+                resDiv.innerHTML = `
+                    <div class="text-[#165239] font-bold mb-1"><i class="fa-solid fa-circle-check"></i> Caja encontrada: ${found.id}</div>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-700">
+                        <div>Cliente: <strong class="text-gray-900">${found.cliente}</strong></div>
+                        <div>Modelo: <strong class="text-gray-900">${found.modelo}</strong></div>
+                        <div>Progreso: <strong class="text-gray-900">${found.progreso}%</strong></div>
+                        <div>Estado: <strong class="text-gray-900">${found.estado}</strong></div>
+                    </div>
+                    ${reabrirBtnHtml}
+                `;
+            } else {
+                resDiv.innerHTML = `<div class="text-rose-600"><i class="fa-solid fa-triangle-exclamation"></i> No se encontró ninguna caja con el código "${val}".</div>`;
+            }
+        }
+
+        function abrirModalReabrir(id) {
+            document.getElementById('reabrir-caja-id').innerText = id;
+            document.getElementById('reabrir-motivo').value = '';
+            document.getElementById('reabrir-supervisor').value = '';
+            closeModal('modal-consultar');
+            document.getElementById('modal-reabrir').classList.remove('hidden');
+            document.getElementById('modal-reabrir').classList.add('flex');
+        }
+
+        function autorizarReapertura() {
+            const motivo = document.getElementById('reabrir-motivo').value.trim();
+            const supervisor = document.getElementById('reabrir-supervisor').value.trim();
+
+            if(!motivo || !supervisor) {
+                showNotification('Debe ingresar el motivo y la autorización del supervisor', 'error');
+                return;
+            }
+
+            // Actualizar estado de la caja a Empacando
+            const caja = cajasData.find(c => c.id === cajaSeleccionadaParaReabrir);
+            if(caja) {
+                caja.estado = 'Empacando';
+                caja.progreso = 50;
+            }
+
+            renderTable();
+            closeModal('modal-reabrir');
+            showNotification('Caja ' + cajaSeleccionadaParaReabrir + ' reabierta exitosamente', 'success');
+        }
+
+        function filterTableSearch() {
+            const query = document.getElementById('table-search').value.toLowerCase();
+            const filtered = cajasData.filter(c => c.id.toLowerCase().includes(query) || c.cliente.toLowerCase().includes(query) || c.modelo.toLowerCase().includes(query));
+            renderTable(filtered);
+        }
+
+        function filterTable(type) {
+            if(type === 'cerradas') {
+                const cerradas = cajasData.filter(c => c.estado === 'Cerrada');
+                renderTable(cerradas.length > 0 ? cerradas : cajasData);
+                showNotification('Filtrando Cajas Cerradas', 'info');
+            } else if(type === 'proceso') {
+                renderTable(cajasData);
+                showNotification('Mostrando todas las cajas en proceso', 'info');
+            } else if(type === 'pendientes') {
+                showNotification('Mostrando pendientes de empaque', 'info');
+            }
+        }
+
+        function eliminarCaja(id) {
+            cajasData = cajasData.filter(c => c.id !== id);
+            renderTable();
+            showNotification('Caja ' + id + ' eliminada del registro', 'info');
+        }
+
+        function editarCaja(id) {
+            showNotification('Modo edición para caja ' + id, 'info');
+        }
+
+        function showNotification(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-desc').innerText = message;
+            document.getElementById('toast-title').innerText = type === 'success' ? 'Éxito' : 'Aviso';
+            
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>

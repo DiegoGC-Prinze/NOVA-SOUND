@@ -1,0 +1,131 @@
+/*
+  IDENTIDAD VISUAL DE NOVA SOUND
+  Aquí viven los colores, la letra y los componentes que se repiten en todas las pantallas.
+  Si algo debe verse distinto en TODO el sistema, se cambia aquí y nada más.
+  (Este archivo lo carga js/tema.js; Tailwind lo lee al abrir la página.)
+*/
+
+@theme {
+  /* Colores de marca */
+  --color-marca: #0E6B52;          /* verde esmeralda: botones, barra superior, acentos */
+  --color-marca-osc: #0A3A2D;      /* verde oscuro: hover de botones, títulos, parte alta del menú */
+  --color-marca-claro: #DDEEE8;    /* verde muy claro: encabezados de tabla, filas resaltadas */
+  --color-marca-borde: #A8CFC0;    /* bordes de avisos y etiquetas en tono de marca */
+  --color-marca-negro: #040806;    /* extremo oscuro de los degradados (casi negro con matiz verde) */
+  --color-fondo: #E6EFEB;          /* fondo de las pantallas: verde grisáceo muy claro */
+  /* Para cambiar el color de TODO el sistema se tocan solo estas 6 líneas. */
+
+  /* Colores con significado */
+  --color-exito: #2E7D32;
+  --color-aviso: #FBDA00;
+  --color-peligro: #C62828;
+
+  /* Texto y bordes */
+  --color-texto: #1F2933;
+  --color-suave: #5B6773;
+  --color-borde: #D5DCE2;
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+
+  /* Sombras con un toque del azul de la marca (se ven más finas que las grises) */
+  --shadow-tarjeta: 0 1px 2px color-mix(in srgb, var(--color-marca-osc) 6%, transparent), 0 4px 14px color-mix(in srgb, var(--color-marca-osc) 9%, transparent);
+  --shadow-boton:   0 1px 2px color-mix(in srgb, var(--color-marca-osc) 28%, transparent);
+  --shadow-campo:   inset 0 1px 2px color-mix(in srgb, var(--color-marca-osc) 8%, transparent);
+  --shadow-menu:    0 10px 28px color-mix(in srgb, var(--color-marca-osc) 30%, transparent);
+}
+
+@layer base {
+  html { background: var(--color-fondo); }
+  body { @apply bg-fondo font-sans text-sm text-texto antialiased; }
+  h1 { @apply text-xl font-bold text-marca-osc; }
+  h2 { @apply text-base font-semibold text-texto; }
+
+  /* Todo lo que se puede pulsar muestra la manita */
+  button:not(:disabled), summary, select, input[type='checkbox'], input[type='radio'] { cursor: pointer; }
+
+  /* Edge dibuja su propio ojo en los campos de contraseña; se esconde porque ya ponemos el nuestro */
+  input[type='password']::-ms-reveal, input[type='password']::-ms-clear { display: none; }
+}
+
+@layer components {
+  /* ---------- Botones ---------- */
+  .btn {
+    @apply inline-flex h-9 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md border-[1.5px] border-transparent px-4 text-sm font-semibold transition duration-150;
+    /* Al pasar el cursor: se levanta un poco y proyecta sombra. Al pulsar: vuelve a su lugar. */
+    @apply hover:-translate-y-px hover:shadow-md active:translate-y-0 active:shadow-none;
+    @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-marca;
+    @apply disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0 disabled:hover:shadow-none;
+    @apply motion-reduce:transition-none motion-reduce:hover:translate-y-0;
+  }
+  /* Los botones llevan una sombra fina en reposo; al pasar el cursor se hace más grande (ver .btn) */
+  .btn-principal  { @apply bg-marca text-white shadow-boton hover:bg-marca-osc; }
+  .btn-confirmar  { @apply bg-exito text-white shadow-boton hover:bg-[#256528]; }
+  .btn-validar    { @apply bg-aviso text-texto shadow-boton hover:bg-[#E5C500]; }
+  .btn-peligro    { @apply bg-peligro text-white shadow-boton hover:bg-[#A82121]; }
+  .btn-secundario { @apply border-marca bg-white text-marca shadow-boton hover:border-marca-osc hover:bg-marca-claro hover:text-marca-osc; }
+  .btn-enlace     { @apply h-auto border-0 bg-transparent px-1 py-0 text-marca underline-offset-2 hover:translate-y-0 hover:underline hover:shadow-none; }
+
+  /* ---------- Tarjetas y zonas ---------- */
+  .tarjeta { @apply rounded-lg border border-borde bg-white shadow-tarjeta; }
+
+  /* ---------- Formularios ---------- */
+  .etiqueta { @apply mb-1 block text-xs font-semibold text-suave; }
+  .campo {
+    @apply h-9 w-full rounded-md border border-[#B8C2CC] bg-white px-3 text-sm text-texto shadow-campo;
+    @apply placeholder:text-[#8A96A3] focus:border-marca focus:outline-2 focus:outline-marca/30;
+    @apply transition-colors duration-150 hover:border-marca disabled:bg-fondo disabled:text-suave disabled:hover:border-[#B8C2CC];
+  }
+  /* Campos de solo lectura (no los desplegables: el navegador también los cuenta como «solo lectura») */
+  input.campo:read-only, textarea.campo:read-only { @apply bg-fondo text-suave; }
+  textarea.campo { @apply h-auto py-2; }
+  .campo-error, .campo-error:hover { @apply border-peligro; }
+  .texto-error { @apply mt-1 text-xs font-medium text-peligro; }
+
+  /* ---------- Tablas ---------- */
+  .tabla { @apply w-full border-collapse text-sm; }
+  .tabla th { @apply bg-marca-claro px-3.5 py-2.5 text-left text-xs font-bold text-marca-osc; }
+  .tabla td { @apply border-t border-[#E6EBEF] px-3.5 py-2.5 align-middle; }
+  .tabla tbody tr:hover td { @apply bg-marca-claro/50; }
+  .tabla .num { @apply text-right tabular-nums; }
+
+  /* ---------- Etiquetas de estado ---------- */
+  .chip { @apply inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+  /* Estados de la unidad */
+  .chip-probada   { @apply bg-[#DCEBF7] text-[#0C447C]; }
+  .chip-liberada  { @apply bg-[#DDF1DE] text-[#1B5E20]; }
+  .chip-retencion { @apply bg-[#FFF3B0] text-[#6B4E00]; }
+  .chip-retrabajo { @apply bg-[#FFE0C2] text-[#7A3B00]; }
+  .chip-scrap     { @apply bg-[#F9D6D5] text-[#8E1B1B]; }
+  .chip-empacada  { @apply bg-marca-borde/55 text-marca-osc; }
+  .chip-embarcada { @apply bg-[#E3E7EB] text-[#3B4650]; }
+  /* Estados generales (tickets, usuarios, autorizaciones…) */
+  .chip-exito   { @apply bg-[#DDF1DE] text-[#1B5E20]; }
+  .chip-aviso   { @apply bg-[#FFF3B0] text-[#6B4E00]; }
+  .chip-peligro { @apply bg-[#F9D6D5] text-[#8E1B1B]; }
+  .chip-neutro  { @apply bg-[#E3E7EB] text-[#3B4650]; }
+  .chip-info    { @apply bg-marca-claro text-marca-osc ring-1 ring-marca/15; }
+
+  /* ---------- Avisos ---------- */
+  .aviso { @apply rounded-md border px-3.5 py-2.5 text-sm; }
+  .aviso-info    { @apply border-marca-borde bg-marca-claro text-marca-osc; }
+  .aviso-exito   { @apply border-[#B8DDBA] bg-[#EAF6EB] text-[#1B5E20]; }
+  .aviso-aviso   { @apply border-[#EBD36B] bg-[#FFF8D1] text-[#6B4E00]; }
+  .aviso-peligro { @apply border-[#E6B1B0] bg-[#FCEBEA] text-[#8E1B1B]; }
+
+  /* ---------- Cuadro de diálogo ---------- */
+  dialog.dialogo {
+    @apply w-[min(32rem,calc(100vw-2rem))] rounded-xl border border-borde bg-white p-0 text-texto shadow-2xl;
+    margin: auto;
+  }
+  /* Degradados de marca: barra superior y pantalla de login (de izquierda a derecha), menú lateral (de arriba abajo) */
+  .degradado-marca { background-image: linear-gradient(to right, var(--color-marca), var(--color-marca-negro)); }
+  .degradado-menu  { background-image: linear-gradient(to bottom, var(--color-marca-osc), var(--color-marca-negro)); }
+
+  dialog.dialogo::backdrop { background: color-mix(in srgb, var(--color-marca-osc) 45%, transparent); }
+
+  /* Opciones de radio y casillas: al pasar el cursor se enmarcan con un halo azul claro */
+  label:has(> input[type='radio']:not(:disabled)),
+  label:has(> input[type='checkbox']:not(:disabled)) { @apply rounded-md transition-shadow duration-150; }
+  label:has(> input[type='radio']:not(:disabled)):hover,
+  label:has(> input[type='checkbox']:not(:disabled)):hover { box-shadow: 0 0 0 4px var(--color-marca-claro); background: var(--color-marca-claro); }
+}
