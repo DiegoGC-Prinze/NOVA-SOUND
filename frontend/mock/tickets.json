@@ -1,0 +1,5 @@
+[
+  {"id": "T-0001", "numEmpleado": "1003", "nombre": "Tomás Reyes", "motivo": "Cuenta bloqueada", "estado": "Abierto", "dia": 0, "hora": "07:12", "comentarios": ""},
+  {"id": "T-0002", "numEmpleado": "1002", "nombre": "Karla Domínguez", "motivo": "Olvidó la contraseña", "estado": "Cerrado", "dia": 1, "hora": "15:40", "comentarios": "Se restableció la contraseña y se le pidió cambiarla al entrar."},
+  {"id": "T-0003", "numEmpleado": "2002", "nombre": "Sofía Cárdenas", "motivo": "Olvidó la contraseña", "estado": "Abierto", "dia": 0, "hora": "13:40", "comentarios": ""}
+]

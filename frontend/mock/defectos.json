@@ -1,0 +1,2272 @@
+[
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 5
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 3
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 3
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 4
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 5
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 5
+ },
+ {
+  "dia": 6,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 6
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 3
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 4
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 3
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 6
+ },
+ {
+  "dia": 6,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 5
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 3
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 5
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 2
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 2
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 3
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 7
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 5
+ },
+ {
+  "dia": 5,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 4
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 6
+ },
+ {
+  "dia": 5,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 5
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 5
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 4
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 3
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 2
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 3
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 2
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 3
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 5
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 4,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 2
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 5
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 5
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 2
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 4
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 4
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 7
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 2
+ },
+ {
+  "dia": 4,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 2
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 3
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 3
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 4
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 3
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 4
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 2
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 7
+ },
+ {
+  "dia": 3,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 7
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 2
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 6
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 6
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 4
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 6
+ },
+ {
+  "dia": 3,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 7
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 4
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 3
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 3
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 5
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 3
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 2
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 5
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 2,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 3
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Etiqueta equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 4
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 3
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 5
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 3
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 4
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Accesorio faltante",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "No carga",
+  "cantidad": 5
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 2
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Color incorrecto",
+  "cantidad": 5
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 5
+ },
+ {
+  "dia": 1,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 6
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 4
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 4
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Falla Bluetooth",
+  "cantidad": 3
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 4
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 3
+ },
+ {
+  "dia": 0,
+  "turno": 1,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 8
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Apariencia",
+  "defecto": "Rayón",
+  "cantidad": 5
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-MINI",
+  "orden": "OP-1041",
+  "categoria": "Identificación",
+  "defecto": "Número de serie ilegible",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Empaque",
+  "defecto": "Producto en caja equivocada",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L1",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1044",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 4
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 3
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-PRO",
+  "orden": "OP-1042",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Funcional",
+  "defecto": "Distorsión de audio",
+  "cantidad": 3
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L2",
+  "modelo": "NS-MINI",
+  "orden": "OP-1045",
+  "categoria": "Apariencia",
+  "defecto": "Golpe",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 1
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-MAX",
+  "orden": "OP-1043",
+  "categoria": "Apariencia",
+  "defecto": "Carcasa mal cerrada",
+  "cantidad": 4
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Empaque",
+  "defecto": "Manual incorrecto",
+  "cantidad": 2
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Funcional",
+  "defecto": "No enciende",
+  "cantidad": 8
+ },
+ {
+  "dia": 0,
+  "turno": 2,
+  "linea": "L3",
+  "modelo": "NS-SPORT",
+  "orden": "OP-1046",
+  "categoria": "Identificación",
+  "defecto": "Modelo incorrecto",
+  "cantidad": 2
+ }
+]

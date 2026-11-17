@@ -1,0 +1,61 @@
+name: nova-sound
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-nova_sounds}
+      POSTGRES_USER: ${DB_USER:-nova_app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Agrega DB_PASSWORD en el archivo .env de la raiz}
+      POSTGRES_INITDB_ARGS: --encoding=UTF8
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # POSTGRES_DB crea la base. No ejecutar 00_crear_base.sql dentro de ella.
+      - ./database/postgresql/01_esquema_postgresql.sql:/docker-entrypoint-initdb.d/010_esquema.sql:ro
+      - ./database/postgresql/02_datos_postgresql.sql:/docker-entrypoint-initdb.d/020_datos_demo.sql:ro
+      - ./database/postgresql/04_modulo_almacen.sql:/docker-entrypoint-initdb.d/040_almacen.sql:ro
+      - ./database/postgresql/05_catalogo_modelos_oficiales.sql:/docker-entrypoint-initdb.d/050_modelos.sql:ro
+      - ./database/postgresql/06_integracion_frontend.sql:/docker-entrypoint-initdb.d/060_integracion_frontend.sql:ro
+      - ./database/postgresql/07_produccion_sistemas_gerencia.sql:/docker-entrypoint-initdb.d/070_gestion.sql:ro
+      - ./database/postgresql/08_calidad_pruebas.sql:/docker-entrypoint-initdb.d/080_calidad_pruebas.sql:ro
+      - ./database/postgresql/03_verificacion_postgresql.sql:/docker-entrypoint-initdb.d/090_verificacion.sql:ro
+    healthcheck:
+      # TCP espera a que termine la inicializacion, cuyo servidor usa solo socket.
+      test: [CMD-SHELL, 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${DB_NAME:-nova_sounds}
+      DB_USER: ${DB_USER:-nova_app}
+      DB_PASSWORD: ${DB_PASSWORD:?Agrega DB_PASSWORD en el archivo .env de la raiz}
+      FRONTEND_DIR: /app/frontend
+      ALMACEN_DEV_MODE: "0"
+      SISTEMAS_USUARIO: ${SISTEMAS_USUARIO:-sistemas}
+      SISTEMAS_NOMBRE: ${SISTEMAS_NOMBRE:-Sistemas}
+      SISTEMAS_PASSWORD: ${SISTEMAS_PASSWORD:?Define SISTEMAS_PASSWORD para la cuenta inicial de Sistemas}
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=5)"]
+      interval: 10s
+      timeout: 6s
+      retries: 6
+      start_period: 15s
+
+volumes:
+  postgres_data:

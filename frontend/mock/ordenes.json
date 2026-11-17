@@ -1,0 +1,92 @@
+[
+ {
+  "id": "OP-1041",
+  "cliente": "Cadena Centro",
+  "modelo": "NS-MINI",
+  "color": "Negro",
+  "cantidad": 6000,
+  "producidas": 4310,
+  "linea": "L1",
+  "compromisoEnDias": 6,
+  "cajas": {
+   "preparadas": 58,
+   "pendientes": 31,
+   "embarcadas": 242
+  }
+ },
+ {
+  "id": "OP-1044",
+  "cliente": "Cadena Norte",
+  "modelo": "NS-SPORT",
+  "color": "Azul",
+  "cantidad": 4000,
+  "producidas": 2150,
+  "linea": "L1",
+  "compromisoEnDias": 2,
+  "cajas": {
+   "preparadas": 44,
+   "pendientes": 22,
+   "embarcadas": 160
+  }
+ },
+ {
+  "id": "OP-1042",
+  "cliente": "Cadena Sur",
+  "modelo": "NS-PRO",
+  "color": "Negro",
+  "cantidad": 3000,
+  "producidas": 2480,
+  "linea": "L2",
+  "compromisoEnDias": 4,
+  "cajas": {
+   "preparadas": 61,
+   "pendientes": 28,
+   "embarcadas": 295
+  }
+ },
+ {
+  "id": "OP-1045",
+  "cliente": "Distribuidor Metro",
+  "modelo": "NS-MINI",
+  "color": "Blanco",
+  "cantidad": 2500,
+  "producidas": 920,
+  "linea": "L2",
+  "compromisoEnDias": 12,
+  "cajas": {
+   "preparadas": 19,
+   "pendientes": 14,
+   "embarcadas": 52
+  }
+ },
+ {
+  "id": "OP-1043",
+  "cliente": "Cadena Centro",
+  "modelo": "NS-MAX",
+  "color": "Gris",
+  "cantidad": 1800,
+  "producidas": 1655,
+  "linea": "L3",
+  "compromisoEnDias": 3,
+  "cajas": {
+   "preparadas": 47,
+   "pendientes": 18,
+   "embarcadas": 340
+  }
+ },
+ {
+  "id": "OP-1046",
+  "cliente": "Cadena Norte",
+  "modelo": "NS-SPORT",
+  "color": "Rojo",
+  "cantidad": 3500,
+  "producidas": 1210,
+  "linea": "L3",
+  "compromisoEnDias": 3,
+  "cajas": {
+   "preparadas": 21,
+   "pendientes": 17,
+   "embarcadas": 88
+  }
+ }
+]

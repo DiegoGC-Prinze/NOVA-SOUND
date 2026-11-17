@@ -1,0 +1,129 @@
+[
+ {
+  "id": "A-0011",
+  "tipo": "Corrección de cierre",
+  "linea": "L2",
+  "turno": 1,
+  "dia": 0,
+  "hora": "14:20",
+  "solicita": {
+   "nombre": "Sofía Cárdenas",
+   "rol": "Líder de línea"
+  },
+  "cambio": {
+   "campo": "Retrabajo",
+   "de": 9,
+   "a": 6
+  },
+  "motivo": "Tres unidades se contaron como retrabajo y ya habían sido liberadas por Calidad.",
+  "estado": "Pendiente"
+ },
+ {
+  "id": "A-0012",
+  "tipo": "Reapertura de turno",
+  "linea": "L3",
+  "turno": 1,
+  "dia": 0,
+  "hora": "14:45",
+  "solicita": {
+   "nombre": "Rosa Quintero",
+   "rol": "Líder de línea"
+  },
+  "cambio": null,
+  "motivo": "Faltó capturar 40 unidades de la última hora del turno.",
+  "estado": "Pendiente"
+ },
+ {
+  "id": "A-0013",
+  "tipo": "Corrección de cierre",
+  "linea": "L1",
+  "turno": 2,
+  "dia": 0,
+  "hora": "13:55",
+  "solicita": {
+   "nombre": "Marco Ibarra",
+   "rol": "Líder de línea"
+  },
+  "cambio": {
+   "campo": "Scrap",
+   "de": 3,
+   "a": 4
+  },
+  "motivo": "Una unidad golpeada se capturó como retrabajo y Calidad la mandó a scrap.",
+  "estado": "Pendiente"
+ },
+ {
+  "id": "A-0010",
+  "tipo": "Corrección de cierre",
+  "linea": "L1",
+  "turno": 2,
+  "dia": 1,
+  "hora": "22:30",
+  "solicita": {
+   "nombre": "Marco Ibarra",
+   "rol": "Líder de línea"
+  },
+  "cambio": {
+   "campo": "Retrabajo",
+   "de": 7,
+   "a": 5
+  },
+  "motivo": "Dos unidades se capturaron dos veces.",
+  "estado": "Aprobada",
+  "resolvio": {
+   "nombre": "Elena Montiel",
+   "rol": "Gerente de Producción"
+  },
+  "diaResolucion": 0,
+  "horaResolucion": "06:50",
+  "motivoResolucion": ""
+ },
+ {
+  "id": "A-0009",
+  "tipo": "Reapertura de turno",
+  "linea": "L2",
+  "turno": 2,
+  "dia": 2,
+  "hora": "22:10",
+  "solicita": {
+   "nombre": "Sofía Cárdenas",
+   "rol": "Líder de línea"
+  },
+  "cambio": null,
+  "motivo": "Se quería agregar producción del turno siguiente.",
+  "estado": "Rechazada",
+  "resolvio": {
+   "nombre": "Ricardo Fuentes",
+   "rol": "Subgerente de Producción"
+  },
+  "diaResolucion": 1,
+  "horaResolucion": "07:05",
+  "motivoResolucion": "La producción del turno siguiente se captura en su propio cierre."
+ },
+ {
+  "id": "A-0008",
+  "tipo": "Corrección de cierre",
+  "linea": "L3",
+  "turno": 1,
+  "dia": 3,
+  "hora": "14:15",
+  "solicita": {
+   "nombre": "Marco Ibarra",
+   "rol": "Líder de línea"
+  },
+  "cambio": {
+   "campo": "Scrap",
+   "de": 6,
+   "a": 5
+  },
+  "motivo": "Una unidad se contó como scrap y fue liberada después de retrabajo.",
+  "estado": "Aprobada",
+  "resolvio": {
+   "nombre": "Ricardo Fuentes",
+   "rol": "Subgerente de Producción"
+  },
+  "diaResolucion": 2,
+  "horaResolucion": "07:40",
+  "motivoResolucion": ""
+ }
+]

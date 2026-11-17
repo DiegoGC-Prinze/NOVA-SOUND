@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.engine import URL
@@ -24,3 +24,10 @@ engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
 )
+
+
+class Base(DeclarativeBase):
+    """Base compartida por los modelos; el esquema se inicializa con SQL."""
+
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

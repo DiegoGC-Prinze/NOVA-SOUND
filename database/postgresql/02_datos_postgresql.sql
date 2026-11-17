@@ -20,7 +20,10 @@ INSERT INTO Clientes (id_cliente, nombre, mezcla_colores) VALUES
 (1, 'Cliente Principal', TRUE);
 
 INSERT INTO Modelos (id_modelo, nombre) VALUES
-(1, 'Modelo SoundPro X');
+(1, 'NS-MINI'),
+(2, 'NS-SPORT'),
+(3, 'NS-PRO'),
+(4, 'NS-MAX');
 
 INSERT INTO Colores (id_color, nombre) VALUES
 (1, 'Negro'),

@@ -1,0 +1,73 @@
+{
+ "lineas": [
+  "L1",
+  "L2",
+  "L3"
+ ],
+ "turnos": [
+  {
+   "valor": 1,
+   "nombre": "Turno 1 (06:00 a 14:00)"
+  },
+  {
+   "valor": 2,
+   "nombre": "Turno 2 (14:00 a 22:00)"
+  }
+ ],
+ "modelos": [
+  "NS-MINI",
+  "NS-SPORT",
+  "NS-PRO",
+  "NS-MAX"
+ ],
+ "ordenes": [
+  {
+   "id": "OP-1041",
+   "cliente": "Cadena Centro",
+   "modelo": "NS-MINI",
+   "color": "Negro"
+  },
+  {
+   "id": "OP-1044",
+   "cliente": "Cadena Norte",
+   "modelo": "NS-SPORT",
+   "color": "Azul"
+  },
+  {
+   "id": "OP-1042",
+   "cliente": "Cadena Sur",
+   "modelo": "NS-PRO",
+   "color": "Negro"
+  },
+  {
+   "id": "OP-1045",
+   "cliente": "Distribuidor Metro",
+   "modelo": "NS-MINI",
+   "color": "Blanco"
+  },
+  {
+   "id": "OP-1043",
+   "cliente": "Cadena Centro",
+   "modelo": "NS-MAX",
+   "color": "Gris"
+  },
+  {
+   "id": "OP-1046",
+   "cliente": "Cadena Norte",
+   "modelo": "NS-SPORT",
+   "color": "Rojo"
+  }
+ ],
+ "clientes": [
+  "Cadena Centro",
+  "Cadena Norte",
+  "Cadena Sur",
+  "Distribuidor Metro"
+ ],
+ "categoriasDefecto": [
+  "Apariencia",
+  "Funcional",
+  "Identificación",
+  "Empaque"
+ ]
+}
