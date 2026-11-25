@@ -87,6 +87,41 @@ def obtener_resumen_unidades():
         )
 
 
+# Registro de API historica EXCLUSIVAMENTE en una instalacion aislada.
+if os.getenv("NOVA_SIMULATION_MODE") == "1":
+    if not os.getenv("DB_NAME", "").endswith("_simulacion"):
+        raise RuntimeError("El reloj simulado requiere una base dedicada *_simulacion")
+    from app.modules.simulacion.router import router as simulacion_router
+    app.include_router(simulacion_router)
+
+    # NOVA_SIM_CLOCK_V2: reloj por solicitud para operaciones de Producción
+    # SOLAMENTE dentro del entorno *_simulacion con clave privada.
+    import hmac
+    from datetime import date, timedelta
+    from fastapi import Request
+    from fastapi.responses import JSONResponse
+
+    @app.middleware('http')
+    async def reloj_simulacion(request: Request, call_next):
+        fecha = request.headers.get('X-Simulation-Date')
+        if fecha is not None:
+            clave = request.headers.get('X-Simulation-Key', '')
+            valida = (request.url.path.startswith('/api/v1/gestion/operacion')
+                      and os.getenv('NOVA_SIMULATION_MODE') == '1'
+                      and os.getenv('DB_NAME', '').endswith('_simulacion')
+                      and bool(os.getenv('NOVA_SIMULATION_KEY'))
+                      and hmac.compare_digest(clave, os.getenv('NOVA_SIMULATION_KEY', '')))
+            if not valida:
+                return JSONResponse({'detail': 'Reloj simulado no autorizado'}, status_code=403)
+            try:
+                dia = date.fromisoformat(fecha)
+            except ValueError:
+                return JSONResponse({'detail': 'Fecha simulada inválida'}, status_code=422)
+            if not date(2020, 1, 1) <= dia <= date.today() + timedelta(days=1):
+                return JSONResponse({'detail': 'Fecha fuera de rango permitido'}, status_code=422)
+            request.state.sim_fecha = dia
+        return await call_next(request)
+
 # Registrar el frontend AL FINAL para conservar la prioridad de /api y /docs.
 FRONTEND_DIR = Path(os.getenv("FRONTEND_DIR", str(Path(__file__).resolve().parents[2] / "frontend")))
 if FRONTEND_DIR.is_dir():

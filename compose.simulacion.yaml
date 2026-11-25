@@ -1,0 +1,9 @@
+# Uso EXCLUSIVO con: -p nova-sound-simulacion --env-file .env.simulacion
+# No altera compose.yaml ni la instalacion del puerto 8000.
+services:
+  app:
+    ports: !override
+      - "127.0.0.1:8001:8000"
+    environment:
+      NOVA_SIMULATION_MODE: "1"
+      NOVA_SIMULATION_KEY: ${SIMULACION_KEY:?Configura SIMULACION_KEY en .env.simulacion}

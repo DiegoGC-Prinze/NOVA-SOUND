@@ -10,7 +10,7 @@ from collections import defaultdict
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel, Field, StrictInt
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -181,10 +181,10 @@ def opciones(actor=Depends(actor_actual)):
 
 
 @router.get('/operacion')
-def consultar_produccion(actor=Depends(actor_actual)):
+def consultar_produccion(request: Request, actor=Depends(actor_actual)):
     exigir_alguna(actor, PRODUCCION)
     with db() as cx:
-        today = hoy(cx)
+        today = getattr(request.state, "sim_fecha", None) or hoy(cx)
         return {'real': True, 'fecha': today.isoformat(), 'catalogos': leer_catalogos(cx, True),
                 'ordenes': ordenes(cx), 'unidades': [{**u, **tiempo(u['fecha_hora'])} for u in unidades(cx, fecha=today)],
                 'resumen': metricas(cx, today), 'autorizaciones': solicitudes(cx), 'cierres': cierres(cx),
@@ -210,7 +210,7 @@ def catalogo_activo(cx, tipo, valor):
 
 
 @router.post('/operacion/{accion}')
-def operar_produccion(accion: str, datos: dict, actor=Depends(actor_actual)):
+def operar_produccion(accion: str, datos: dict, request: Request, actor=Depends(actor_actual)):
     reglas = {'registrarUnidad': ('registrar-produccion', 'registrar-produccion'),
               'registrarIncidencia': ('registrar-incidencia', None),
               'solicitarAjuste': ('solicitar-ajuste', 'solicitar-ajuste-de-produccion-o-de-cierre'),
@@ -220,7 +220,11 @@ def operar_produccion(accion: str, datos: dict, actor=Depends(actor_actual)):
     pantalla, permiso = reglas[accion]
     exigir(actor, 'produccion/'+pantalla, escribir=True, accion=permiso)
     with db() as cx:
-        today = hoy(cx)
+        # NOVA_SIM_CLOCK_V2: usar el día del turno simulado validado por middleware.
+        sim_fecha = getattr(request.state, 'sim_fecha', None)
+        today = sim_fecha or hoy(cx)
+        fecha_operativa = datetime.combine(today, datetime.now().time())
+        fecha_sql = ':fecha_operativa' if sim_fecha is not None else AHORA
         if accion == 'registrarIncidencia':
             linea = catalogo_activo(cx, 'lineas', requerido(datos, 'linea'))
             tipo, severidad = requerido(datos, 'tipo'), requerido(datos, 'severidad')
@@ -265,13 +269,13 @@ def operar_produccion(accion: str, datos: dict, actor=Depends(actor_actual)):
                     error(409, 'El lote no está abierto para registrar producción.')
             else:
                 lid = ejecutar(cx, '''INSERT INTO lote(id_orden,cantidad_acordada,estado,codigo,fecha_creacion)
-                    VALUES (:o,:n,'EN_PROCESO',:c,''' + AHORA + ') RETURNING id_lote',
-                    o=orden['id_orden'], n=orden['cantidad'], c=codigo).scalar_one()
+                    VALUES (:o,:n,'EN_PROCESO',:c,''' + fecha_sql + ') RETURNING id_lote',
+                    o=orden['id_orden'], n=orden['cantidad'], c=codigo, fecha_operativa=fecha_operativa).scalar_one()
             uid = ejecutar(cx, '''INSERT INTO unidades(id_color,id_linea,id_turno,id_lote,estado,numero_serie,id_usuario_registro,fecha_hora)
-                VALUES (:color,:linea,:turno,:lote,'ENSAMBLADA',:serie,:u,''' + AHORA + ') RETURNING id_unidad',
-                color=orden['id_color'], linea=linea['id'], turno=turno, lote=lid, serie=serie, u=actor['id_usuario']).scalar_one()
+                VALUES (:color,:linea,:turno,:lote,'ENSAMBLADA',:serie,:u,''' + fecha_sql + ') RETURNING id_unidad',
+                color=orden['id_color'], linea=linea['id'], turno=turno, lote=lid, serie=serie, u=actor['id_usuario'], fecha_operativa=fecha_operativa).scalar_one()
             ejecutar(cx, '''INSERT INTO ensamble(id_usuario,id_turno,id_linea,id_lote,cantidad,fecha_ensamble)
-                VALUES (:u,:t,:l,:lo,1,''' + AHORA + ')', u=actor['id_usuario'], t=turno, l=linea['id'], lo=lid)
+                VALUES (:u,:t,:l,:lo,1,''' + fecha_sql + ')', u=actor['id_usuario'], t=turno, l=linea['id'], lo=lid, fecha_operativa=fecha_operativa)
             auditar(cx, actor, 'unidades', uid, 'REGISTRAR_PRODUCCION', despues={'serie': serie, 'estado': 'ENSAMBLADA'})
             return {'ok': True, 'id': uid, 'serie': serie}
         if accion == 'cerrarTurno':
@@ -288,8 +292,8 @@ def operar_produccion(accion: str, datos: dict, actor=Depends(actor_actual)):
             else:
                 rid = ejecutar(cx, '''INSERT INTO cierresturno(id_usuario,id_linea,id_turno,fecha,estado,nota,origen_web,
                     total_reportadas,total_empacadas,total_retenidas,total_retrabajo,total_scrap)
-                    VALUES (:u,:l,:t,''' + AHORA + ", 'Cerrado',:nota,TRUE,:n,:e,:r,:re,:s) RETURNING id_cierre",
-                    u=actor['id_usuario'], l=linea['id'], t=turno, nota=nota,
+                    VALUES (:u,:l,:t,''' + fecha_sql + ", 'Cerrado',:nota,TRUE,:n,:e,:r,:re,:s) RETURNING id_cierre",
+                    u=actor['id_usuario'], l=linea['id'], t=turno, nota=nota, fecha_operativa=fecha_operativa,
                     n=total('reportadas'), e=total('recibidas'), r=total('retenidas'), re=total('retrabajo'), s=total('scrap')).scalar_one()
             auditar(cx, actor, 'cierresturno', rid, 'CERRAR_TURNO', nota)
             return {'ok': True}
