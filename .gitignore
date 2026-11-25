@@ -236,3 +236,6 @@ dist/
 
 # Sistema
 .DS_Store
+
+# Resultados generados por el simulador
+/resultados/

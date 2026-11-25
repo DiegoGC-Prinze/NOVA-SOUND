@@ -1,0 +1,75 @@
+{
+  "nombre": "NOVA SOUND - Simulacion industrial",
+  "semilla": 20261124,
+  "fecha_inicio": "2026-10-19",
+  "dias_operativos": 30,
+  "dias_semana_laborables": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "lineas": [
+    "L1",
+    "L2"
+  ],
+  "turnos": [
+    1,
+    2
+  ],
+  "meta_unidades_por_turno": 25,
+  "minutos_por_turno": 480,
+  "modelos": [
+    {
+      "nombre": "NS-MINI",
+      "peso": 0.4,
+      "factor_fallas": 0.85,
+      "capacidad_caja": 12
+    },
+    {
+      "nombre": "NS-SPORT",
+      "peso": 0.3,
+      "factor_fallas": 1.05,
+      "capacidad_caja": 8
+    },
+    {
+      "nombre": "NS-PRO",
+      "peso": 0.2,
+      "factor_fallas": 1.2,
+      "capacidad_caja": 6
+    },
+    {
+      "nombre": "NS-MAX",
+      "peso": 0.1,
+      "factor_fallas": 1.35,
+      "capacidad_caja": 4
+    }
+  ],
+  "operacion": {
+    "probabilidad_paro_equipo_por_turno": 0.14,
+    "duracion_paro_minutos": [
+      25,
+      155
+    ],
+    "probabilidad_faltante_material_por_turno": 0.09,
+    "perdida_capacidad_por_material": [
+      0.1,
+      0.35
+    ],
+    "factor_ritmo_normal": [
+      0.88,
+      1.04
+    ]
+  },
+  "calidad": {
+    "probabilidad_falla_funcional": 0.065,
+    "probabilidad_defecto_inspeccion": 0.085,
+    "factor_defectos_con_faltante_material": 1.5,
+    "factor_defectos_tras_paro_equipo": 1.2,
+    "probabilidad_scrap_dado_defecto": 0.2,
+    "probabilidad_retrabajo_dado_defecto": 0.55,
+    "probabilidad_exito_retrabajo": 0.72
+  }
+}
