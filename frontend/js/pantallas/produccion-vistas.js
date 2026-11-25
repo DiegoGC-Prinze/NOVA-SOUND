@@ -1,13 +1,15 @@
 import { iniciarOperacion, campo, boton, tabla, tarjeta, formulario, valor, enlace, columnasUnidad, exportar, esc } from './operacion-comun.js';
-import { indicador, preguntar, chip } from '../componentes.js';
-import { hoyISO } from '../ui.js';
+import { indicador, preguntar, chip, barra } from '../componentes.js';
+import { hoyISO, turnoPorHora, num, pct } from '../ui.js';
 
 const turnosDemo = [{ valor: 1, texto: 'Turno 1' }, { valor: 2, texto: 'Turno 2' }];
 const suma = (filas, k) => filas.reduce((s, f) => s + Number(f[k] || 0), 0);
 const opcionesOrden = d => d.ordenes.map(o => ({ valor: o.id, texto: `${o.id} · ${o.modelo} · ${o.cliente}` }));
 
 export function iniciarProduccion(id) {
-  let filtros = { linea: '', turno: '' };
+  const esLider = id.endsWith('/tablero-de-linea-lider');
+  const turnoActual = turnoPorHora();
+  let filtros = { linea: '', turno: turnoActual ? String(turnoActual) : '' };
   iniciarOperacion(id, async c => {
     const d = c.datos, vista = id.split('/')[1];
     const turnos = d.real ? d.catalogos.turnos.items.map(t => ({ valor: t.id, texto: t.nombre })) : turnosDemo;
@@ -24,7 +26,7 @@ export function iniciarProduccion(id) {
         campo({ id: 'rp-serie', etiqueta: 'N.º de serie', requerido: true, placeholder: 'Escanea o escribe una serie única' }) +
         '<div id="datos-orden" class="text-sm text-suave"></div>',
         puede ? boton('Registrar unidad', { enviar: true, id: 'btn-guardar-prod' }) : 'Solo consulta'))}
-        ${tarjeta('Unidades registradas', tabla({ filas: d.unidades.filter(u => u.nueva).reverse(), columnas: columnasUnidad }))}`;
+        ${tarjeta('Unidades registradas', tabla({ filas: d.unidades.filter(u => u.nueva).reverse(), columnas: columnasUnidad.filter(c => c.titulo !== 'Estado') }))}`;
       const datosOrden = () => { const o = d.ordenes.find(o => o.id === valor('rp-orden')); document.getElementById('datos-orden').textContent = `Línea: ${o.linea} · Modelo: ${o.modelo} · Color: ${o.color} · Cliente: ${o.cliente}`; };
       datosOrden(); c.evento('#rp-orden', 'change', datosOrden);
       if (puede) c.evento('#form-produccion', 'submit', () => c.escribir('registrarUnidad', { orden: valor('rp-orden'), turno: valor('rp-turno'), lote: valor('rp-lote'), serie: valor('rp-serie') }, 'Unidad registrada. Ya está disponible en Prueba funcional.'));
@@ -70,11 +72,54 @@ export function iniciarProduccion(id) {
     // Los dos tableros comparten cifras y filtros; el del líder muestra el detalle por línea.
     const filas = d.resumen.filter(r => r.dia === 0 && (!filtros.linea || r.linea === filtros.linea) && (!filtros.turno || r.turno === Number(filtros.turno)));
     const porOrden = d.ordenes.filter(o => !filtros.linea || o.linea === filtros.linea).map(o => ({ ...o, turno: filtros.turno || 'Todos', reportadas: suma(filas.filter(f => f.orden === o.id), 'reportadas'), liberadas: suma(filas.filter(f => f.orden === o.id), 'liberadas'), empacadas: suma(filas.filter(f => f.orden === o.id), 'recibidas') }));
-    const cols = [{ titulo: 'Orden', campo: 'id' }, { titulo: 'Cliente', campo: 'cliente' }, { titulo: 'Línea', campo: 'linea' }, { titulo: 'Modelo', campo: 'modelo' }, { titulo: 'Reportadas', campo: 'reportadas' }, { titulo: 'Liberadas', campo: 'liberadas' }, { titulo: 'Empacadas', campo: 'empacadas' }];
-    c.vista.innerHTML = `${tarjeta('Filtros del turno', formulario('form-tablero', campo({ id: 'f-linea', etiqueta: 'Línea', valor: filtros.linea, opciones: [{ valor: '', texto: 'Todas' }, ...d.catalogos.lineas.items.map(l => l.codigo)] }) + campo({ id: 'f-turno', etiqueta: 'Turno', valor: filtros.turno, opciones: [{ valor: '', texto: 'Todos' }, ...turnos] }), boton('Filtrar', { enviar: true }) + boton('Exportar CSV', { id: 'exportar' })))}
-      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">${indicador({ titulo: 'Meta', valor: suma(filas, 'meta') })}${indicador({ titulo: 'Reportadas', valor: suma(filas, 'reportadas') })}${indicador({ titulo: 'Liberadas', valor: suma(filas, 'liberadas'), tono: 'exito' })}${indicador({ titulo: 'Empacadas', valor: suma(filas, 'recibidas') })}</div>
-      ${tarjeta('Producción por orden', tabla({ filas: porOrden, columnas: cols }))}
-      ${c.sesion.permisos['produccion/registrar-produccion'] ? enlace('pages/produccion/registrar-produccion.html', 'Registrar producción') : ''}`;
+    const meta = suma(filas, 'meta');
+    const producido = suma(filas, 'reportadas');
+    const avance = meta > 0 ? producido / meta * 100 : 0;
+    const cols = [
+      { titulo: 'Orden', campo: 'id' }, { titulo: 'Cliente', campo: 'cliente' },
+      { titulo: 'Línea', campo: 'linea' }, { titulo: 'Modelo', campo: 'modelo' },
+      { titulo: 'Producido', campo: 'reportadas' },
+      ...(esLider ? [{ titulo: 'Liberadas', campo: 'liberadas' }, { titulo: 'Empacadas', campo: 'empacadas' }] : []),
+    ];
+    const acciones = [
+      ['registrar-produccion', 'Registrar producción'],
+      ['registrar-incidencia', 'Registrar incidencia'],
+      ['solicitar-ajuste', 'Solicitar ajuste'],
+      ['cierre-de-turno', 'Cerrar turno'],
+    ].filter(([ruta]) => c.sesion.permisos[`produccion/${ruta}`] === 'acciona')
+      .map(([ruta, etiqueta]) => enlace(`pages/produccion/${ruta}.html`, etiqueta)).join('');
+    const escala = Math.max(1, ...porOrden.map(o => o.reportadas), ...porOrden.map(o => suma(filas.filter(f => f.orden === o.id), 'meta')));
+    const grafica = porOrden.map(o => {
+      const objetivo = suma(filas.filter(f => f.orden === o.id), 'meta');
+      return `<li class="grid grid-cols-[5rem_1fr] items-center gap-3">
+        <strong>${esc(o.id)}</strong><div class="space-y-2">
+          <div class="text-sm">Meta · ${num(objetivo)}${barra(objetivo / escala * 100, 'aviso')}</div>
+          <div class="text-sm">Producido · ${num(o.reportadas)}${barra(o.reportadas / escala * 100)}</div>
+        </div>
+      </li>`;
+    }).join('');
+    const ultimos = [...d.unidades].filter(u => u.nueva && (u.dia ?? 0) === 0 &&
+      (!filtros.linea || u.linea === filtros.linea) && (!filtros.turno || Number(u.turno) === Number(filtros.turno))).reverse().slice(0, 10);
+    const colsUltimos = [{ titulo: 'Hora', campo: 'hora' }, { titulo: 'Serie', campo: 'serie' },
+      { titulo: 'Orden', campo: 'orden' }, { titulo: 'Línea', campo: 'linea' }, { titulo: 'Modelo', campo: 'modelo' }];
+    c.vista.innerHTML = `
+      ${esLider ? tarjeta('Filtros del turno', formulario('form-tablero',
+        campo({ id: 'f-linea', etiqueta: 'Línea', valor: filtros.linea, opciones: [{ valor: '', texto: 'Todas' }, ...d.catalogos.lineas.items.map(l => l.codigo)] }) +
+        campo({ id: 'f-turno', etiqueta: 'Turno', valor: filtros.turno, opciones: [{ valor: '', texto: 'Todos' }, ...turnos] }),
+        boton('Filtrar', { enviar: true }) + boton('Exportar CSV', { id: 'exportar' }))) : ''}
+      <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        ${indicador({ titulo: 'Meta', valor: num(meta) })}
+        ${indicador({ titulo: 'Producido', valor: num(producido), tono: 'exito' })}
+        ${indicador({ titulo: 'Faltante', valor: num(Math.max(0, meta - producido)), tono: 'aviso' })}
+        ${indicador({ titulo: '% avance', valor: meta > 0 ? pct(avance) : '—' })}
+      </div>
+      ${esLider
+        ? tarjeta('Meta y producción por orden', grafica ? `<ul class="space-y-4">${grafica}</ul>` : 'Sin órdenes para mostrar.')
+        : tarjeta('Avance del turno', barra(avance))}
+      ${esLider
+        ? tarjeta('Producción por orden', tabla({ filas: porOrden, columnas: cols }))
+        : tarjeta('Últimos registros', tabla({ filas: ultimos, columnas: colsUltimos }))}
+      ${esLider && acciones ? `<div class="flex flex-wrap gap-2">${acciones}</div>` : ''}`;
     c.evento('#form-tablero', 'submit', () => { filtros = { linea: valor('f-linea'), turno: valor('f-turno') }; return c.refrescar(); });
     c.evento('#exportar', 'click', () => exportar('produccion.csv', porOrden, cols));
   });

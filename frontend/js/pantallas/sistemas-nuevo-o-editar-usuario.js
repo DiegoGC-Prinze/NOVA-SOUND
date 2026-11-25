@@ -3,6 +3,7 @@
 
 import { montarPagina, rutaA } from '../layout.js';
 import { usuario, guardarUsuario, rolesPermisos, sesionReal } from '../api.js';
+import { esc } from '../ui.js';
 import { encabezado, tarjeta, campo, marcarError, aviso, cargarEn, mostrarAvisoDespues } from '../componentes.js';
 
 const pagina = montarPagina('sistemas/nuevo-o-editar-usuario');
@@ -17,17 +18,18 @@ function iniciar({ sesion, contenido, puedeAccionar }) {
 
   cargarEn(zona, async () => {
     const [datos, { roles }] = await Promise.all([esNuevo ? Promise.resolve({ estado: 'Activo' }) : usuario(id), rolesPermisos()]);
-    return { html: htmlFormulario(datos, roles.map((r) => r.nombre), esNuevo, puedeAccionar), listo: () => conectar(esNuevo, puedeAccionar) };
+    return { html: htmlFormulario(datos, roles.map((r) => r.nombre), esNuevo, puedeAccionar), listo: () => conectar(esNuevo, puedeAccionar, id) };
   });
 }
 
 function htmlFormulario(u, roles, esNuevo, puedeAccionar) {
   const campos = `
     <div id="error-general" class="aviso aviso-peligro mb-4 hidden" role="alert"></div>
+    ${esNuevo ? '' : `<p class="mb-4 text-sm">Número de empleado <strong class="tabular-nums">${esc(u.numEmpleado)}</strong></p>`}
     <fieldset ${puedeAccionar ? '' : 'disabled'} class="min-w-0">
     <div class="grid gap-4 md:grid-cols-2">
       ${campo({ id: 'nombre', etiqueta: 'Nombre completo', valor: u.nombre || '', requerido: true, extra: 'autocomplete="off"' })}
-      ${campo({ id: 'numEmpleado', etiqueta: sesionReal() ? 'Usuario o número de empleado' : 'Número de empleado', valor: u.numEmpleado || '', requerido: true, ayuda: esNuevo ? 'Con este identificador inicia sesión.' : 'No se puede cambiar.', extra: `inputmode="${sesionReal() ? 'text' : 'numeric'}" ${esNuevo ? '' : 'readonly'}` })}
+      ${esNuevo ? campo({ id: 'numEmpleado', etiqueta: 'Número de empleado', requerido: true, extra: 'inputmode="numeric"' }) : ''}
       ${campo({ id: 'rol', etiqueta: 'Rol', valor: u.rol || '', requerido: true, opciones: [{ valor: '', texto: 'Elige un rol' }, ...roles] })}
       ${campo({ id: 'estado', etiqueta: 'Estado', valor: u.estado || 'Activo', requerido: true, opciones: ['Activo', 'Bloqueado', 'Inactivo'], ayuda: 'Una cuenta bloqueada o inactiva no puede iniciar sesión.' })}
       ${campo({ id: 'contrasena', etiqueta: esNuevo ? 'Contraseña' : 'Contraseña nueva', tipo: 'password', requerido: esNuevo, ayuda: esNuevo ? `Mínimo ${sesionReal() ? 8 : 6} caracteres.` : 'Déjala vacía para conservar la actual.', extra: 'autocomplete="new-password"' })}
@@ -40,18 +42,18 @@ function htmlFormulario(u, roles, esNuevo, puedeAccionar) {
   return `<form id="form-usuario" novalidate class="max-w-3xl">${tarjeta(esNuevo ? 'Datos del usuario nuevo' : `Datos de ${u.nombre}`, campos)}</form>`;
 }
 
-function conectar(esNuevo, puedeAccionar) {
+function conectar(esNuevo, puedeAccionar, id) {
   const formulario = document.getElementById('form-usuario');
   if (!puedeAccionar) return; // solo consulta: no hay nada que guardar
   formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
     const v = (id) => document.getElementById(id).value.trim();
-    const datos = { nombre: v('nombre'), numEmpleado: v('numEmpleado'), rol: v('rol'), estado: v('estado'), contrasena: document.getElementById('contrasena').value };
+    const datos = { nombre: v('nombre'), numEmpleado: esNuevo ? v('numEmpleado') : id, rol: v('rol'), estado: v('estado'), contrasena: document.getElementById('contrasena').value };
 
     // Validación (el back vuelve a validar; esto solo ahorra un viaje).
     const errores = {
       nombre: datos.nombre ? '' : 'Escribe el nombre.',
-      numEmpleado: !datos.numEmpleado ? 'Escribe el identificador de acceso.' : (sesionReal() ? /^[\w.@-]{1,50}$/ : /^\d+$/).test(datos.numEmpleado) ? '' : 'Usa un identificador válido.',
+      numEmpleado: esNuevo && !/^\d{1,50}$/.test(datos.numEmpleado) ? 'Escribe el número de empleado con dígitos.' : '',
       rol: datos.rol ? '' : 'Elige un rol.',
       contrasena: esNuevo && !datos.contrasena ? 'Escribe una contraseña.' : datos.contrasena && datos.contrasena.length < (sesionReal() ? 8 : 6) ? `Debe tener al menos ${sesionReal() ? 8 : 6} caracteres.` : '',
     };

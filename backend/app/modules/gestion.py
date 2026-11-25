@@ -10,7 +10,7 @@ from collections import defaultdict
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field, StrictInt
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -25,6 +25,7 @@ log = logging.getLogger(__name__)
 PRODUCCION = [p for p in PANTALLAS if p.startswith('produccion/')]
 GERENCIA = [p for p in PANTALLAS if p.startswith('gerencia/')]
 SISTEMAS = [p for p in PANTALLAS if p.startswith('sistemas/')]
+NOMBRES_ROLES = [r['nombre'] for r in CONTRATOS['roles']]
 AHORA = "(CURRENT_TIMESTAMP AT TIME ZONE 'America/Mexico_City')"
 CATALOGOS = {'modelos': ('modelos', 'id_modelo', 'Modelos'), 'lineas': ('linea', 'id_linea', 'Líneas'),
              'turnos': ('turnos', 'id_turno', 'Turnos'), 'clientes': ('clientes', 'id_cliente', 'Clientes'),
@@ -541,8 +542,8 @@ def guardar_usuario(datos, actor, *, numero=None):
     exigir(actor, 'sistemas/nuevo-o-editar-usuario', escribir=True, accion=ADMINISTRAR)
     d = datos.model_dump()
     d['numEmpleado'], d['nombre'] = d['numEmpleado'].strip(), d['nombre'].strip()
-    if not d['nombre'] or not re.fullmatch(r'[\w.@-]{1,50}', d['numEmpleado']):
-        error(422, 'Nombre y número de empleado o usuario no válidos.')
+    if not d['nombre'] or (numero is None and not re.fullmatch(r'[0-9]{1,50}', d['numEmpleado'])):
+        error(422, 'Escribe un nombre y un número de empleado con dígitos.')
     if numero is not None and numero != d['numEmpleado']:
         error(422, 'No se puede cambiar el identificador de acceso.')
     if d['contrasena'] and len(d['contrasena']) < 8:
@@ -554,7 +555,7 @@ def guardar_usuario(datos, actor, *, numero=None):
             error(409, 'Ya existe un usuario con ese identificador.')
         if numero is not None and not actual:
             error(404, 'Usuario no encontrado.')
-        rol = uno(cx, 'SELECT * FROM roles WHERE nombre=:n ORDER BY id_rol LIMIT 1', n=d['rol'])
+        rol = next((r for r in roles_disponibles(cx) if r['nombre'] == d['rol']), None)
         if not rol:
             error(422, 'Rol no encontrado.')
         if actual and actual['id_usuario'] == actor['id_usuario'] and (d['estado'] != 'Activo' or rol['id_rol'] != actual['id_rol']):
@@ -593,11 +594,87 @@ def editar_usuario(numero: str, datos: UsuarioGuardar, actor=Depends(actor_actua
     return guardar_usuario(datos, actor, numero=numero)
 
 
+def roles_disponibles(cx):
+    filas = todos(cx, """SELECT DISTINCT ON (r.nombre) r.id_rol,r.nombre,r.descripcion,r.permisos,r.acciones,
+        c.id_original IS NOT NULL AS editable
+        FROM roles r LEFT JOIN catalogos_web c ON c.tipo='roles' AND c.id_original=r.id_rol
+        WHERE r.nombre=ANY(:nombres) OR c.id_original IS NOT NULL
+        ORDER BY r.nombre,c.id_original NULLS LAST,r.id_rol""", nombres=NOMBRES_ROLES)
+    por_nombre = {r['nombre']: r for r in filas}
+    return [por_nombre[n] for n in NOMBRES_ROLES if n in por_nombre] + [r for r in filas if r['editable']]
+
+
+class RolCatalogo(BaseModel):
+    nombre: str = Field(min_length=1, max_length=50)
+    descripcion: str = Field(default='', max_length=500)
+
+
+def rol_catalogo(cx, datos, actor, codigo=None):
+    nombre = datos.nombre.strip()
+    if not nombre:
+        error(422, 'Escribe el nombre del rol.')
+    if nombre.casefold() == 'administrador':
+        nombre = 'Administrador'
+    ejecutar(cx, "SELECT pg_advisory_xact_lock(hashtextextended('administracion-usuarios-roles',0))")
+    disponibles = roles_disponibles(cx)
+    anterior = next((r for r in disponibles if r['id_rol'] == codigo and r['editable']), None)
+    if codigo is not None and not anterior:
+        error(404, 'Rol editable no encontrado.')
+    if anterior and (anterior['nombre'] == 'Administrador') != (nombre == 'Administrador'):
+        error(422, 'Crea un rol Administrador por separado para asignarle acceso total.')
+    if any(r['id_rol'] != codigo and r['nombre'].casefold() == nombre.casefold() for r in disponibles):
+        error(409, 'Ya existe un rol con ese nombre.')
+    if anterior:
+        ejecutar(cx, 'UPDATE roles SET nombre=:n,descripcion=:d WHERE id_rol=:id',
+                 n=nombre, d=datos.descripcion.strip(), id=codigo)
+        ejecutar(cx, "UPDATE catalogos_web SET nombre=:n WHERE tipo='roles' AND id_original=:id", n=nombre, id=codigo)
+    else:
+        permisos = dict.fromkeys(sorted(PANTALLAS | {'login/login', 'login/levantar-ticket'}), 'acciona') if nombre == 'Administrador' else {}
+        acciones = sorted(ACCIONES) if nombre == 'Administrador' else []
+        codigo = ejecutar(cx, """INSERT INTO roles(nombre,descripcion,permisos,acciones)
+            VALUES (:n,:d,CAST(:p AS jsonb),CAST(:a AS jsonb)) RETURNING id_rol""",
+            n=nombre, d=datos.descripcion.strip(), p=json.dumps(permisos), a=json.dumps(acciones)).scalar_one()
+        ejecutar(cx, "INSERT INTO catalogos_web(tipo,codigo,nombre,id_original) VALUES ('roles',:c,:n,:id)",
+                 c=str(codigo), n=nombre, id=codigo)
+    auditar(cx, actor, 'roles', codigo, 'EDITAR_ROL' if anterior else 'CREAR_ROL', despues={'nombre': nombre})
+    return {'ok': True}
+
+
+@router.post('/catalogos/roles', status_code=201)
+def crear_rol_catalogo(datos: RolCatalogo, actor=Depends(actor_actual)):
+    exigir(actor, 'sistemas/catalogos', escribir=True, accion=ADMINISTRAR)
+    with db() as cx:
+        return rol_catalogo(cx, datos, actor)
+
+
+@router.put('/catalogos/roles/{codigo}')
+def editar_rol_catalogo(codigo: int, datos: RolCatalogo, actor=Depends(actor_actual)):
+    exigir(actor, 'sistemas/catalogos', escribir=True, accion=ADMINISTRAR)
+    with db() as cx:
+        return rol_catalogo(cx, datos, actor, codigo)
+
+
+@router.delete('/catalogos/roles/{codigo}')
+def eliminar_rol_catalogo(codigo: int, actor=Depends(actor_actual)):
+    exigir(actor, 'sistemas/catalogos', escribir=True, accion=ADMINISTRAR)
+    with db() as cx:
+        ejecutar(cx, "SELECT pg_advisory_xact_lock(hashtextextended('administracion-usuarios-roles',0))")
+        rol = next((r for r in roles_disponibles(cx) if r['id_rol'] == codigo and r['editable']), None)
+        if not rol:
+            error(404, 'Rol editable no encontrado.')
+        if uno(cx, 'SELECT 1 FROM usuarios WHERE id_rol=:id LIMIT 1', id=codigo):
+            error(409, 'Reasigna los usuarios de este rol antes de eliminarlo.')
+        ejecutar(cx, "DELETE FROM catalogos_web WHERE tipo='roles' AND id_original=:id", id=codigo)
+        ejecutar(cx, 'DELETE FROM roles WHERE id_rol=:id', id=codigo)
+        auditar(cx, actor, 'roles', codigo, 'ELIMINAR_ROL', antes={'nombre': rol['nombre']})
+        return {'ok': True}
+
+
 @router.get('/roles')
 def roles(actor=Depends(actor_actual)):
     exigir_alguna(actor, ['sistemas/roles-y-permisos', 'sistemas/nuevo-o-editar-usuario', 'sistemas/usuarios'])
     with db() as cx:
-        return {**CONTRATOS, 'roles': todos(cx, 'SELECT nombre,descripcion,permisos,acciones FROM roles ORDER BY id_rol')}
+        return {**CONTRATOS, 'roles': roles_disponibles(cx)}
 
 
 class RolGuardar(BaseModel):
@@ -612,10 +689,12 @@ def guardar_rol(nombre: str, datos: RolGuardar, actor=Depends(actor_actual)):
         error(422, 'Pantallas, niveles o acciones no válidos.')
     with db() as cx:
         ejecutar(cx, "SELECT pg_advisory_xact_lock(hashtextextended('administracion-usuarios-roles',0))")
-        rol = uno(cx, 'SELECT * FROM roles WHERE nombre=:n ORDER BY id_rol LIMIT 1 FOR UPDATE', n=nombre)
+        rol = next((r for r in roles_disponibles(cx) if r['nombre'] == nombre), None)
         if not rol:
             error(404, 'Rol no encontrado.')
-        if actor['rol'] == nombre or nombre == 'Administrador':
+        if nombre == 'Administrador':
+            error(409, 'El rol Administrador conserva todos los permisos.')
+        if actor['rol'] == nombre or nombre == 'Sistemas':
             if any(datos.permisos.get(p) != 'acciona' for p in SISTEMAS) or ADMINISTRAR not in datos.acciones:
                 error(409, 'Conserva el acceso administrativo a Sistemas para evitar perder la administración.')
         ejecutar(cx, 'UPDATE roles SET permisos=CAST(:p AS jsonb),acciones=CAST(:a AS jsonb) WHERE id_rol=:id',
@@ -628,7 +707,12 @@ def guardar_rol(nombre: str, datos: RolGuardar, actor=Depends(actor_actual)):
 def catalogos(actor=Depends(actor_actual)):
     exigir(actor, 'sistemas/catalogos')
     with db() as cx:
-        return leer_catalogos(cx)
+        datos = leer_catalogos(cx)
+        datos['roles'] = {'nombre': 'Roles', 'items': [
+            {'codigo': str(r['id_rol']), 'nombre': r['nombre'], 'descripcion': r['descripcion'],
+             'estado': 'Activo', 'editable': r['editable']} for r in roles_disponibles(cx)
+        ]}
+        return datos
 
 
 class ElementoCatalogo(BaseModel):
@@ -725,18 +809,33 @@ def guardar_parametros(datos: ParametrosGuardar, actor=Depends(actor_actual)):
 
 
 class TicketCrear(BaseModel):
-    numEmpleado: str = Field(min_length=1, max_length=50)
-    nombre: str = Field(min_length=1, max_length=100)
+    numEmpleado: str = Field(pattern=r'^[0-9]{1,50}$')
     motivo: str = Field(min_length=1, max_length=2000)
+
+
+def nombre_empleado_ticket(cx, numero):
+    fila = uno(cx, 'SELECT nombre FROM usuarios WHERE usuario=:numero', numero=numero)
+    if not fila:
+        error(404, 'No se encontró ese número de empleado.')
+    return fila['nombre']
+
+
+@router.get('/tickets/empleado')
+def empleado_para_ticket(response: Response, numero: str = Query(pattern=r'^[0-9]{1,50}$')):
+    response.headers['Cache-Control'] = 'no-store'
+    with db() as cx:
+        return {'nombre': nombre_empleado_ticket(cx, numero)}
 
 
 @router.post('/tickets', status_code=201)
 def levantar_ticket(datos: TicketCrear):
-    if not all(v.strip() for v in datos.model_dump().values()):
-        error(422, 'Completa todos los datos del ticket.')
+    motivo = datos.motivo.strip()
+    if not motivo:
+        error(422, 'Escribe el motivo del ticket.')
     with db() as cx:
+        nombre = nombre_empleado_ticket(cx, datos.numEmpleado)
         rid = ejecutar(cx, 'INSERT INTO tickets_web(num_empleado,nombre,motivo) VALUES (:n,:nombre,:m) RETURNING id_ticket',
-            n=datos.numEmpleado.strip(), nombre=datos.nombre.strip(), m=datos.motivo.strip()).scalar_one()
+            n=datos.numEmpleado, nombre=nombre, m=motivo).scalar_one()
         return {'id': 'T-'+str(rid).zfill(4)}
 
 

@@ -3,9 +3,9 @@
 import { coleccion, guardarColecciones, leerJSON, conEscritura } from './mockdb.js';
 import { obtenerSesion } from './session.js';
 import { ErrorApi } from './errores.js';
-import { hoyISO, fechaRelativa } from './ui.js';
+import { hoyISO, fechaRelativa, horaActual } from './ui.js';
 
-const hora = () => new Date().toTimeString().slice(0, 5);
+const hora = horaActual;
 const texto = v => String(v ?? '').trim();
 const codigo = v => texto(v).toUpperCase();
 const error = (mensaje, estado = 400) => { throw new ErrorApi(mensaje, estado); };
@@ -30,7 +30,7 @@ function evento(u, area, descripcion, resultado) {
 }
 function auditoria(registro, que, motivo = '') {
   registro.auditoria ||= [];
-  registro.auditoria.push({ fecha: hoyISO(), hora: hora(), quien: usuario().nombre, que, motivo });
+  registro.auditoria.push({ fecha: hoyISO(), hora: hora(), quien: usuario().numEmpleado, que, motivo });
 }
 
 async function cargar() {
@@ -177,7 +177,7 @@ const operaciones = {
     evento(u, 'Empaque', `Retirada de ${c.id}`, 'Liberada'); auditoria(c, `Unidad retirada: ${u.serie}`); sincronizarCaja(d, c); return c;
   },
   cerrarCaja(d, p) {
-    exigir(['empaque/formar-caja', 'empaque/confirmar-cierre-de-caja', 'embarques/cierre-de-caja-escaneo', 'embarques/confirmacion-de-cierre-de-caja'], 'cerrar-caja');
+    exigir(['empaque/formar-caja', 'empaque/confirmar-cierre-de-caja'], 'cerrar-caja');
     const c = buscar(d.op.cajas, p.caja);
     if (c.estado !== 'Abierta') error('La caja ya está cerrada.', 409);
     c.capacidad = Number(d.parametros.capacidadCaja[c.modelo]);
@@ -212,8 +212,18 @@ const operaciones = {
   quitarCaja(d, p) {
     permisoEmbarque(); const e = buscar(d.op.embarques, p.embarque), c = buscar(d.op.cajas, p.caja);
     if (e.estado !== 'Preparando' || c.embarque !== e.id) error('No se puede retirar esa caja del embarque.', 409);
-    e.cajas = e.cajas.filter(id => id !== c.id); c.embarque = null; auditoria(c, `Retirada de ${e.id}`); auditoria(e, `Caja retirada: ${c.id}`);
+    e.cajas = e.cajas.filter(id => id !== c.id); c.embarque = null; c.estibaVerificada = false; auditoria(c, `Retirada de ${e.id}`); auditoria(e, `Caja retirada: ${c.id}`);
     c.unidades.forEach(s => evento(buscar(d.unidades, s, 'serie'), 'Embarques', `Retirada de ${e.id}`, 'Pendiente de embarque')); return e;
+  },
+  verificarEstiba(d, p) {
+    exigir('embarques/paquetes-en-embarcacion');
+    const c = buscar(d.op.cajas, p.caja);
+    if (c.embarque !== p.embarque) error('La caja ya no pertenece al embarque.', 409);
+    if (!c.estibaVerificada) {
+      c.estibaVerificada = true;
+      auditoria(c, 'Estiba verificada');
+    }
+    return { mensaje: 'Estiba verificada.' };
   },
   confirmarSalida(d, p) {
     permisoEmbarque(); const e = buscar(d.op.embarques, p.embarque);

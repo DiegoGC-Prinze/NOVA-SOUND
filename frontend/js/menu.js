@@ -1,4 +1,4 @@
-// REGISTRO DE PANTALLAS: aquí se declara cada pantalla del sistema (43 en total).
+// REGISTRO DE PANTALLAS: aquí se declara cada pantalla del sistema.
 // Lo usa la barra superior para armar el menú. Este archivo NO guarda permisos:
 // qué rol ve qué pantalla lo decide el back (en el login devuelve `permisos`) y,
 // mientras no esté listo, sale de mock/roles-permisos.json.
@@ -7,7 +7,7 @@
 // la manda a pages/pendiente.html en vez de a un archivo que aún no existe.
 // (Archivo generado el primer día; ya se puede editar a mano.)
 
-export const ROLES = ["Operador", "Líder de línea", "Inspector de Calidad", "Almacén/Empaque", "Subgerente de Producción", "Gerente de Producción", "Gerente de Planta", "Administrador", "Supervisor de almacén"];
+export const ROLES = ["Operador / Pruebas Funcionales", "Líder de línea", "Calidad", "Almacén/Empaque", "Embarques", "Gerencia", "Sistemas"];
 
 // Áreas, en el orden en que se muestran.
 export const AREAS = {
@@ -50,8 +50,6 @@ export const PANTALLAS = [
   {"id": "empaque/reportes-de-empaque", "area": "empaque", "nombre": "Reportes de empaque", "ruta": "pages/empaque/reportes-de-empaque.html", "lista": true, "enMenu": true},
   {"id": "embarques/armar-embarque", "area": "embarques", "nombre": "Armar embarque", "ruta": "pages/embarques/armar-embarque.html", "lista": true, "enMenu": true},
   {"id": "embarques/paquetes-en-embarcacion", "area": "embarques", "nombre": "Paquetes en embarcación", "ruta": "pages/embarques/paquetes-en-embarcacion.html", "lista": true, "enMenu": true},
-  {"id": "embarques/cierre-de-caja-escaneo", "area": "embarques", "nombre": "Cierre de caja (escaneo)", "ruta": "pages/embarques/cierre-de-caja-escaneo.html", "lista": true, "enMenu": true},
-  {"id": "embarques/confirmacion-de-cierre-de-caja", "area": "embarques", "nombre": "Confirmación de cierre de caja", "ruta": "pages/embarques/confirmacion-de-cierre-de-caja.html", "lista": true, "enMenu": true},
   {"id": "embarques/estado-del-embarque", "area": "embarques", "nombre": "Estado del embarque", "ruta": "pages/embarques/estado-del-embarque.html", "lista": true, "enMenu": true},
   {"id": "embarques/rastreo-de-contenedor", "area": "embarques", "nombre": "Rastreo de contenedor", "ruta": "pages/embarques/rastreo-de-contenedor.html", "lista": true, "enMenu": true},
   {"id": "embarques/grafica-de-embarques", "area": "embarques", "nombre": "Gráfica de embarques", "ruta": "pages/embarques/grafica-de-embarques.html", "lista": true, "enMenu": true},

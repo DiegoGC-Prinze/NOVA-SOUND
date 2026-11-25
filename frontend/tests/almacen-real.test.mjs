@@ -42,12 +42,17 @@ try {
   const fill=(s,v)=>evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(s)});if(!e)throw Error('Falta '+${JSON.stringify(s)});e.value=${JSON.stringify(v)};e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
   const text=()=>evaluate("document.querySelector('#contenido')?.innerText||''");
   const paso=t=>{report.pasos.push(t);console.log('OK',t);};
-  const login=async(user,password)=>{await go('index.html');await fill('#modo-login','almacen');await fill('#numEmpleado',user);await fill('#contrasena',password);await click('#entrar');await wait("location.pathname.includes('/pages/empaque/')");assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('novasound.sesion')).modo"),'real');};
+  const login=async(user,password)=>{await go('index.html');await fill('#modo-login','almacen');await fill('#numEmpleado',user);await fill('#contrasena',password);await click('#entrar');await wait("['/pages/empaque/', '/pages/embarques/'].some(p=>location.pathname.startsWith(p))");assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('novasound.sesion')).modo"),'real');};
   const salir=async()=>{await click('#salir');await wait("location.pathname==='/index.html'");await sleep(300);};
   await login(fixture.usuario,fixture.password);paso('Login real de Almacen');
   const screens=await evaluate("(await import('/js/menu.js')).PANTALLAS.filter(p=>['empaque','embarques'].includes(p.area))");
-  for(const p of screens){await go(p.ruta);await wait("!!document.querySelector('#vista-operacion')");assert.equal(await evaluate("document.querySelector('#error-operacion').innerText"),'',p.id);assert.match(await text(),/Datos de PostgreSQL/);report.pantallas.push(p.id);}
-  paso('13 pantallas consultan PostgreSQL con su rol real');
+  for(const area of ['empaque','embarques']){
+    if(area==='embarques'){await salir();await login(fixture.supervisor,fixture.passwordSupervisor);}
+    for(const p of screens.filter(p=>p.area===area)){await go(p.ruta);await wait("!!document.querySelector('#vista-operacion')");assert.equal(await evaluate("document.querySelector('#error-operacion').innerText"),'',p.id);assert.match(await text(),/Datos de PostgreSQL/);report.pantallas.push(p.id);}
+  }
+  assert.equal(report.pantallas.length,11);
+  paso('11 pantallas consultan PostgreSQL con roles separados');
+  await salir();await login(fixture.usuario,fixture.password);
   await go('pages/empaque/formar-caja.html');await fill('#orden',String(fixture.orden));await click('#nueva-caja');await wait("!!document.querySelector('#caja-activa table')");
   const caja=await evaluate("new URLSearchParams(location.search).get('caja')");assert.match(caja,/^\d+$/);report.caja=caja;
   await fill('#buscar',fixture.serieRetenida);await click('#form-agregar button[type=submit]');await wait("!!document.querySelector('#error-operacion')?.innerText");assert.match(await text(),/Calidad|liberada/);
@@ -59,10 +64,20 @@ try {
   await salir();await login(fixture.supervisor,fixture.passwordSupervisor);await go('pages/empaque/consultar-caja.html?caja='+caja);await click('[data-autorizar-reapertura]');await click('dialog button[type=submit]');await wait("document.querySelector('#resultado')?.innerText.includes('Abierta')");
   await go('pages/empaque/formar-caja.html');assert.match(await text(),/No tienes permiso/);paso('Otra cuenta autoriza la reapertura; supervisor no puede formar cajas');
   await salir();await login(fixture.usuario,fixture.password);await go('pages/empaque/formar-caja.html?caja='+caja);await cerrar();
+  await salir();await login(fixture.supervisor,fixture.passwordSupervisor);
   await go('pages/embarques/armar-embarque.html');await fill('#emb-orden',String(fixture.orden));await fill('#emb-destino','Destino QA real');await fill('#emb-contenedor','CONT-QA-REAL');await click('#crear-embarque');await wait("!!document.querySelector('#embarque-activo table')");
   const embarque=await evaluate("new URLSearchParams(location.search).get('embarque')");report.embarque=embarque;
   await click(`[data-accion=asignar][data-caja="${caja}"]`);await wait("!!document.querySelector('[data-accion=retirar]')");
   await click('[data-accion=retirar]');await wait(`!!document.querySelector('[data-accion=asignar][data-caja="${caja}"]')`);await click(`[data-accion=asignar][data-caja="${caja}"]`);await wait("!!document.querySelector('[data-accion=retirar]')");
+  await go('pages/embarques/paquetes-en-embarcacion.html');
+  await fill('#filtro-emb', embarque);
+  await click(`[data-verificar][data-verificar="${caja}"]`);
+  await wait("document.querySelector('#zona-tabla')?.innerText.includes('Verificada')");
+  await go('pages/embarques/paquetes-en-embarcacion.html');
+  await fill('#filtro-emb', embarque);
+  await wait("document.querySelector('#zona-tabla')?.innerText.includes('Verificada')");
+  paso('Paquetes en embarcación muestra la caja y conserva la estiba verificada');
+  await go('pages/embarques/armar-embarque.html?embarque='+embarque);
   await click('#btn-confirmar-emb');await click('dialog [data-cancelar]');assert.match(await text(),/Preparando/);await click('#btn-confirmar-emb');await click('dialog button[type=submit]');await wait("document.querySelector('#embarque-activo')?.innerText.includes('Enviado')");
   await go('pages/embarques/armar-embarque.html?embarque='+embarque);assert.match(await text(),/Enviado/);assert.match(await text(),/Destino QA real/);paso('Embarque real: asignar, retirar, cancelar y confirmar salida; datos persistidos');
   await go('pages/embarques/rastreo-de-contenedor.html');await fill('#busqueda-contenedor','CONT-QA-REAL');await click('#form-rastreo button[type=submit]');await wait("document.querySelector('#vista-operacion').innerText.includes('Destino QA real')");paso('Rastreo consulta destino y contenedor reales');

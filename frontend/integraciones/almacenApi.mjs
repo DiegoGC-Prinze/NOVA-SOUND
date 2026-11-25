@@ -87,6 +87,8 @@ export function createAlmacenApi({
       `/embarques/${numero(idEmbarque)}/cajas/${numero(idCaja)}`),
     quitarCajaEmbarque: (idEmbarque, idCaja) => request('DELETE',
       `/embarques/${numero(idEmbarque)}/cajas/${numero(idCaja)}`),
+    verificarEstiba: (idEmbarque, idCaja) => request('POST',
+      `/embarques/${numero(idEmbarque)}/cajas/${numero(idCaja)}/estiba`),
     registrarSalida: (idEmbarque) => request('POST', `/embarques/${numero(idEmbarque)}/salida`),
     historialEmbarque: (idEmbarque) => request('GET', `/embarques/${numero(idEmbarque)}/historial`),
     // Reportes y seguimiento

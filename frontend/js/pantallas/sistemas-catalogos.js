@@ -4,8 +4,8 @@
 // Un elemento no se borra: se desactiva, para no perder el historial.
 
 import { montarPagina } from '../layout.js';
-import { catalogos, guardarElementoCatalogo, cambiarEstadoCatalogo } from '../api.js';
-import { encabezado, tarjeta, tabla, chip, campo, marcarError, boton, aviso, cargarEn, mostrarAviso } from '../componentes.js';
+import { catalogos, guardarElementoCatalogo, cambiarEstadoCatalogo, guardarRolCatalogo, eliminarRolCatalogo } from '../api.js';
+import { encabezado, tarjeta, tabla, chip, campo, marcarError, boton, aviso, cargarEn, mostrarAviso, preguntar } from '../componentes.js';
 import { esc } from '../ui.js';
 
 const pagina = montarPagina('sistemas/catalogos');
@@ -24,33 +24,41 @@ function editor(datos, puedeAccionar) {
   const zona = document.getElementById('editor');
   let tipo = Object.keys(datos)[0];
   let formularioAbierto = false;
+  let rolEditado = null;
 
   function pintar() {
     const catalogo = datos[tipo];
+    const puedeEditar = puedeAccionar;
+    const esRoles = tipo === 'roles';
 
     const filas = tabla({
       filas: catalogo.items,
       vacio: 'Este catálogo todavía no tiene elementos',
-      detalleVacio: puedeAccionar ? 'Usa «Nuevo» para agregar el primero.' : '',
+      detalleVacio: puedeEditar ? 'Usa «Nuevo» para agregar el primero.' : '',
       columnas: [
         { titulo: 'Código', html: (i) => `<strong class="tabular-nums">${esc(i.codigo)}</strong>` },
         { titulo: 'Nombre', campo: 'nombre' },
         { titulo: 'Estado', html: (i) => chip(i.estado, i.estado === 'Activo' ? 'exito' : 'neutro') },
-        // Activar / Desactivar solo si el rol puede accionar.
-        ...(puedeAccionar ? [{ titulo: '', html: (i) => `<button type="button" class="btn btn-secundario h-8 px-3" data-alternar="${esc(i.codigo)}">${i.estado === 'Activo' ? 'Desactivar' : 'Activar'}</button>` }] : []),
+        ...(esRoles ? [{ titulo: 'Descripción', campo: 'descripcion' }] : []),
+        ...(esRoles && puedeEditar ? [{ titulo: 'Acciones', html: i => i.editable
+          ? boton('Editar', { tipo: 'secundario', extra: `data-editar-rol="${esc(i.codigo)}"` }) + boton('Eliminar', { tipo: 'secundario', extra: `data-eliminar-rol="${esc(i.codigo)}"` })
+          : '' }] : []),
+        ...(puedeEditar && !esRoles ? [{ titulo: '', html: (i) => `<button type="button" class="btn btn-secundario h-8 px-3" data-alternar="${esc(i.codigo)}">${i.estado === 'Activo' ? 'Desactivar' : 'Activar'}</button>` }] : []),
       ],
     });
 
-    const formulario = formularioAbierto && puedeAccionar
+    const formulario = formularioAbierto && puedeEditar
       ? `<form id="form-nuevo" class="tarjeta mb-4 p-4" novalidate>
-           <h2 class="mb-3">Nuevo elemento de «${esc(catalogo.nombre)}»</h2>
+           <h2 class="mb-3">${esRoles ? (rolEditado ? "Editar rol" : "Nuevo rol") : `Nuevo elemento de «${esc(catalogo.nombre)}»`}</h2>
            <div id="error-general" class="aviso aviso-peligro mb-3 hidden" role="alert"></div>
            <div class="grid gap-3 md:grid-cols-[10rem_1fr_auto] md:items-start">
-             ${campo({ id: 'codigo', etiqueta: 'Código', requerido: true, extra: 'autocomplete="off" autofocus' })}
-             ${campo({ id: 'nombre', etiqueta: 'Nombre', requerido: true, extra: 'autocomplete="off"' })}
+             ${esRoles ? '' : campo({ id: 'codigo', etiqueta: 'Código', requerido: true, extra: 'autocomplete="off" autofocus' })}
+             ${campo({ id: 'nombre', etiqueta: 'Nombre', valor: rolEditado?.nombre || '', requerido: true, extra: 'autocomplete="off"' })}
+             ${esRoles ? campo({ id: 'descripcion-rol', etiqueta: 'Descripción', valor: rolEditado?.descripcion || '', tipo: 'textarea',
+                ayuda: 'El rol Administrador recibe todos los permisos al crearse.', extra: 'maxlength="500"' }) : ''}
              <div class="flex gap-2 md:pt-5">
                ${boton('Cancelar', { tipo: 'secundario', id: 'cancelar-nuevo' })}
-               ${boton('Registrar', { enviar: true, id: 'registrar' })}
+               ${boton(rolEditado ? 'Guardar' : 'Registrar', { enviar: true, id: 'registrar' })}
              </div>
            </div>
          </form>`
@@ -62,13 +70,14 @@ function editor(datos, puedeAccionar) {
           <label class="etiqueta" for="tipo">Tipo de catálogo</label>
           <select id="tipo" class="campo">${Object.entries(datos).map(([clave, c]) => `<option value="${esc(clave)}" ${clave === tipo ? 'selected' : ''}>${esc(c.nombre)}</option>`).join('')}</select>
         </div>
-        <div class="ml-auto">${formularioAbierto || !puedeAccionar ? '' : boton('+ Nuevo', { id: 'nuevo' })}</div>
+        <div class="ml-auto">${formularioAbierto || !puedeEditar ? '' : boton('+ Nuevo', { id: 'nuevo' })}</div>
       </div>
       <div class="mt-4">${formulario}${tarjeta(`${catalogo.nombre} (${catalogo.items.length})`, filas, { relleno: false })}</div>`;
 
     document.getElementById('tipo').addEventListener('change', (e) => {
       tipo = e.target.value;
       formularioAbierto = false;
+      rolEditado = null;
       pintar();
     });
     document.getElementById('nuevo')?.addEventListener('click', () => {
@@ -77,22 +86,30 @@ function editor(datos, puedeAccionar) {
     });
     document.getElementById('cancelar-nuevo')?.addEventListener('click', () => {
       formularioAbierto = false;
+      rolEditado = null;
       pintar();
     });
 
     document.getElementById('form-nuevo')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const elemento = { codigo: document.getElementById('codigo').value.trim(), nombre: document.getElementById('nombre').value.trim(), estado: 'Activo' };
-      marcarError('codigo', elemento.codigo ? '' : 'Escribe el código.');
+      const elemento = { codigo: document.getElementById('codigo')?.value.trim(), nombre: document.getElementById('nombre').value.trim(), estado: 'Activo' };
+      if (!esRoles) marcarError('codigo', elemento.codigo ? '' : 'Escribe el código.');
       marcarError('nombre', elemento.nombre ? '' : 'Escribe el nombre.');
-      if (!elemento.codigo || !elemento.nombre) return;
+      if ((!esRoles && !elemento.codigo) || !elemento.nombre) return;
 
       const b = document.getElementById('registrar');
       b.disabled = true;
       b.textContent = 'Registrando…';
       try {
-        await guardarElementoCatalogo(tipo, elemento);
-        catalogo.items.push(elemento);
+        if (esRoles) {
+          const descripcion = document.getElementById('descripcion-rol').value;
+          await guardarRolCatalogo({ nombre: elemento.nombre, descripcion }, rolEditado?.codigo);
+          datos.roles = (await catalogos()).roles;
+        } else {
+          await guardarElementoCatalogo(tipo, elemento);
+          catalogo.items.push(elemento);
+        }
+        rolEditado = null;
         formularioAbierto = false;
         mostrarAviso(`Se registró «${elemento.nombre}».`);
         pintar();
@@ -104,6 +121,27 @@ function editor(datos, puedeAccionar) {
         b.textContent = 'Registrar';
       }
     });
+
+    zona.querySelectorAll('[data-editar-rol]').forEach(b => b.addEventListener('click', () => {
+      rolEditado = catalogo.items.find(i => i.codigo === b.dataset.editarRol);
+      formularioAbierto = true;
+      pintar();
+    }));
+    zona.querySelectorAll('[data-eliminar-rol]').forEach(b => b.addEventListener('click', async () => {
+      const rol = catalogo.items.find(i => i.codigo === b.dataset.eliminarRol);
+      if (!await preguntar({ titulo: 'Eliminar rol', mensaje: `¿Eliminar «${rol.nombre}»?`, textoOk: 'Eliminar' })) return;
+      b.disabled = true;
+      try {
+        await eliminarRolCatalogo(rol.codigo);
+        catalogo.items = catalogo.items.filter(i => i !== rol);
+        formularioAbierto = false;
+        rolEditado = null;
+        pintar();
+      } catch (error) {
+        mostrarAviso(error.message, 'peligro');
+        b.disabled = false;
+      }
+    }));
 
     zona.querySelectorAll('[data-alternar]').forEach((b) =>
       b.addEventListener('click', async () => {

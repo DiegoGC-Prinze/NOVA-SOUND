@@ -22,8 +22,8 @@ def datos(pg_test, escenario, monkeypatch):
     sufijo = uuid4().hex[:10]
     cuentas = {}
     with pg_test.begin() as cx:
-        for key, rol in [('operador', 'Operador'), ('lider', 'Líder de línea'), ('gerente', 'Gerente de Producción')]:
-            login = 'qa_'+key+'_'+sufijo
+        for key, rol in [('operador', 'Operador / Pruebas Funcionales'), ('lider', 'Líder de línea'), ('gerente', 'Gerencia')]:
+            login = f'95{int(sufijo, 16)}{len(cuentas)}'
             rid = sqlval(cx, 'SELECT id_rol FROM roles WHERE nombre=:r LIMIT 1', r=rol)
             uid = sqlval(cx, 'INSERT INTO usuarios(id_rol,nombre,usuario,contrasena) VALUES (:r,:n,:n,:p) RETURNING id_usuario', r=rid, n=login, p=hash_password('Test-gestion-2026'))
             cuentas[key] = dict(id=uid, login=login)
@@ -183,20 +183,20 @@ def test_usuario_bloqueado_revoca_token_y_no_expone_password(datos):
 
 def test_permisos_cambian_en_servidor_sin_relogin(datos):
     d = datos
-    rol = next(r for r in llamar(d, 'GET', '/roles').json()['roles'] if r['nombre'] == 'Operador')
+    rol = next(r for r in llamar(d, 'GET', '/roles').json()['roles'] if r['nombre'] == 'Operador / Pruebas Funcionales')
     try:
         cambio = dict(permisos={k: v for k, v in rol['permisos'].items() if k != 'produccion/registrar-produccion'}, acciones=rol['acciones'])
-        assert llamar(d, 'PUT', '/roles/Operador', json=cambio).status_code == 200
+        assert llamar(d, 'PUT', '/roles/'+rol['nombre'], json=cambio).status_code == 200
         assert registrar(d).status_code == 403
     finally:
-        assert llamar(d, 'PUT', '/roles/Operador', json=rol).status_code == 200
+        assert llamar(d, 'PUT', '/roles/'+rol['nombre'], json=rol).status_code == 200
 
 
 def test_incidencias_y_ticket_publico_con_cierre(datos):
     d = datos
-    r = llamar(d, 'POST', '/operacion/registrarIncidencia', 'operador', json={'linea': d['linea'], 'tipo': 'Equipo', 'severidad': 'Alta', 'paro': 5, 'motivo': 'Incidencia QA real'})
+    r = llamar(d, 'POST', '/operacion/registrarIncidencia', 'lider', json={'linea': d['linea'], 'tipo': 'Equipo', 'severidad': 'Alta', 'paro': 5, 'motivo': 'Incidencia QA real'})
     assert r.status_code == 200, r.text
-    r = d['api'].post(API+'/tickets', json={'numEmpleado': 'QA', 'nombre': 'QA soporte', 'motivo': 'Cuenta bloqueada'})
+    r = d['api'].post(API+'/tickets', json={'numEmpleado': d['cuentas']['operador']['login'], 'motivo': 'Cuenta bloqueada'})
     assert r.status_code == 201
     tid = r.json()['id']
     try:

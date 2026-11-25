@@ -2,21 +2,21 @@
  {
   "numEmpleado": "1001",
   "nombre": "Luis Hernández",
-  "rol": "Operador",
+  "rol": "Operador / Pruebas Funcionales",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "1002",
   "nombre": "Karla Domínguez",
-  "rol": "Operador",
+  "rol": "Operador / Pruebas Funcionales",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "1003",
   "nombre": "Tomás Reyes",
-  "rol": "Operador",
+  "rol": "Operador / Pruebas Funcionales",
   "estado": "Bloqueado",
   "contrasena": "nova123"
  },
@@ -44,7 +44,7 @@
  {
   "numEmpleado": "3001",
   "nombre": "Andrea Salgado",
-  "rol": "Inspector de Calidad",
+  "rol": "Calidad",
   "estado": "Activo",
   "contrasena": "nova123"
  },
@@ -58,35 +58,35 @@
  {
   "numEmpleado": "4002",
   "nombre": "Patricia Luna",
-  "rol": "Supervisor de almacén",
+  "rol": "Embarques",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "5001",
   "nombre": "Ricardo Fuentes",
-  "rol": "Subgerente de Producción",
+  "rol": "Gerencia",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "5002",
   "nombre": "Elena Montiel",
-  "rol": "Gerente de Producción",
+  "rol": "Gerencia",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "6001",
   "nombre": "Héctor Aguilar",
-  "rol": "Gerente de Planta",
+  "rol": "Gerencia",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "9001",
   "nombre": "Daniela Rivas",
-  "rol": "Administrador",
+  "rol": "Sistemas",
   "estado": "Activo",
   "contrasena": "nova123"
  }

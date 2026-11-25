@@ -41,6 +41,12 @@ _CAJA_SELECT = """
     SELECT c.id_caja, c.id_orden, c.id_cliente, cl.nombre AS cliente,
            c.id_modelo, m.nombre AS modelo, c.capacidad, c.id_embarque,
            c.estado, c.fecha_creacion, c.fecha_cierre,
+           COALESCE(c.id_embarque IS NOT NULL AND (
+              SELECT b.accion='VERIFICAR_ESTIBA' FROM bitacora_general b
+              WHERE b.tabla_afectada='cajas' AND b.id_registro_afectado=c.id_caja
+                AND b.accion IN ('VERIFICAR_ESTIBA','ASIGNAR_EMBARQUE')
+              ORDER BY b.id_bitacora DESC LIMIT 1
+           ), FALSE) AS estiba_verificada,
            (SELECT COUNT(*) FROM unidades u WHERE u.id_caja=c.id_caja) AS cantidad_unidades
     FROM cajas c
     JOIN clientes cl ON cl.id_cliente = c.id_cliente
@@ -178,9 +184,9 @@ def auditoria(cx, id_usuario, id_referencia, accion, tabla, antes=None, despues=
 
 def historial_caja(cx, id_caja):
     return todos(cx, """
-        SELECT id_bitacora, id_usuario, accion, valor_anterior,
+        SELECT id_bitacora, id_usuario, u.usuario AS num_empleado, accion, valor_anterior,
                valor_nuevo, motivo, fecha_hora
-        FROM bitacora_general
+        FROM bitacora_general LEFT JOIN usuarios u USING (id_usuario)
         WHERE tabla_afectada='cajas' AND id_registro_afectado=:id
         ORDER BY fecha_hora DESC, id_bitacora DESC
     """, id=id_caja)
@@ -372,9 +378,9 @@ def historial_unidad(cx, id_unidad):
 def historial_embarque(cx, id_embarque):
     """Eventos de creación, asignación/retiro de cajas y salida de embarque."""
     return todos(cx, """
-        SELECT id_bitacora, id_usuario, accion, valor_anterior,
+        SELECT id_bitacora, id_usuario, u.usuario AS num_empleado, accion, valor_anterior,
                valor_nuevo, motivo, fecha_hora
-        FROM bitacora_general
+        FROM bitacora_general LEFT JOIN usuarios u USING (id_usuario)
         WHERE tabla_afectada='embarques' AND id_registro_afectado=:id
         ORDER BY fecha_hora DESC NULLS LAST, id_bitacora DESC
     """, id=id_embarque)

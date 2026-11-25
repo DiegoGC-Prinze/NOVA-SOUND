@@ -1,14 +1,13 @@
 {
   "roles": [
     {
-      "nombre": "Operador",
-      "descripcion": "Consulta su orden y línea; registra producción o incidencias permitidas. No modifica cierres.",
+      "nombre": "Operador / Pruebas Funcionales",
+      "descripcion": "Consulta el avance de producción y registra pruebas funcionales.",
       "permisos": {
         "login/login": "acciona",
         "login/levantar-ticket": "acciona",
-        "produccion/tablero-de-produccion-del-turno": "acciona",
+        "produccion/tablero-de-produccion-del-turno": "ver",
         "produccion/registrar-produccion": "acciona",
-        "produccion/registrar-incidencia": "acciona",
         "prueba-funcional/escanear-pieza-o-lote": "acciona",
         "prueba-funcional/registro-de-pruebas-funcionales": "acciona",
         "prueba-funcional/unidades-por-probar": "acciona",
@@ -26,20 +25,20 @@
         "login/login": "acciona",
         "login/levantar-ticket": "acciona",
         "produccion/tablero-de-produccion-del-turno": "ver",
-        "produccion/registrar-incidencia": "ver",
+        "produccion/registrar-incidencia": "acciona",
         "produccion/tablero-de-linea-lider": "acciona",
         "produccion/solicitar-ajuste": "acciona",
         "produccion/cierre-de-turno": "acciona",
-        "prueba-funcional/unidades-por-probar": "ver",
-        "prueba-funcional/historial-de-pruebas": "ver"
+        "produccion/registrar-produccion": "acciona"
       },
       "acciones": [
         "solicitar-ajuste-de-produccion-o-de-cierre",
-        "guardar-cierre-de-turno"
+        "guardar-cierre-de-turno",
+        "registrar-produccion"
       ]
     },
     {
-      "nombre": "Inspector de Calidad",
+      "nombre": "Calidad",
       "descripcion": "Registra inspección, defecto y disposición; libera o retiene unidades.",
       "permisos": {
         "login/login": "acciona",
@@ -58,7 +57,7 @@
     },
     {
       "nombre": "Almacén/Empaque",
-      "descripcion": "Crea cajas, agrega unidades liberadas, cierra cajas y prepara embarques.",
+      "descripcion": "Forma, consulta y cierra cajas de empaque.",
       "permisos": {
         "login/login": "acciona",
         "login/levantar-ticket": "acciona",
@@ -67,23 +66,33 @@
         "empaque/confirmar-cierre-de-caja": "acciona",
         "empaque/consultar-caja": "ver",
         "empaque/historial-de-cajas": "ver",
-        "empaque/reportes-de-empaque": "ver",
+        "empaque/reportes-de-empaque": "ver"
+      },
+      "acciones": [
+        "cerrar-caja"
+      ]
+    },
+    {
+      "nombre": "Embarques",
+      "descripcion": "Prepara y confirma embarques. Autoriza reaperturas de caja cuando corresponde.",
+      "permisos": {
+        "login/login": "acciona",
+        "login/levantar-ticket": "acciona",
+        "empaque/consultar-caja": "acciona",
         "embarques/armar-embarque": "acciona",
-        "embarques/paquetes-en-embarcacion": "acciona",
-        "embarques/cierre-de-caja-escaneo": "acciona",
-        "embarques/confirmacion-de-cierre-de-caja": "acciona",
         "embarques/estado-del-embarque": "ver",
         "embarques/rastreo-de-contenedor": "ver",
-        "embarques/grafica-de-embarques": "ver"
+        "embarques/grafica-de-embarques": "ver",
+        "embarques/paquetes-en-embarcacion": "acciona"
       },
       "acciones": [
-        "cerrar-caja",
-        "confirmar-salida-de-embarque"
+        "confirmar-salida-de-embarque",
+        "reabrir-caja"
       ]
     },
     {
-      "nombre": "Subgerente de Producción",
-      "descripcion": "Consulta todas las líneas y órdenes; revisa avance y autoriza ajustes.",
+      "nombre": "Gerencia",
+      "descripcion": "Consulta indicadores de planta y autoriza ajustes y reaperturas de turno.",
       "permisos": {
         "login/login": "acciona",
         "login/levantar-ticket": "acciona",
@@ -98,37 +107,7 @@
       ]
     },
     {
-      "nombre": "Gerente de Producción",
-      "descripcion": "Consulta indicadores, históricos y cierres; autoriza reaperturas de turno.",
-      "permisos": {
-        "login/login": "acciona",
-        "login/levantar-ticket": "acciona",
-        "gerencia/dashboard": "ver",
-        "gerencia/discrepancias": "ver",
-        "gerencia/autorizaciones": "acciona",
-        "gerencia/trazabilidad": "ver",
-        "gerencia/cierres-de-turno": "ver"
-      },
-      "acciones": [
-        "aprobar-o-rechazar-ajustes-y-reaperturas"
-      ]
-    },
-    {
-      "nombre": "Gerente de Planta",
-      "descripcion": "Consulta tableros, cumplimiento, defectos y embarques. No captura producción.",
-      "permisos": {
-        "login/login": "acciona",
-        "login/levantar-ticket": "acciona",
-        "gerencia/dashboard": "ver",
-        "gerencia/discrepancias": "ver",
-        "gerencia/autorizaciones": "ver",
-        "gerencia/trazabilidad": "ver",
-        "gerencia/cierres-de-turno": "ver"
-      },
-      "acciones": []
-    },
-    {
-      "nombre": "Administrador",
+      "nombre": "Sistemas",
       "descripcion": "Gestiona usuarios, roles, catálogos y parámetros. No es un puesto operativo.",
       "permisos": {
         "login/login": "acciona",
@@ -143,21 +122,6 @@
       },
       "acciones": [
         "administrar-usuarios-roles-catalogos-y-parametros"
-      ]
-    },
-    {
-      "nombre": "Supervisor de almacén",
-      "descripcion": "Reabre cajas cerradas (queda auditoría). Propuesto como 9.º rol (C9).",
-      "permisos": {
-        "login/login": "acciona",
-        "login/levantar-ticket": "acciona",
-        "empaque/inicio-de-empaque-panel-de-control": "ver",
-        "empaque/consultar-caja": "acciona",
-        "empaque/historial-de-cajas": "ver",
-        "empaque/reportes-de-empaque": "ver"
-      },
-      "acciones": [
-        "reabrir-caja"
       ]
     }
   ],
@@ -283,16 +247,6 @@
       "nombre": "Paquetes en embarcación"
     },
     {
-      "id": "embarques/cierre-de-caja-escaneo",
-      "area": "embarques",
-      "nombre": "Cierre de caja (escaneo)"
-    },
-    {
-      "id": "embarques/confirmacion-de-cierre-de-caja",
-      "area": "embarques",
-      "nombre": "Confirmación de cierre de caja"
-    },
-    {
       "id": "embarques/estado-del-embarque",
       "area": "embarques",
       "nombre": "Estado del embarque"
@@ -410,5 +364,5 @@
       "nombre": "Administrar usuarios, roles, catálogos y parámetros"
     }
   ],
-  "version": 2
+  "version": 3
 }

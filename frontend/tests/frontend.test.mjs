@@ -68,8 +68,9 @@ try {
     await llenar(selector, '1001'); await llenar('#contrasena', 'nova123'); await click('#entrar'); await esperar("location.pathname.includes('tablero-de-produccion')");
     await rechazo('iniciarSesion', '1001', 'incorrecta'); await rechazo('iniciarSesion', '1003', 'nova123');
   });
-  await prueba('Las 41 pantallas cargan sin errores con sus roles reales', async () => {
+  await prueba('Las 39 pantallas operativas cargan con sus roles', async () => {
     const pantallas = await evaluar("(await import('/js/menu.js')).PANTALLAS.filter(p=>p.area!=='login')");
+    assert.equal(pantallas.length, 39);
     const cuentas = ['1001','2001','3001','4001','4002','5002','9001'];
     const sesiones = [];
     for (const num of cuentas) sesiones.push(await entrar(num));
@@ -77,6 +78,8 @@ try {
       const s = sesiones.find(s => s.permisos[p.id]); assert.ok(s, 'Sin rol para ' + p.id);
       await evaluar(`(await import('/js/session.js')).guardarSesion(${JSON.stringify(s)})`); await ir(p.ruta);
       assert.ok((await texto()).length > 30, p.id + ' vacía');
+      assert.ok(await evaluar("!!document.querySelector('#menu-lateral')"), p.id + ' sin menú lateral');
+      assert.ok(await evaluar("!!document.querySelector('#barra-superior img[alt=\"Nova Sound\"]') && !!document.querySelector('#reloj').textContent"), p.id + ' sin logo o reloj');
       assert.equal(await evaluar("document.querySelector('#error-operacion')?.innerText || ''"), '', p.id);
     }
   });
@@ -128,6 +131,7 @@ try {
     await rechazo('operar','quitarUnidad',{caja:caja.id,serie:'NOVA-TEST-001'});
   });
   await prueba('Embarque respeta orden y caja; salida actualiza trazabilidad', async () => {
+    await entrar('4002');
     embarque=await api('operar','crearEmbarque',{orden:'OP-1041',destino:'Centro de distribución',contenedor:'CONT-TEST'});
     const otro=await api('operar','crearEmbarque',{orden:'OP-1042',destino:'Otro destino'});
     await rechazo('operar','asignarCaja',{embarque:otro.id,caja:caja.id});
@@ -137,6 +141,7 @@ try {
     await esperar("document.querySelector('#embarque-activo')?.innerText.includes('Enviado')");
     const u=await api('unidadPorSerie','NOVA-TEST-001'); assert.equal(u.estado,'EMBARCADA'); assert.equal(u.embarque.referencia,embarque.id); assert.ok(u.historial.some(e=>e.area==='Embarques'&&e.evento.includes('Salida')));
     await ir('pages/embarques/rastreo-de-contenedor.html'); await llenar('#busqueda-contenedor','CONT-TEST'); await click('#form-rastreo button[type=submit]'); await esperar(`document.querySelector('#vista-operacion')?.innerText.includes('${embarque.id}')`);
+    assert.deepEqual(await evaluar("[...document.querySelectorAll('[aria-label=\"Recorrido del embarque\"] li strong')].map(e=>e.textContent)"), ['Partida', 'Destino']);
   });
   await prueba('Cierre persiste y bloquea registros; reapertura requiere Gerencia', async () => {
     await entrar('2001'); await ir('pages/produccion/cierre-de-turno.html'); await click('#btn-cerrar-turno'); await llenar('#dialogo-motivo','Cierre de prueba'); await click('dialog button[type=submit]');
@@ -159,15 +164,15 @@ try {
   await prueba('Permisos de escritura y caja enviada protegidos', async () => {
     await entrar('1001'); await rechazo('operar','crearCaja',{orden:'OP-1041'}); await rechazo('operar','cerrarTurno',{linea:'L1',turno:1,motivo:'Sin permiso'});
     await ir('pages/produccion/cierre-de-turno.html'); assert.match(await texto(),/No tienes permiso/);
-    await entrar('2001'); await ir('pages/produccion/registrar-incidencia.html'); assert.equal(await evaluar("!!document.querySelector('#btn-inc')"),false);
+    await entrar('2001'); await ir('pages/produccion/registrar-incidencia.html'); assert.equal(await evaluar("!!document.querySelector('#btn-inc')"),true);
     await entrar('4002'); await rechazo('operar','reabrirCaja',{caja:caja.id,motivo:'Ya enviada'});
   });
   await prueba('Incidencias se conservan y validan tiempo de paro', async () => {
-    await entrar('1001');
+    await entrar('2001');
     await rechazo('operar','registrarIncidencia',{linea:'L1',motivo:'Error de equipo',paro:-1});
     await api('operar','registrarIncidencia',{linea:'L1',tipo:'Equipo',severidad:'Alta',motivo:'INC-PRUEBA-PERSISTENTE',paro:10});
     await ir('pages/produccion/registrar-incidencia.html'); assert.match(await texto(),/INC-PRUEBA-PERSISTENTE/);
-    await entrar('2001'); await rechazo('operar','registrarIncidencia',{linea:'L1',motivo:'Sin permiso de escritura',paro:0});
+    await entrar('1001'); await rechazo('operar','registrarIncidencia',{linea:'L1',motivo:'Sin permiso de escritura',paro:0});
   });
   await prueba('Caja incompleta exige motivo; reapertura y retiro conservan historial', async () => {
     await entrar('1001'); await api('operar','registrarUnidad',{serie:'NOVA-PARTIAL',lote:'L-PARTIAL',orden:'OP-1042',turno:1}); await api('operar','guardarPrueba',{serie:'NOVA-PARTIAL',prueba:completo});
@@ -187,8 +192,23 @@ try {
   await prueba('Migración de permisos guardados y restablecimiento de la demo', async () => {
     await entrar('9001');
     await evaluar("(async()=>{const db=await import('/js/mockdb.js');const r=await db.leerJSON('roles-permisos');delete r.version;for(const role of r.roles){delete role.permisos['embarques/cierre-de-caja-escaneo'];delete role.permisos['embarques/confirmacion-de-cierre-de-caja'];}db.guardarColeccion('roles-permisos',r);})()");
-    const s=await entrar('4001'); assert.equal(s.permisos['embarques/cierre-de-caja-escaneo'],'acciona');
+    const s=await entrar('4002'); assert.equal(s.usuario.rol,'Embarques'); assert.equal(s.permisos['embarques/armar-embarque'],'acciona'); assert.equal(s.permisos['embarques/cierre-de-caja-escaneo'],undefined);
     await api('reiniciarMocks'); const d=await api('consultarOperacion'); assert.equal(d.cajas.length,0); assert.equal(d.embarques.length,0); assert.equal(d.unidades.filter(u=>u.nueva).length,0); assert.equal(d.parametros.capacidadCaja['NS-MINI'],12);
+  });
+  await prueba('Tableros dedicados, nombre de ticket y catálogo de roles', async () => {
+    await entrar('1001'); await ir('pages/produccion/tablero-de-produccion-del-turno.html');
+    assert.equal(await evaluar("document.querySelectorAll('[role=progressbar]').length"), 1);
+    assert.equal(await evaluar("!!document.querySelector('#menu-lateral')"), true);
+    await entrar('2001'); await ir('pages/produccion/tablero-de-linea-lider.html');
+    assert.ok(await evaluar("document.querySelectorAll('[role=progressbar]').length > 1"));
+    assert.match(await texto(), /Registrar incidencia/);
+    await ir('pages/login/levantar-ticket.html?modo=demo');
+    await llenar('#numEmpleado', '1001');
+    await esperar("document.querySelector('#nombre').value === 'Luis Hernández'");
+    assert.equal(await evaluar("!!document.querySelector('#modo-ticket')"), false);
+    await click('#enviar'); await esperar("document.querySelector('h1')?.textContent === 'Ticket enviado'");
+    await entrar('9001'); await ir('pages/sistemas/catalogos.html'); await llenar('#tipo','roles');
+    assert.match(await texto(), /Roles \(7\)/);
   });
   await prueba('No hubo excepciones JavaScript sin manejar', async () => assert.deepEqual(erroresJS, []));
 } catch (e) { resultados.push({ nombre: 'Ejecutor de pruebas', ok: false, error: e.stack }); console.error(e); }

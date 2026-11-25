@@ -186,6 +186,12 @@ def agregar_caja_embarque(id_embarque: int, id_caja: int, actor: Actor = Depends
     return _db(service.agregar_caja_embarque, id_embarque, id_caja, actor)
 
 
+@router.post("/embarques/{id_embarque}/cajas/{id_caja}/estiba", response_model=Mensaje)
+def verificar_estiba(id_embarque: int = Path(gt=0), id_caja: int = Path(gt=0),
+                     actor: Actor = Depends(obtener_actor)):
+    return _db(service.verificar_estiba, id_embarque, id_caja, actor)
+
+
 @router.post("/embarques/{id_embarque}/salida", response_model=EmbarqueDetalle,
              summary="Registrar salida de embarque",
              description="Revalida todas las cajas y sus unidades y registra fecha de salida, estados y auditoría en transacción.",

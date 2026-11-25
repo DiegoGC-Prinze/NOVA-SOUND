@@ -41,7 +41,12 @@ export function urlPantalla(pantalla) {
 
 // A dónde llega cada rol después de iniciar sesión: a la primera pantalla que puede ver.
 export function inicioDelRol(sesion) {
-  const primera = pantallasVisibles(sesion).find((p) => p.enMenu);
+  const visibles = pantallasVisibles(sesion).filter((p) => p.enMenu);
+  const primera = sesion.usuario.rol === 'Líder de línea'
+    ? visibles.find((p) => p.id === 'produccion/tablero-de-linea-lider') || visibles[0]
+    : sesion.usuario.rol === 'Embarques'
+      ? visibles.find((p) => p.area === 'embarques') || visibles[0]
+      : visibles[0];
   return primera ? urlPantalla(primera) : null;
 }
 
@@ -228,7 +233,9 @@ export function montarPagina(id) {
 
 // Cabecera de las pantallas SIN sesión (login y levantar ticket): marca y hora, día y turno.
 export function montarCabeceraPublica() {
-  document.getElementById('barra-superior').innerHTML = `
+  const barra = document.getElementById('barra-superior');
+  if (!barra) return;
+  barra.innerHTML = `
     <div class="degradado-marca bg-marca text-white shadow-md">
       <div class="mx-auto flex h-14 max-w-[1400px] items-center justify-between px-6">
         <img src="${rutaA('img/logo.png')}" alt="Nova Sound" class="h-11 w-auto">

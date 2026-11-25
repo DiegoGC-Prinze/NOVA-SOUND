@@ -38,8 +38,8 @@ def main():
                 assert scalar('SELECT count(*) FROM calidad WHERE id_unidad=:id', id=u['id_unidad']) == 0
             assert scalar("SELECT count(*) FROM autorizacion WHERE tipo_referencia='PRODUCCION_WEB' AND estado='Aprobada'") >= 1
             assert not cx.execute(text('SELECT 1 FROM catalogos_web WHERE id_original IS NOT NULL GROUP BY tipo,id_original HAVING count(*)>1')).first()
-            permisos = scalar("SELECT permisos FROM roles WHERE nombre='Gerente de Planta' LIMIT 1")
-            assert 'gerencia/autorizaciones' not in permisos, 'La migración no debe sobrescribir permisos editados.'
+            permisos = scalar("SELECT permisos FROM roles WHERE nombre='Gerencia' LIMIT 1")
+            assert 'gerencia/discrepancias' not in permisos, 'La migración no debe sobrescribir permisos editados.'
             full = cx.execute(text('''SELECT u.id_unidad,u.estado,c.estado AS caja,e.estado AS embarque,e.contenedor
                 FROM unidades u JOIN cajas c USING(id_caja) JOIN embarques e USING(id_embarque)
                 WHERE u.numero_serie='QA-FULL-WEB-001' ''')).mappings().one()
@@ -48,13 +48,13 @@ def main():
             assert scalar('SELECT count(*) FROM pruebas WHERE id_unidad=:id',id=full['id_unidad']) == 2
             assert scalar("SELECT count(*) FROM retrabajo WHERE id_unidad=:id AND resultado='Corregido'",id=full['id_unidad']) == 1
             assert scalar("SELECT count(*) FROM calidad WHERE id_unidad=:id AND estado='LIBERADA'",id=full['id_unidad']) == 1
-            assert 'calidad/reportes-de-calidad' not in scalar("SELECT permisos FROM roles WHERE nombre='Inspector de Calidad' LIMIT 1")
+            assert 'calidad/reportes-de-calidad' not in scalar("SELECT permisos FROM roles WHERE nombre='Calidad' LIMIT 1")
             assert scalar('SELECT count(*) FROM usuarios u JOIN roles r USING(id_rol) WHERE u.usuario=:u AND r.nombre=\'Sistemas\'',u=fixture['sistemas']) == 1
-            assert scalar("SELECT count(*) FROM usuarios WHERE usuario='qa_sistemas_operador_web'") == 1
+            assert scalar("SELECT count(*) FROM usuarios WHERE usuario='990101'") == 1
             print('SQL verificado: embarque enviado; producción, incidencia y reapertura persistidas; unidades nuevas sin pruebas ni inspecciones inventadas.')
             return
         ids = []
-        for key, password, role in [('usuario', 'password', 'Almacén/Empaque'), ('supervisor', 'passwordSupervisor', 'Supervisor de almacén'), ('admin', 'passwordAdmin', 'Administrador')]:
+        for key, password, role in [('usuario', 'password', 'Almacén/Empaque'), ('supervisor', 'passwordSupervisor', 'Embarques'), ('admin', 'passwordAdmin', 'Sistemas')]:
             if cx.execute(text('SELECT 1 FROM usuarios WHERE usuario=:usuario'), {'usuario': fixture[key]}).first():
                 raise SystemExit('La cuenta QA ya existe; se requiere un volumen nuevo de pruebas.')
             rid = scalar('SELECT id_rol FROM roles WHERE nombre=:nombre ORDER BY id_rol LIMIT 1', nombre=role)

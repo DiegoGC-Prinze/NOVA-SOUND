@@ -11,15 +11,15 @@ def main():
     parser = argparse.ArgumentParser(description='Crear cuenta de Almacén sin modificar cuentas existentes.')
     parser.add_argument('--usuario', required=True)
     parser.add_argument('--nombre', required=True)
-    parser.add_argument('--rol', choices=['almacen', 'supervisor'], default='almacen')
+    parser.add_argument('--rol', choices=['almacen', 'embarques', 'supervisor'], default='almacen')
     args = parser.parse_args()
     usuario, nombre = args.usuario.strip(), args.nombre.strip()
-    if not 1 <= len(usuario) <= 50 or not 1 <= len(nombre) <= 100:
-        parser.error('Usuario: 1-50 caracteres. Nombre: 1-100 caracteres.')
+    if not (usuario.isascii() and usuario.isdigit() and len(usuario) <= 50) or not 1 <= len(nombre) <= 100:
+        parser.error('Número de empleado: de 1 a 50 dígitos. Nombre: 1-100 caracteres.')
     password = getpass.getpass('Contraseña nueva (mínimo 8 caracteres): ')
     if len(password) < 8 or len(password) > 255 or password != getpass.getpass('Repetir contraseña: '):
         parser.error('La contraseña debe tener 8-255 caracteres y ambas capturas deben coincidir.')
-    rol = 'Almacén/Empaque' if args.rol == 'almacen' else 'Supervisor de almacén'
+    rol = 'Almacén/Empaque' if args.rol == 'almacen' else 'Embarques'
     with engine.begin() as cx:
         cx.execute(text('LOCK TABLE usuarios IN SHARE ROW EXCLUSIVE MODE'))
         if cx.execute(text('SELECT 1 FROM usuarios WHERE usuario=:usuario'), {'usuario': usuario}).first():

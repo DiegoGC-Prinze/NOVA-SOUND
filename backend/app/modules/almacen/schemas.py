@@ -45,6 +45,7 @@ class CajaResumen(BaseModel):
     fecha_creacion: datetime | None
     fecha_cierre: datetime | None
     cantidad_unidades: int
+    estiba_verificada: bool = False
 
 
 class UnidadDetalle(BaseModel):
@@ -97,6 +98,7 @@ class EmbarqueDetalle(EmbarqueResumen):
 class EventoAuditoria(BaseModel):
     id_bitacora: int
     id_usuario: int
+    num_empleado: str | None = None
     accion: str | None
     valor_anterior: str | None
     valor_nuevo: str | None

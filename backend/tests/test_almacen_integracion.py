@@ -21,6 +21,7 @@ from app.modules.almacen import service
 from app.modules.almacen.auth import Actor, obtener_actor
 from app.modules.almacen import auth as almacen_auth
 from app.core import sesiones
+from app.core.inicializacion import actualizar_roles_operativos
 
 pytestmark = pytest.mark.skipif(
     os.getenv("ALMACEN_RUN_INTEGRATION") != "1",
@@ -55,6 +56,7 @@ def pg_test(monkeypatch):
     except Exception:
         engine_test.dispose()
         raise
+    actualizar_roles_operativos(engine_test)
     monkeypatch.setattr(service, "engine", engine_test)
     monkeypatch.setattr(almacen_auth, "engine", engine_test)
     monkeypatch.setattr(sesiones, "engine", engine_test)
@@ -348,7 +350,7 @@ def test_flujo_http_con_sesion_destino_contenedor_y_motivo(pg_test, escenario):
 def test_reapertura_por_dos_cuentas_reales_y_limites_de_supervisor(pg_test, escenario):
     app.dependency_overrides.clear()
     with pg_test.begin() as cx:
-        cx.execute(text("UPDATE usuarios SET id_rol=(SELECT id_rol FROM roles WHERE nombre='Supervisor de almacén' ORDER BY id_rol LIMIT 1) WHERE id_usuario=:id"), {'id': escenario['supervisor']})
+        cx.execute(text("UPDATE usuarios SET id_rol=(SELECT id_rol FROM roles WHERE nombre='Embarques' ORDER BY id_rol LIMIT 1) WHERE id_usuario=:id"), {'id': escenario['supervisor']})
         cx.execute(text("UPDATE usuarios SET id_rol=(SELECT id_rol FROM roles WHERE nombre='Almacén/Empaque' ORDER BY id_rol LIMIT 1) WHERE id_usuario=:id"), {'id': escenario['usuario']})
     with TestClient(app) as api, pg_test.connect() as cx:
         h, _ = login_real(api, cx, escenario['usuario'])

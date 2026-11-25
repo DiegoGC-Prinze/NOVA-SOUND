@@ -4,20 +4,25 @@ import assert from 'node:assert/strict';
 export async function probarCalidad({fixture,api,go,login,wait,click,fill,text,evaluate,paso,report}) {
   const serie = 'QA-FULL-WEB-001';
   await login(fixture.admin,fixture.passwordAdmin);
-  await api('guardarUsuario',{numEmpleado:'qa_inspector_web',nombre:'Inspector QA Web',rol:'Inspector de Calidad',estado:'Activo',contrasena:fixture.passwordGeneral},true);
+  await api('guardarUsuario',{numEmpleado:'990105',nombre:'Inspector QA Web',rol:'Calidad',estado:'Activo',contrasena:fixture.passwordGeneral},true);
   const roles = await api('rolesPermisos');
-  const inspector = roles.roles.find(r=>r.nombre==='Inspector de Calidad');
+  const inspector = roles.roles.find(r=>r.nombre==='Calidad');
   const permisosInspector = {...inspector.permisos};delete permisosInspector['calidad/reportes-de-calidad'];
   await api('guardarRol',inspector.nombre,{permisos:permisosInspector,acciones:inspector.acciones});
   const pantallas = roles.pantallas.filter(p=>['calidad','prueba-funcional'].includes(p.area));
   assert.equal(pantallas.length,10);
-  for (const p of pantallas) {
+  let area;
+  for (const p of pantallas.filter(p => p.id !== 'calidad/reportes-de-calidad')) {
+    if (area !== p.area) {
+      area = p.area;
+      await login(area === 'calidad' ? '990105' : '990102',fixture.passwordGeneral);
+    }
     await go(`pages/${p.id}.html`);
     assert.doesNotMatch(await text(),/No se pudo|No fue posible|No tienes permiso|undefined|NaN/);
     report.pantallas.push(p.id);
   }
-  paso('Las 10 pantallas nuevas de Pruebas y Calidad consultan PostgreSQL');
-  await login('qa_produccion_web',fixture.passwordGeneral);
+  paso('Pruebas y Calidad consultan PostgreSQL según los permisos guardados');
+  await login('990102',fixture.passwordGeneral);
   await api('operar','registrarUnidad',{orden:String(fixture.orden),turno:1,lote:'QA-FULL-WEB',serie},'produccion');
   await go('pages/prueba-funcional/escanear-pieza-o-lote.html');
   await fill('#pf-buscar',serie);await click('#form-buscar button[type=submit]');
@@ -31,7 +36,7 @@ export async function probarCalidad({fixture,api,go,login,wait,click,fill,text,e
   for (const key of ['encendido','audio','carga','bluetooth']) await click(`[name="prueba-${key}"][value="Aprobada"]`);
   await click('#btn-guardar');await wait("!document.querySelector('#form-prueba')");
   paso('Prueba funcional: falla, repetición aprobada e historial real');
-  await login('qa_inspector_web',fixture.passwordGeneral);
+  await login('990105',fixture.passwordGeneral);
   await go('pages/calidad/resumen-de-calidad.html');await wait(`document.querySelector('#contenido').innerText.includes(${JSON.stringify(serie)})`);
   await go('pages/calidad/inspeccion-de-unidad.html?serie='+serie);await wait("!!document.querySelector('#form-inspeccion')");
   const cat = await api('catalogos','calidad');
@@ -53,11 +58,12 @@ export async function probarCalidad({fixture,api,go,login,wait,click,fill,text,e
   const caja=await evaluate("new URLSearchParams(location.search).get('caja')");
   await fill('#buscar',serie);await click('#form-agregar button[type=submit]');await wait(`document.querySelector('#en-caja')?.innerText.includes(${JSON.stringify(serie)})`);
   await click('#cerrar');await fill('#dialogo-motivo','Pedido parcial del flujo completo QA');await click('dialog button[type=submit]');await wait("document.querySelector('#caja-activa')?.innerText.includes('Cerrada')");
+  await login(fixture.supervisor,fixture.passwordSupervisor);
   await go('pages/embarques/armar-embarque.html');await fill('#emb-orden',String(fixture.orden));await fill('#emb-destino','Destino flujo completo QA');await fill('#emb-contenedor','CONT-QA-FULL');await click('#crear-embarque');await wait("!!document.querySelector('#embarque-activo table')");
   await click(`[data-accion=asignar][data-caja="${caja}"]`);await wait("!!document.querySelector('[data-accion=retirar]')");
   await click('#btn-confirmar-emb');await click('dialog button[type=submit]');await wait("document.querySelector('#embarque-activo')?.innerText.includes('Enviado')");
   paso('La unidad liberada pasa por Empaque y sale en un embarque real');
-  await login('qa_gerente_web',fixture.passwordGeneral);
+  await login('990104',fixture.passwordGeneral);
   await go('pages/gerencia/trazabilidad.html?serie='+serie);await wait("document.querySelector('#resultado').innerText.includes('EMBARCADA')");
   const traza = await api('unidadPorSerie',serie,'gerencia');
   for (const area of ['Producción','Prueba funcional','Calidad','Empaque','Embarques']) assert.ok(traza.historial.some(e=>e.area===area),area);

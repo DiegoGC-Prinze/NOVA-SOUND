@@ -42,7 +42,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?Agrega DB_PASSWORD en el archivo .env de la raiz}
       FRONTEND_DIR: /app/frontend
       ALMACEN_DEV_MODE: "0"
-      SISTEMAS_USUARIO: ${SISTEMAS_USUARIO:-sistemas}
+      SISTEMAS_USUARIO: ${SISTEMAS_USUARIO:-9001}
       SISTEMAS_NOMBRE: ${SISTEMAS_NOMBRE:-Sistemas}
       SISTEMAS_PASSWORD: ${SISTEMAS_PASSWORD:?Define SISTEMAS_PASSWORD para la cuenta inicial de Sistemas}
     ports:

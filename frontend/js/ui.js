@@ -32,16 +32,24 @@ export function fechaCorta(iso) {
 const dos = (n) => String(n).padStart(2, '0');
 const aISO = (f) => `${f.getFullYear()}-${dos(f.getMonth() + 1)}-${dos(f.getDate())}`;
 
-// Fecha de hoy en formato "YYYY-MM-DD" con la hora local.
-export function hoyISO() {
-  return aISO(new Date());
+const relojPlanta = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/Monterrey', year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+});
+
+export function fechaHoraPlanta(fecha = new Date()) {
+  const partes = Object.fromEntries(relojPlanta.formatToParts(fecha).map(p => [p.type, p.value]));
+  return { fecha: `${partes.year}-${partes.month}-${partes.day}`, hora: `${partes.hour}:${partes.minute}` };
 }
 
-// Fecha relativa a hoy: fechaRelativa(-1) es ayer, fechaRelativa(3) es dentro de 3 días.
+export function hoyISO() {
+  return fechaHoraPlanta().fecha;
+}
+
 export function fechaRelativa(dias) {
-  const f = new Date();
-  f.setDate(f.getDate() + dias);
-  return aISO(f);
+  const fecha = new Date(`${hoyISO()}T12:00:00`);
+  fecha.setDate(fecha.getDate() + dias);
+  return aISO(fecha);
 }
 
 // Días que hay de una fecha ISO a otra (b - a).
@@ -74,7 +82,7 @@ export function diaRelativo(iso) {
 
 // Turnos del caso: 1 = 06:00 a 14:00, 2 = 14:00 a 22:00. Fuera de eso devuelve null.
 export function turnoPorHora(fecha = new Date()) {
-  const h = fecha.getHours();
+  const h = Number(horaActual(fecha).slice(0, 2));
   if (h >= 6 && h < 14) return 1;
   if (h >= 14 && h < 22) return 2;
   return null;
@@ -82,7 +90,7 @@ export function turnoPorHora(fecha = new Date()) {
 
 // "Hora" en formato 24 h: 17:05
 export function horaActual(fecha = new Date()) {
-  return `${dos(fecha.getHours())}:${dos(fecha.getMinutes())}`;
+  return fechaHoraPlanta(fecha).hora;
 }
 
 // Minúsculas y sin acentos, para buscar sin que importe cómo se escribió.

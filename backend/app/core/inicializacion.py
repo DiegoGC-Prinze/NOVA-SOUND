@@ -13,7 +13,7 @@ PERMISOS = {'login/login': 'acciona', 'login/levantar-ticket': 'acciona',
             **{p['id']: 'acciona' for p in CONTRATOS['pantallas'] if p['area'] == 'sistemas'}}
 
 
-def crear_sistemas_inicial(db_engine, *, usuario='sistemas', nombre='Sistemas', password=''):
+def crear_sistemas_inicial(db_engine, *, usuario='9001', nombre='Sistemas', password=''):
     """No cambia contraseñas, estados ni permisos cuando ya se completó el alta inicial."""
     with db_engine.begin() as cx:
         cx.execute(text("SET LOCAL TIME ZONE 'America/Mexico_City'"))
@@ -56,3 +56,53 @@ def crear_sistemas_inicial(db_engine, *, usuario='sistemas', nombre='Sistemas', 
     # No registrar la contraseña ni su hash en logs o en el marcador.
     log.info('Inicialización de Sistemas completada. Cuenta creada: %s', creado)
     return creado
+
+
+ROLES_ACTUALES = {r['nombre']: r for r in CONTRATOS['roles']}
+ROLES_ANTERIORES = {
+    'Operador': 'Operador / Pruebas Funcionales',
+    'Inspector Calidad': 'Calidad',
+    'Inspector de Calidad': 'Calidad',
+    'Supervisor de almacén': 'Embarques',
+    'Subgerente de Producción': 'Gerencia',
+    'Gerente de Producción': 'Gerencia',
+    'Gerente de Planta': 'Gerencia',
+    'Administrador': 'Sistemas',
+}
+
+
+def actualizar_roles_operativos(db_engine):
+    """Aplica la matriz del equipo una vez y reasigna cuentas por su rol anterior."""
+    marcador = 'roles-operativos-v1'
+    with db_engine.begin() as cx:
+        cx.execute(text("SELECT pg_advisory_xact_lock(hashtextextended('administracion-usuarios-roles',0))"))
+        if cx.execute(text('SELECT 1 FROM configuracion_web WHERE clave=:clave'), {'clave': marcador}).first():
+            return
+        for nombre, rol in ROLES_ACTUALES.items():
+            rid = cx.execute(text('SELECT MIN(id_rol) FROM roles WHERE nombre=:nombre'), {'nombre': nombre}).scalar_one()
+            valores = {'nombre': nombre, 'desc': rol['descripcion'], 'p': json.dumps(rol['permisos']), 'a': json.dumps(rol['acciones'])}
+            if rid is None:
+                rid = cx.execute(text("""INSERT INTO roles(nombre,descripcion,permisos,acciones)
+                    VALUES (:nombre,:desc,CAST(:p AS jsonb),CAST(:a AS jsonb)) RETURNING id_rol"""), valores).scalar_one()
+            else:
+                cx.execute(text("""UPDATE roles SET descripcion=:desc,permisos=CAST(:p AS jsonb),acciones=CAST(:a AS jsonb)
+                    WHERE id_rol=:rid"""), {**valores, 'rid': rid})
+            anteriores = [anterior for anterior, nuevo in ROLES_ANTERIORES.items() if nuevo == nombre] + [nombre]
+            cx.execute(text("""UPDATE usuarios SET id_rol=:rid WHERE id_rol<>:rid
+                AND id_rol IN (SELECT id_rol FROM roles WHERE nombre = ANY(:anteriores))"""),
+                {'rid': rid, 'anteriores': anteriores})
+        cx.execute(text("""INSERT INTO configuracion_web(clave,valor,motivo)
+            VALUES (:clave,'true'::jsonb,'Matriz de roles operativos')"""), {'clave': marcador})
+
+
+def incorporar_manifiesto(db_engine):
+    """Agrega Paquetes en embarcación a los roles con acceso al armado."""
+    with db_engine.begin() as cx:
+        cx.execute(text("SELECT pg_advisory_xact_lock(hashtextextended('administracion-usuarios-roles',0))"))
+        nuevo = cx.execute(text("""INSERT INTO configuracion_web(clave,valor,motivo)
+            VALUES ('permiso-manifiesto-v1','true'::jsonb,'Pantalla Paquetes en embarcación')
+            ON CONFLICT DO NOTHING RETURNING clave""")).first()
+        if nuevo:
+            cx.execute(text("""UPDATE roles SET permisos=permisos || jsonb_build_object(
+                'embarques/paquetes-en-embarcacion', permisos->'embarques/armar-embarque')
+                WHERE permisos ? 'embarques/armar-embarque' AND NOT permisos ? 'embarques/paquetes-en-embarcacion'"""))

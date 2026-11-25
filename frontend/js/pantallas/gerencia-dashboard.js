@@ -4,8 +4,8 @@
 
 import { montarPagina } from '../layout.js';
 import { dashboard, opciones } from '../api.js';
-import { campo, boton, encabezado, indicador, tarjeta, tabla, barra, chip, chipUnidad, cargarEn, estadoVacio } from '../componentes.js';
-import { esc, num, pct, pctDe, fechaCorta, fechaLarga, hoyISO } from '../ui.js';
+import { campo, boton, encabezado, indicador, tarjeta, tabla, barra, chipUnidad, cargarEn, estadoVacio } from '../componentes.js';
+import { esc, num, pct, pctDe, fechaLarga, hoyISO } from '../ui.js';
 
 const pagina = montarPagina('gerencia/dashboard');
 
@@ -87,22 +87,12 @@ function htmlDashboard(d) {
     )
     .join('');
 
-  const estados = { 'A tiempo': 'exito', 'En riesgo': 'aviso', Atrasada: 'peligro' };
-  const tablaOrdenes = tabla({
-    vacio: 'No hay órdenes con estos filtros.',
-    filas: d.ordenes,
-    columnas: [
-      { titulo: 'Orden', html: (o) => `<strong>${esc(o.id)}</strong>` },
-      { titulo: 'Cliente', campo: 'cliente' },
-      { titulo: 'Modelo', texto: (o) => `${o.modelo} · ${o.color}` },
-      { titulo: 'Línea', campo: 'linea' },
-      { titulo: 'Avance', html: (o) => `<div class="flex min-w-36 items-center gap-2"><div class="flex-1">${barra(o.avance, estados[o.estado])}</div><span class="w-12 text-right text-xs tabular-nums">${pct(o.avance)}</span></div>` },
-      { titulo: 'Producidas / cantidad', num: true, texto: (o) => `${num(o.producidas)} / ${num(o.cantidad)}` },
-      { titulo: 'Faltante', num: true, texto: (o) => num(o.faltante) },
-      { titulo: 'Compromiso', texto: (o) => fechaCorta(o.compromiso) },
-      { titulo: 'Estado', html: (o) => chip(o.estado, estados[o.estado]) },
-    ],
-  });
+  const avanceOrdenes = d.ordenes.length ? `<ul class="space-y-3">${d.ordenes.map((o) => `
+    <li class="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+      <strong>${esc(o.id)}</strong>
+      ${barra(o.avance, tonoAvance(o.avance))}
+      <span class="tabular-nums">${num(o.producidas)} / ${num(o.cantidad)}</span>
+    </li>`).join('')}</ul>` : estadoVacio('No hay órdenes con estos filtros.');
 
   const tablaCajas = tabla({
     vacio: 'No hay cajas con estos filtros.',
@@ -116,31 +106,29 @@ function htmlDashboard(d) {
   });
 
   return `
-    <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div class="grid gap-3 sm:grid-cols-3">
       ${indicador({ titulo: 'Meta', valor: num(r.meta), nota: 'unidades por producir', tono: 'marca' })}
       ${indicador({ titulo: 'Producción', valor: num(r.producidas), nota: 'unidades reportadas', tono: 'exito' })}
       ${indicador({ titulo: 'Faltante', valor: num(r.faltante), nota: 'para llegar a la meta', tono: r.faltante ? 'aviso' : 'exito' })}
-      <div class="tarjeta border-l-4 border-l-marca px-4 py-3">
-        <p class="text-xs text-suave">Avance</p>
-        <p class="mt-0.5 text-2xl font-bold tabular-nums">${pct(r.avance)}</p>
-        <div class="mt-2">${barra(r.avance, tonoAvance(r.avance))}</div>
-      </div>
+    </div>
+    <div class="tarjeta mt-4 px-4 py-3">
+      <div class="mb-2 flex justify-between gap-3 text-sm font-semibold"><span>Avance de la meta</span><span>${pct(r.avance)}</span></div>
+      ${barra(r.avance, tonoAvance(r.avance))}
     </div>
 
     <div class="mt-4 grid gap-4 lg:grid-cols-2">
       ${tarjeta('Unidades por disposición', `<ul class="flex flex-col gap-3">${filasDisp}</ul><p class="mt-4 text-xs text-suave">Rechazo (retención, retrabajo y scrap): <strong class="text-texto">${pct(rechazo)}</strong> de ${num(totalDisp)} unidades.</p>`)}
       <div id="tarjeta-defectos"></div>
-    </div>
-
-    <div class="mt-4">${tarjeta('Avance de órdenes', tablaOrdenes, { relleno: false })}</div>
-    <div class="mt-4">${tarjeta('Cajas por cliente', tablaCajas, { relleno: false })}</div>`;
+      ${tarjeta('Avance de órdenes', avanceOrdenes)}
+      ${tarjeta('Cajas por cliente', tablaCajas, { relleno: false })}
+    </div>`;
 }
 
 // Top de defectos con dos vistas: por defecto o por categoría.
 function conectarVistaDefectos(d) {
   const zona = document.getElementById('tarjeta-defectos');
   if (!zona) return;
-  let vista = 'defecto';
+  let vista = 'categoria';
 
   function pintar() {
     const grupos = new Map();

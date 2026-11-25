@@ -12,7 +12,7 @@ from app.db.database import engine
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Sesión"])
 EMPAQUE = ['inicio-de-empaque-panel-de-control', 'formar-caja', 'confirmar-cierre-de-caja', 'consultar-caja', 'historial-de-cajas', 'reportes-de-empaque']
-EMBARQUES = ['armar-embarque', 'paquetes-en-embarcacion', 'cierre-de-caja-escaneo', 'confirmacion-de-cierre-de-caja', 'estado-del-embarque', 'rastreo-de-contenedor', 'grafica-de-embarques']
+EMBARQUES = ['armar-embarque', 'estado-del-embarque', 'rastreo-de-contenedor', 'grafica-de-embarques']
 ALMACEN = {'administrador', 'almacén/empaque', 'almacén', 'almacen', 'empaque'}
 SUPERVISORES = {'supervisor de almacén', 'supervisor almacen'}
 

@@ -50,7 +50,7 @@ def main():
     folder = Path(tempfile.mkdtemp(prefix=project+'-'))
     env_file = folder/'pruebas.env'
     password_sistemas = secrets.token_urlsafe(24)
-    env_file.write_text(f'DB_NAME=nova_sounds\nDB_USER=nova_test\nDB_PASSWORD={secrets.token_urlsafe(32)}\nAPP_PORT={port}\nSISTEMAS_USUARIO=sistemas\nSISTEMAS_NOMBRE=Sistemas\nSISTEMAS_PASSWORD={password_sistemas}\n', encoding='utf-8')
+    env_file.write_text(f'DB_NAME=nova_sounds\nDB_USER=nova_test\nDB_PASSWORD={secrets.token_urlsafe(32)}\nAPP_PORT={port}\nSISTEMAS_USUARIO=990100\nSISTEMAS_NOMBRE=Sistemas\nSISTEMAS_PASSWORD={password_sistemas}\n', encoding='utf-8')
     fixture_file = folder/'fixture.json'
     compose = ['docker', 'compose', '-f', str(ROOT/'compose.yaml'), '--env-file', str(env_file), '--project-name', project]
     image = project+'-tests'
@@ -91,18 +91,18 @@ def main():
         container = ['docker', 'run', '--rm', '--env-file', str(env_file), '--network', project+'_default', '-e', 'DB_HOST=db', '-e', 'DB_PORT=5432', '-e', 'PYTHONPATH=/app/backend']
         run('6. Backend completo, incluidas pruebas PostgreSQL', container+['-e', 'ALMACEN_RUN_INTEGRATION=1', '-e', 'ALMACEN_TEST_DB_NAME=nova_sounds_test', image])
         fixture = {'entorno': 'pruebas', 'baseURL': f'http://localhost:{port}/',
-                   'usuario': 'qa_almacen_web', 'password': secrets.token_urlsafe(24),
-                   'supervisor': 'qa_supervisor_web', 'passwordSupervisor': secrets.token_urlsafe(24),
-                   'admin': 'qa_admin_web', 'passwordAdmin': secrets.token_urlsafe(24),
+                   'usuario': '990106', 'password': secrets.token_urlsafe(24),
+                   'supervisor': '990107', 'passwordSupervisor': secrets.token_urlsafe(24),
+                   'admin': '990108', 'passwordAdmin': secrets.token_urlsafe(24),
                    'passwordGeneral': secrets.token_urlsafe(24),
-                   'sistemas': 'sistemas', 'passwordSistemas': password_sistemas,
+                   'sistemas': '990100', 'passwordSistemas': password_sistemas,
                    'serie': 'QA-WEB-LIBERADA', 'serieRetenida': 'QA-WEB-RETENIDA'}
         bootstrap = container+['-i', '-e', 'NOVA_ISOLATED_TESTS=1', '-e', 'NOVA_TEST_PROJECT='+project, image, 'python', 'tests/preparar_fixture_web.py']
         content = run('7. Preparar cuentas y registros QA privados', bootstrap, capture=True, input_text=json.dumps(fixture))
         fixture = json.loads(content)
         fixture_file.write_text(json.dumps(fixture), encoding='utf-8')
-        run('8. Frontend de demostracion y 41 pantallas', ['node', 'frontend/tests/frontend.test.mjs'])
-        run('9. Frontend real con PostgreSQL y 13 pantallas de Almacen', ['node', 'frontend/tests/almacen-real.test.mjs', str(fixture_file)])
+        run('8. Frontend de demostracion y 39 pantallas', ['node', 'frontend/tests/frontend.test.mjs'])
+        run('9. Frontend real con PostgreSQL y 11 pantallas de Empaque y Embarques', ['node', 'frontend/tests/almacen-real.test.mjs', str(fixture_file)])
         run('9b. Produccion, cierres, Gerencia y Sistemas en navegador real', ['node', 'frontend/tests/gestion-real.test.mjs', str(fixture_file)])
         run('9c. Verificar migracion 07 reejecutable con datos existentes', compose+['exec', '-T', 'db', 'sh', '-c', 'psql -X -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/070_gestion.sql > /dev/null'])
         run('9d. Verificar migracion 08 sin sobrescribir permisos de Calidad', compose+['exec', '-T', 'db', 'sh', '-c', 'psql -X -q -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/080_calidad_pruebas.sql > /dev/null'])

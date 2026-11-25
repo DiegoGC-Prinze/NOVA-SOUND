@@ -41,6 +41,7 @@ function editor(datos, sesion, puedeAccionar) {
 
   function pintar() {
     const rol = datos.roles.find((r) => r.nombre === rolActual);
+    const esSistemas = rol.nombre === 'Sistemas';
     const esAdmin = rol.nombre === 'Administrador';
     const areas = Object.keys(AREAS).filter((a) => a !== 'login');
 
@@ -51,7 +52,7 @@ function editor(datos, sesion, puedeAccionar) {
         const filas = pantallas
           .map((p, i) => {
             const actual = edicion.permisos[p.id] || '';
-            const bloqueado = !puedeAccionar || (esAdmin && area === 'sistemas'); // sin «Acciona» no se edita; y el administrador no puede quitarse Sistemas
+            const bloqueado = !puedeAccionar || esAdmin || (esSistemas && area === 'sistemas'); // sin «Acciona» no se edita; y el administrador no puede quitarse Sistemas
             const radios = NIVELES.map(
               ([valor, texto]) => `
               <label class="flex cursor-pointer items-center gap-1.5 ${bloqueado ? 'cursor-not-allowed opacity-60' : ''}">
@@ -69,7 +70,7 @@ function editor(datos, sesion, puedeAccionar) {
     const acciones = datos.acciones
       .map(
         (a) => `<label class="flex cursor-pointer items-start gap-2 rounded-md px-2 py-1.5 hover:bg-fondo">
-          <input type="checkbox" class="mt-0.5 h-4 w-4 accent-marca" data-accion="${esc(a.id)}" ${edicion.acciones.includes(a.id) ? 'checked' : ''} ${puedeAccionar ? '' : 'disabled'}>
+          <input type="checkbox" class="mt-0.5 h-4 w-4 accent-marca" data-accion="${esc(a.id)}" ${edicion.acciones.includes(a.id) ? 'checked' : ''} ${puedeAccionar && !esAdmin ? '' : 'disabled'}>
           <span>${esc(a.nombre)}</span></label>`,
       )
       .join('');
@@ -85,13 +86,14 @@ function editor(datos, sesion, puedeAccionar) {
       </div>
 
       ${puedeAccionar ? '' : `<div class="mt-4">${aviso('info', 'Tu rol solo puede consultar los permisos. Los cambios los hace Sistemas.')}</div>`}
-      ${esAdmin ? `<div class="mt-4">${aviso('info', 'El Administrador siempre conserva el acceso a las pantallas de Sistemas para no quedarse sin forma de arreglar los permisos.')}</div>` : ''}
+      ${esSistemas ? `<div class="mt-4">${aviso('info', 'Sistemas siempre conserva el acceso a las pantallas de Sistemas para no quedarse sin forma de arreglar los permisos.')}</div>` : ''}
 
+      ${esAdmin ? `<div class="mt-4">${aviso('info', 'Administrador tiene acceso a todas las pantallas y acciones.')}</div>` : ''}
       <div class="mt-4 grid gap-4 xl:grid-cols-2">${tarjetasAreas}</div>
 
       <div class="mt-4">${tarjeta('Acciones con permiso', `<div class="grid gap-1 md:grid-cols-2">${acciones}</div>`)}</div>
 
-      ${puedeAccionar ? `<div class="sticky bottom-0 mt-4 flex flex-wrap items-center justify-end gap-2 border-t border-borde bg-fondo py-3">
+      ${puedeAccionar && !esAdmin ? `<div class="sticky bottom-0 mt-4 flex flex-wrap items-center justify-end gap-2 border-t border-borde bg-fondo py-3">
         <p class="mr-auto text-xs text-suave">Los cambios se aplican la próxima vez que esta persona inicie sesión.</p>
         ${boton('Cancelar', { tipo: 'secundario', id: 'cancelar', extra: hayCambios() ? '' : 'disabled' })}
         ${boton('Guardar', { id: 'guardar', extra: hayCambios() ? '' : 'disabled' })}

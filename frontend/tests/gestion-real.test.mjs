@@ -44,16 +44,22 @@ try {
   await login(fixture.sistemas, fixture.passwordSistemas);
   assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('novasound.sesion')).usuario.rol"),'Sistemas');
   await go('pages/sistemas/nuevo-o-editar-usuario.html');
-  await fill('#nombre','Operador desde Sistemas inicial');await fill('#numEmpleado','qa_sistemas_operador_web');await fill('#rol','Operador');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
+  await fill('#nombre','Operador desde Sistemas inicial');await fill('#numEmpleado','990101');await fill('#rol','Operador / Pruebas Funcionales');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
   await wait("location.pathname.endsWith('/usuarios.html')");
-  assert.equal((await api('usuarios','qa_sistemas_operador_web')).length,1);
-  await login('qa_sistemas_operador_web',fixture.passwordGeneral);
+  assert.equal((await api('usuarios','990101')).length,1);
+  await login('990101',fixture.passwordGeneral);
   assert.equal((await api('consultarOperacion','produccion')).real,true);
   paso('La cuenta Sistemas creada al arrancar inicia sesion y da de alta otro usuario desde el formulario');
   await login(fixture.admin, fixture.passwordAdmin);
   const roles=await api('rolesPermisos');
   assert.ok(['calidad','prueba-funcional'].every(area=>roles.pantallas.some(p=>p.area===area)));
+  const cuentas = { produccion: ['990103',fixture.passwordGeneral], gerencia: ['990104',fixture.passwordGeneral], sistemas: [fixture.admin,fixture.passwordAdmin] };
+  for(const [numEmpleado,rol] of [['990103','Líder de línea'],['990104','Gerencia']]){
+    await api('guardarUsuario',{numEmpleado,nombre:numEmpleado,rol,estado:'Activo',contrasena:fixture.passwordGeneral},true);
+  }
+  let area;
   for(const p of roles.pantallas.filter(p=>['produccion','gerencia','sistemas'].includes(p.area) && p.id!=='sistemas/ver-ticket')){
+    if(area!==p.area){area=p.area;await login(...cuentas[area]);}
     await go(`pages/${p.id}.html`);
     const contenido=await text();
     assert.doesNotMatch(contenido,/No se pudo|No fue posible|No tienes permiso|undefined|NaN/);
@@ -62,17 +68,14 @@ try {
   paso(`${report.pantallas.length} pantallas de Producción, Gerencia y Sistemas consultan datos reales`);
   // Crear el operador desde el formulario de Sistemas y comprobar que puede iniciar sesión.
   await go('pages/sistemas/nuevo-o-editar-usuario.html');
-  await fill('#nombre','Operador QA Web');await fill('#numEmpleado','qa_produccion_web');await fill('#rol','Operador');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
+  await fill('#nombre','Operador QA Web');await fill('#numEmpleado','990102');await fill('#rol','Operador / Pruebas Funcionales');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
   await wait("location.pathname.endsWith('/usuarios.html')");
-  for(const [numero,rol] of [['qa_lider_web','Líder de línea'],['qa_gerente_web','Gerente de Producción']]){
-    await api('guardarUsuario',{numEmpleado:numero,nombre:numero,rol,estado:'Activo',contrasena:fixture.passwordGeneral},true);
-  }
-  const listado=await api('usuarios','qa_produccion_web');assert.equal(listado.length,1);assert.ok(!('contrasena' in listado[0]));
+  const listado=await api('usuarios','990102');assert.equal(listado.length,1);assert.ok(!('contrasena' in listado[0]));
   paso('Sistemas crea usuarios persistentes con roles reales');
-  const planta=roles.roles.find(r=>r.nombre==='Gerente de Planta');
-  const permisosPlanta={...planta.permisos};delete permisosPlanta['gerencia/autorizaciones'];
+  const planta=roles.roles.find(r=>r.nombre==='Gerencia');
+  const permisosPlanta={...planta.permisos};delete permisosPlanta['gerencia/discrepancias'];
   await api('guardarRol',planta.nombre,{permisos:permisosPlanta,acciones:planta.acciones});
-  assert.ok(!('gerencia/autorizaciones' in (await api('rolesPermisos')).roles.find(r=>r.nombre===planta.nombre).permisos));
+  assert.ok(!('gerencia/discrepancias' in (await api('rolesPermisos')).roles.find(r=>r.nombre===planta.nombre).permisos));
   paso('Los permisos de un rol se guardan en el servidor');
   // Catálogo y parámetro se vuelven a consultar después de guardarlos.
   await api('guardarElementoCatalogo','defectos',{codigo:'QA-DEF',nombre:'Defecto QA',estado:'Activo'});
@@ -84,30 +87,31 @@ try {
   await api('guardarParametros',{capacidadCaja:param.capacidadCaja,motivo:'Restaurar capacidad tras QA'});
   paso('Catálogos y parámetros se guardan y recuperan en PostgreSQL');
   // Ticket público y atención desde Sistemas.
-  await go('pages/login/levantar-ticket.html?modo=real');await fill('#numEmpleado','qa_produccion_web');await fill('#nombre','Operador QA Web');await click('#enviar');await wait("document.querySelector('#contenido').innerText.includes('Ticket enviado')");
-  const tickets=await api('tickets');const t=tickets.find(t=>t.numEmpleado==='qa_produccion_web');assert.ok(t);
+  await go('pages/login/levantar-ticket.html?modo=real');await fill('#numEmpleado','990102');await wait("document.querySelector('#nombre').value==='Operador QA Web'");await click('#enviar');await wait("document.querySelector('#contenido').innerText.includes('Ticket enviado')");
+  const tickets=await api('tickets');const t=tickets.find(t=>t.numEmpleado==='990102');assert.ok(t);
   await go('pages/sistemas/ver-ticket.html?id='+t.id);assert.match(await text(),/Operador QA Web/);report.pantallas.push('sistemas/ver-ticket');
   await api('cerrarTicket',t.id,{comentarios:'Cuenta verificada por Sistemas'});assert.equal((await api('ticket',t.id)).estado,'Cerrado');
   paso('Ticket público llega a Sistemas y su cierre persiste');
-  await login('qa_produccion_web',fixture.passwordGeneral);
+  await login('990102',fixture.passwordGeneral);
   await go('pages/produccion/registrar-produccion.html');await fill('#rp-orden',String(fixture.orden));await fill('#rp-turno','1');await fill('#rp-lote','QA-PROD-WEB');await fill('#rp-serie','QA-PROD-WEB-001');await click('#btn-guardar-prod');
   await wait("document.querySelector('#vista-operacion').innerText.includes('QA-PROD-WEB-001')");
   await go('pages/produccion/registrar-produccion.html');assert.match(await text(),/QA-PROD-WEB-001/);
   let d=await api('consultarOperacion','produccion');const orden=d.ordenes.find(o=>o.id===String(fixture.orden));const linea=orden.linea;
   assert.equal(d.unidades.find(u=>u.serie==='QA-PROD-WEB-001').estado,'ENSAMBLADA');
+  await login('990103',fixture.passwordGeneral);
   await go('pages/produccion/registrar-incidencia.html');await fill('#inc-linea',linea);await fill('#inc-paro','7');await fill('#inc-motivo','Paro QA real');await click('#btn-inc');await wait("document.querySelector('#vista-operacion').innerText.includes('Paro QA real')");
   paso('Producción registra unidad e incidencia reales sin liberar por Calidad');
-  await login('qa_lider_web',fixture.passwordGeneral);
+  await login('990103',fixture.passwordGeneral);
   await go('pages/produccion/cierre-de-turno.html');await fill('#ct-linea',linea);await fill('#ct-turno','1');await click('#btn-cerrar-turno');await fill('#dialogo-motivo','Cierre real validado por líder');await click('dialog button[type=submit]');await wait("document.querySelector('#btn-cerrar-turno')?.innerText.includes('ya cerrado')");
-  await login('qa_produccion_web',fixture.passwordGeneral);
+  await login('990102',fixture.passwordGeneral);
   let bloqueada=await evaluate(`import('/js/api.js').then(a=>a.operar('registrarUnidad',{orden:${JSON.stringify(String(fixture.orden))},turno:1,lote:'QA-PROD-WEB',serie:'QA-PROD-WEB-BLOCK'},'produccion')).then(()=>false,e=>e.estado===409)`);assert.equal(bloqueada,true);
-  await login('qa_lider_web',fixture.passwordGeneral);
+  await login('990103',fixture.passwordGeneral);
   await go('pages/produccion/solicitar-ajuste.html');await fill('#aj-orden',String(fixture.orden));await fill('#aj-turno','1');await fill('#aj-tipo','Reapertura de turno');await fill('#aj-motivo','Reapertura para continuar registro QA');await click('#btn-solicitar-aj');await wait("document.querySelector('#vista-operacion').innerText.includes('Pendiente')");
   paso('El cierre bloquea nuevas capturas y el líder solicita reapertura');
-  await login('qa_gerente_web',fixture.passwordGeneral);
+  await login('990104',fixture.passwordGeneral);
   await go('pages/gerencia/autorizaciones.html');await click('[data-aprobar]');await click('dialog button[type=submit]');await wait("document.querySelector('#resultado').innerText.includes('Aprobada')");
   await go('pages/gerencia/trazabilidad.html?serie=QA-PROD-WEB-001');await wait("document.querySelector('#resultado').innerText.includes('ENSAMBLADA')");assert.match(await text(),/Operador QA Web/);
-  await login('qa_produccion_web',fixture.passwordGeneral);
+  await login('990102',fixture.passwordGeneral);
   await api('operar','registrarUnidad',{orden:String(fixture.orden),turno:1,lote:'QA-PROD-WEB',serie:'QA-PROD-WEB-002'},'produccion');
   assert.ok((await api('consultarOperacion','produccion')).unidades.some(u=>u.serie==='QA-PROD-WEB-002'));
   paso('Gerencia autoriza con otra cuenta; vuelve la captura y existe trazabilidad real');

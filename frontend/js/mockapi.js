@@ -3,14 +3,14 @@
 // Cuando el back real esté listo, este archivo ya no se usa; lo que debe devolver el back
 // tiene la misma forma que lo que devuelven estas funciones.
 
-import { coleccion, guardarColeccion, leerJSON, pausa } from './mockdb.js';
+import { coleccion, guardarColeccion, guardarColecciones, leerJSON, pausa } from './mockdb.js';
 import { ErrorApi } from './errores.js';
-import { fechaRelativa, diasEntre, hoyISO, normalizar } from './ui.js';
+import { fechaRelativa, diasEntre, hoyISO, normalizar, horaActual } from './ui.js';
 import { obtenerSesion } from './session.js';
 import { metricasProduccion, resolverSolicitud } from './mockapi-operacion.js';
 
 const suma = (filas, campo) => filas.reduce((t, f) => t + (f[campo] || 0), 0);
-const ahoraHora = () => new Date().toTimeString().slice(0, 5);
+const ahoraHora = horaActual;
 
 function agrupar(filas, clave) {
   const grupos = new Map();
@@ -218,7 +218,14 @@ export async function seriesDeEjemplo() {
 }
 
 // ---------------------------------------------------------------- Tickets
-export async function levantarTicket({ numEmpleado, nombre, motivo }) {
+export async function empleadoParaTicket(numero) {
+  const u = (await coleccion('usuarios')).find(u => u.numEmpleado === numero);
+  if (!u) throw new ErrorApi('No se encontró ese número de empleado.', 404);
+  return { nombre: u.nombre };
+}
+
+export async function levantarTicket({ numEmpleado, motivo }) {
+  const { nombre } = await empleadoParaTicket(numEmpleado);
   await pausa(350);
   const lista = await coleccion('tickets');
   const siguiente = Math.max(0, ...lista.map((t) => Number(t.id.slice(2)))) + 1;
@@ -298,6 +305,7 @@ export async function guardarRol(nombre, { permisos, acciones }) {
   const datos = await coleccion('roles-permisos');
   const rol = datos.roles.find((r) => r.nombre === nombre);
   if (!rol) throw new ErrorApi('No se encontró el rol.', 404);
+  if (nombre === 'Administrador') throw new ErrorApi('El rol Administrador conserva todos los permisos.', 409);
   rol.permisos = permisos;
   rol.acciones = acciones;
   guardarColeccion('roles-permisos', datos);
@@ -307,7 +315,53 @@ export async function guardarRol(nombre, { permisos, acciones }) {
 // ---------------------------------------------------------------- Catálogos
 export async function catalogos() {
   await pausa(200);
-  return coleccion('catalogos');
+  const [datos, { roles }] = await Promise.all([coleccion('catalogos'), rolesPermisos()]);
+  datos.roles = { nombre: 'Roles', items: roles.map((rol, i) => ({
+    codigo: rol.codigo || String(i + 1), nombre: rol.nombre, descripcion: rol.descripcion,
+    estado: 'Activo', editable: !!rol.codigo,
+  })) };
+  return datos;
+}
+
+export async function guardarRolCatalogo(datos, codigo) {
+  const matriz = await rolesPermisos();
+  let nombre = datos.nombre.trim();
+  if (!nombre || nombre.length > 50) throw new ErrorApi('Escribe un nombre de hasta 50 caracteres.', 422);
+  if (nombre.toLowerCase() === 'administrador') nombre = 'Administrador';
+  const actual = codigo && matriz.roles.find(r => r.codigo === codigo);
+  if (codigo && !actual) throw new ErrorApi('Rol editable no encontrado.', 404);
+  if (actual && (actual.nombre === 'Administrador') !== (nombre === 'Administrador')) {
+    throw new ErrorApi('Crea un rol Administrador por separado para asignarle acceso total.', 422);
+  }
+  if (matriz.roles.some(r => r !== actual && r.nombre.toLowerCase() === nombre.toLowerCase())) {
+    throw new ErrorApi('Ya existe un rol con ese nombre.', 409);
+  }
+  const descripcion = datos.descripcion.trim();
+  if (actual) {
+    const usuarios = await coleccion('usuarios');
+    usuarios.filter(u => u.rol === actual.nombre).forEach(u => { u.rol = nombre; });
+    Object.assign(actual, { nombre, descripcion });
+    guardarColecciones({ usuarios, 'roles-permisos': matriz });
+    return { ok: true };
+  }
+  const admin = nombre === 'Administrador';
+  const permisos = admin ? Object.fromEntries(matriz.pantallas.map(p => [p.id, 'acciona'])) : {};
+  const acciones = admin ? matriz.acciones.map(a => a.id) : [];
+  matriz.roles.push({ codigo: crypto.randomUUID(), nombre, descripcion, permisos, acciones });
+  guardarColeccion('roles-permisos', matriz);
+  return { ok: true };
+}
+
+export async function eliminarRolCatalogo(codigo) {
+  const matriz = await rolesPermisos();
+  const rol = matriz.roles.find(r => r.codigo === codigo);
+  if (!rol) throw new ErrorApi('Rol editable no encontrado.', 404);
+  if ((await coleccion('usuarios')).some(u => u.rol === rol.nombre)) {
+    throw new ErrorApi('Reasigna los usuarios de este rol antes de eliminarlo.', 409);
+  }
+  matriz.roles = matriz.roles.filter(r => r !== rol);
+  guardarColeccion('roles-permisos', matriz);
+  return { ok: true };
 }
 
 export async function guardarElementoCatalogo(tipo, elemento) {

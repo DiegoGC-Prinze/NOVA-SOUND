@@ -6,10 +6,21 @@
 // - reiniciarMocks() borra esos cambios y todo vuelve a los datos de /mock.
 
 import { leerArchivo } from './leer.js';
+import { hoyISO } from './ui.js';
 
 const PREFIJO = 'novasound.mock.';
 const cacheArchivos = {};
 const memoria = {}; // por si el navegador bloquea localStorage
+
+const rolesAnteriores = {
+  Operador: 'Operador / Pruebas Funcionales',
+  'Inspector de Calidad': 'Calidad',
+  'Supervisor de almacén': 'Embarques',
+  'Subgerente de Producción': 'Gerencia',
+  'Gerente de Producción': 'Gerencia',
+  'Gerente de Planta': 'Gerencia',
+  Administrador: 'Sistemas',
+};
 
 // Lee un archivo de /mock (solo lectura).
 export async function leerJSON(nombre) {
@@ -33,16 +44,31 @@ export async function coleccion(nombre) {
   if (Array.isArray(filas)) filas.forEach(f => {
     const fecha = f.fechaRegistro || f.fecha;
     if (fecha) {
-      const ahora = new Date(); ahora.setHours(12, 0, 0, 0);
+      const ahora = new Date(`${hoyISO()}T12:00:00`);
       f.dia = Math.round((ahora - new Date(`${fecha}T12:00:00`)) / 86400000);
     }
   });
-  // Migración única del registro de pantallas para las demos ya guardadas.
-  if (nombre === 'roles-permisos' && !datos.version) {
-    const almacen = datos.roles.find(r => r.nombre === 'Almacén/Empaque');
-    if (almacen) for (const id of ['embarques/cierre-de-caja-escaneo', 'embarques/confirmacion-de-cierre-de-caja']) almacen.permisos[id] = 'acciona';
-    datos.version = 2;
+  if (nombre === 'roles-permisos' && (datos.version ?? 0) < 3) {
+    const vigentes = await leerJSON(nombre);
+    Object.assign(datos, vigentes);
     if (guardado) guardarColeccion(nombre, datos);
+  }
+  if (nombre === 'roles-permisos' && !datos.pantallas.some(p => p.id === 'embarques/paquetes-en-embarcacion')) {
+    const { pantallas } = await leerJSON(nombre);
+    const id = 'embarques/paquetes-en-embarcacion';
+    datos.pantallas.push(pantallas.find(p => p.id === id));
+    datos.roles.forEach(r => {
+      const nivel = r.permisos['embarques/armar-embarque'];
+      if (nivel) r.permisos[id] = nivel;
+    });
+    if (guardado) guardarColeccion(nombre, datos);
+  }
+  if (nombre === 'usuarios') {
+    const { roles } = await coleccion('roles-permisos');
+    const nombres = new Set(roles.map(r => r.nombre));
+    const antiguos = datos.filter(u => !nombres.has(u.rol) && rolesAnteriores[u.rol]);
+    antiguos.forEach(u => { u.rol = rolesAnteriores[u.rol]; });
+    if (guardado && antiguos.length) guardarColeccion(nombre, datos);
   }
   return datos;
 }

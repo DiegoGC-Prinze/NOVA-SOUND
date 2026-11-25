@@ -1,25 +1,35 @@
 // Traduce los contratos PostgreSQL a las vistas existentes. Nunca recurre a mocks.
 import { createAlmacenApi, AlmacenApiError } from '../integraciones/almacenApi.mjs';
 import { obtenerSesion, cerrarSesion } from './session.js';
+import { API_BASE_URL } from './config.js';
+import { fechaHoraPlanta } from './ui.js';
 import { ErrorApi } from './errores.js';
 
-const api = createAlmacenApi({ obtenerToken: () => obtenerSesion()?.token });
+const api = createAlmacenApi({ baseURL: `${API_BASE_URL.replace(/\/$/, '')}/api/v1/almacen`, obtenerToken: () => obtenerSesion()?.token });
 const id = value => {
   if (!/^\d+$/.test(String(value)) || Number(value) < 1) throw new ErrorApi('Selecciona un registro válido de PostgreSQL.', 422);
   return Number(value);
 };
 const estadoCaja = { EN_PROCESO: 'Abierta', CERRADA: 'Cerrada', EMBARCADA: 'Embarcada' };
 const estadoEmbarque = { PREPARACION: 'Preparando', ENVIADO: 'Enviado' };
-const dia = value => value?.slice(0, 10) || '';
-const auditoria = eventos => eventos.map(e => ({ fecha: dia(e.fecha_hora), hora: e.fecha_hora?.slice(11, 16) || '', quien: `Usuario ${e.id_usuario}`, que: e.accion, motivo: e.motivo || '' }));
+// Almacén persiste sus marcas de tiempo UTC en columnas sin zona horaria.
+const instante = valor => {
+  if (!valor) return { fecha: '', hora: '' };
+  const utc = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(valor) ? valor : `${valor}Z`;
+  return fechaHoraPlanta(new Date(utc));
+};
+const dia = valor => instante(valor).fecha;
+const auditoria = eventos => eventos.map(e => ({
+  ...instante(e.fecha_hora), quien: e.num_empleado || '—', que: e.accion, motivo: e.motivo || '',
+}));
 const orden = o => ({ ...o, id: String(o.id_orden), idColor: o.id_color, mezclaColores: o.mezcla_colores });
 const caja = (b, ordenes) => {
   const o = ordenes.find(o => o.id === String(b.id_orden));
   return { id: String(b.id_caja), orden: b.id_orden == null ? '' : String(b.id_orden), cliente: b.cliente, modelo: b.modelo,
     color: o?.color || '', idColor: o?.idColor, mezclaColores: o?.mezclaColores || false,
     estado: estadoCaja[b.estado] || `Heredada (${b.estado || 'sin estado'})`, capacidad: b.capacidad,
-    cantidad: b.cantidad_unidades, unidades: (b.unidades || []).map(u => u.numero_serie).filter(Boolean),
-    embarque: b.id_embarque == null ? null : String(b.id_embarque), fecha: dia(b.fecha_creacion), auditoria: [] };
+    cantidad: b.cantidad_unidades, estibaVerificada: b.estiba_verificada, unidades: (b.unidades || []).map(u => u.numero_serie).filter(Boolean),
+    embarque: b.id_embarque == null ? null : String(b.id_embarque), ...instante(b.fecha_creacion), auditoria: [] };
 };
 const embarque = e => ({ id: String(e.id_embarque), orden: String(e.id_orden), cliente: e.cliente,
   referencia: e.referencia, destino: e.destino || '', contenedor: e.contenedor || e.referencia || '',
@@ -35,6 +45,7 @@ async function proteger(tarea) {
   try { return await tarea(); }
   catch (e) {
     if (e instanceof AlmacenApiError) {
+      if (e.status === 405) throw new ErrorApi('El servidor recibido no ofrece esta operación de Almacén. Abre NOVA SOUND desde FastAPI o revisa la URL de la API.', 405);
       if (e.status === 401) { await cerrarSesion(); location.replace(new URL('../index.html', import.meta.url)); }
       throw new ErrorApi(e.message, e.status);
     }
@@ -96,6 +107,7 @@ export const operarAlmacen = (accion, p = {}) => proteger(async () => {
       return { id: String(r.id_embarque) };
     case 'asignarCaja': return api.agregarCajaEmbarque(id(p.embarque), id(p.caja));
     case 'quitarCaja': return api.quitarCajaEmbarque(id(p.embarque), id(p.caja));
+    case 'verificarEstiba': return api.verificarEstiba(id(p.embarque), id(p.caja));
     case 'confirmarSalida': return api.registrarSalida(id(p.embarque));
     default: throw new ErrorApi('Esta operación no está disponible para Almacén.', 422);
   }

@@ -18,11 +18,11 @@ PASSWORD = 'Inicial-QA-Sistemas-2026'
 
 @pytest.fixture
 def contexto(pg_test, monkeypatch):
-    usuario = 'qa_sistemas_'+uuid4().hex[:10]
+    usuario = '97'+str(uuid4().int)
     monkeypatch.setattr(gestion, 'engine', pg_test)
     with pg_test.connect() as cx:
         assert not cx.execute(text('SELECT 1 FROM configuracion_web WHERE clave=:c'), {'c': MARCADOR}).first()
-        roles_antes = set(cx.execute(text("SELECT id_rol FROM roles WHERE nombre='Sistemas'")).scalars())
+        roles_antes = dict(cx.execute(text("SELECT id_rol,permisos FROM roles WHERE nombre='Sistemas'")).all())
     yield dict(engine=pg_test, usuario=usuario, nombre='Sistemas QA', password=PASSWORD)
     with pg_test.begin() as cx:
         cx.execute(text('DELETE FROM configuracion_web WHERE clave=:c'), {'c': MARCADOR})
@@ -34,6 +34,9 @@ def contexto(pg_test, monkeypatch):
         for rid in cx.execute(text("SELECT id_rol FROM roles WHERE nombre='Sistemas'")).scalars().all():
             if rid not in roles_antes:
                 cx.execute(text('DELETE FROM roles WHERE id_rol=:id'), {'id': rid})
+            else:
+                cx.execute(text('UPDATE roles SET permisos=CAST(:p AS jsonb) WHERE id_rol=:id'),
+                           {'p': json.dumps(roles_antes[rid]), 'id': rid})
 
 
 def iniciar(c, **cambios):
@@ -99,11 +102,11 @@ def test_password_invalida_revierte_el_alta_completa(contexto):
 def test_no_toma_una_cuenta_existente_de_otro_rol(contexto):
     c = contexto
     with c['engine'].connect() as cx:
-        antes = dict(cx.execute(text("SELECT * FROM usuarios WHERE usuario='admin'")).mappings().one())
+        antes = dict(cx.execute(text("SELECT * FROM usuarios WHERE usuario='jperez'")).mappings().one())
     with pytest.raises(RuntimeError, match='otro rol'):
-        iniciar(c, usuario='admin')
+        iniciar(c, usuario='jperez')
     with c['engine'].connect() as cx:
-        assert dict(cx.execute(text("SELECT * FROM usuarios WHERE usuario='admin'")).mappings().one()) == antes
+        assert dict(cx.execute(text("SELECT * FROM usuarios WHERE usuario='jperez'")).mappings().one()) == antes
 
 
 def test_arranques_simultaneos_crean_una_sola_cuenta(contexto):
@@ -134,9 +137,9 @@ def test_sistemas_inicial_puede_dar_de_alta_usuarios(contexto):
     headers = {'Authorization': 'Bearer '+sesion['token']}
     assert api.get('/api/v1/gestion/roles', headers=headers).status_code == 200
     assert api.get('/api/v1/gestion/operacion', headers=headers).status_code == 403
-    usuario = c['usuario']+'-operador'
+    usuario = c['usuario']+'01'
     r = api.post('/api/v1/gestion/usuarios', headers=headers, json=dict(numEmpleado=usuario, nombre='Operador creado por Sistemas',
-        rol='Operador', estado='Activo', contrasena='Operador-Nuevo-2026'))
+        rol='Operador / Pruebas Funcionales', estado='Activo', contrasena='Operador-Nuevo-2026'))
     assert r.status_code == 201, r.text
     assert api.post('/api/v1/auth/login', json={'usuario': usuario, 'contrasena': 'Operador-Nuevo-2026'}).status_code == 200
 

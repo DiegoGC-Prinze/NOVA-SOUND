@@ -3,6 +3,7 @@
 Las mutaciones se ejecutan en una transacción y bloquean la caja/embarque.
 """
 import json
+from contextlib import contextmanager
 from datetime import date, datetime, time, timedelta
 
 from fastapi import HTTPException
@@ -13,6 +14,14 @@ from app.modules.almacen import repository as r
 from app.modules.almacen.auth import Actor, exigir_supervisor, exigir_operador
 
 CAPACIDADES_OFICIALES = {"NS-MINI": 12, "NS-SPORT": 8, "NS-PRO": 6, "NS-MAX": 4}
+
+
+@contextmanager
+def _escritura():
+    with engine.begin() as cx:
+        # Las fechas de Almacén se guardan en UTC y la interfaz las convierte a la hora de planta.
+        cx.execute(text("SET LOCAL TIME ZONE 'UTC'"))
+        yield cx
 
 
 def capacidad_modelo(nombre: str) -> int | None:
@@ -140,7 +149,7 @@ def disponibles(id_orden, buscar=None, limite=50, desplazamiento=0):
 
 def crear_caja(id_orden: int, actor: Actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         orden = r.obtener_orden(cx, id_orden)
         if orden is None:
             _error(404, "Orden de producción no encontrada")
@@ -155,7 +164,7 @@ def crear_caja(id_orden: int, actor: Actor):
 
 def agregar_unidad(id_caja, numero_serie, actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         caja = _caja(cx, id_caja, bloqueo=True)
         if caja["estado"] != "EN_PROCESO" or caja["id_embarque"] is not None:
             _error(409, "Solo se pueden modificar cajas abiertas y no asignadas a embarque")
@@ -188,7 +197,7 @@ def agregar_unidad(id_caja, numero_serie, actor):
 
 def retirar_unidad(id_caja, id_unidad, actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         caja = _caja(cx, id_caja, bloqueo=True)
         if caja["estado"] != "EN_PROCESO" or caja["id_embarque"] is not None:
             _error(409, "La caja no está abierta")
@@ -210,7 +219,7 @@ def retirar_unidad(id_caja, id_unidad, actor):
 
 def cerrar_caja(id_caja, actor, motivo=None):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         caja = _caja(cx, id_caja, bloqueo=True)
         if caja["estado"] != "EN_PROCESO" or caja["id_embarque"] is not None:
             _error(409, "La caja no está abierta o ya está asignada")
@@ -227,7 +236,7 @@ def cerrar_caja(id_caja, actor, motivo=None):
 
 
 def solicitar_reapertura(id_caja, motivo, actor):
-    with engine.begin() as cx:
+    with _escritura() as cx:
         caja = _caja(cx, id_caja, bloqueo=True)
         if caja["estado"] != "CERRADA" or caja["id_embarque"] is not None:
             _error(409, "Solo cajas cerradas sin embarque pueden solicitar reapertura")
@@ -240,7 +249,7 @@ def solicitar_reapertura(id_caja, motivo, actor):
 
 def autorizar_reapertura(id_caja, id_autorizacion, actor):
     exigir_supervisor(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         caja = _caja(cx, id_caja, bloqueo=True)
         if caja["estado"] != "CERRADA" or caja["id_embarque"] is not None:
             _error(409, "Caja no elegible para reapertura")
@@ -286,7 +295,7 @@ def historial_embarque(id_embarque):
 
 def crear_embarque(id_orden, referencia, actor, destino=None, contenedor=None):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         orden = r.obtener_orden(cx, id_orden)
         if orden is None:
             _error(404, "Orden no encontrada")
@@ -300,7 +309,7 @@ def crear_embarque(id_orden, referencia, actor, destino=None, contenedor=None):
 
 def agregar_caja_embarque(id_embarque, id_caja, actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         embarque = _embarque(cx, id_embarque, bloqueo=True)
         if embarque["estado"] != "PREPARACION":
             _error(409, "El embarque ya salió")
@@ -320,9 +329,22 @@ def agregar_caja_embarque(id_embarque, id_caja, actor):
         return {**_embarque(cx, id_embarque), "cajas": r.cajas_embarque(cx, id_embarque)}
 
 
+def verificar_estiba(id_embarque, id_caja, actor):
+    exigir_operador(actor)
+    with _escritura() as cx:
+        _embarque(cx, id_embarque, bloqueo=True)
+        caja = _caja(cx, id_caja, bloqueo=True)
+        if caja["id_embarque"] != id_embarque:
+            _error(409, "La caja ya no pertenece al embarque")
+        if not caja["estiba_verificada"]:
+            r.auditoria(cx, actor.id_usuario, id_caja, "VERIFICAR_ESTIBA", "cajas",
+                        despues=f"Embarque={id_embarque}")
+        return {"mensaje": "Estiba verificada."}
+
+
 def registrar_salida(id_embarque, actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         embarque = _embarque(cx, id_embarque, bloqueo=True)
         if embarque["estado"] != "PREPARACION":
             _error(409, "El embarque no está en preparación")
@@ -383,7 +405,7 @@ def _leer_evento(texto: str | None) -> dict:
 
 def registrar_incidencia(id_caja, tipo, motivo, actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         _caja(cx, id_caja, bloqueo=True)
         r.auditoria(cx, actor.id_usuario, id_caja, "INCIDENCIA", "cajas",
                     despues=tipo.strip().upper(), motivo=motivo.strip())
@@ -401,7 +423,7 @@ def solicitudes_reapertura(id_caja):
 
 def quitar_caja_embarque(id_embarque, id_caja, actor):
     exigir_operador(actor)
-    with engine.begin() as cx:
+    with _escritura() as cx:
         embarque = _embarque(cx, id_embarque, bloqueo=True)
         if embarque["estado"] != "PREPARACION":
             _error(409, "No se pueden modificar embarques enviados")

@@ -14,8 +14,8 @@ COMPLETA = {k:'Aprobada' for k in ['encendido','audio','carga','bluetooth']}
 @pytest.fixture
 def flujo(datos):
     d = datos
-    nombre = 'qa_inspector_'+uuid4().hex[:10]
-    u = dict(numEmpleado=nombre,nombre=nombre,rol='Inspector de Calidad',estado='Activo',contrasena='Inspector-QA-2026')
+    nombre = '96'+str(uuid4().int)
+    u = dict(numEmpleado=nombre,nombre=nombre,rol='Calidad',estado='Activo',contrasena='Inspector-QA-2026')
     r = d['api'].post('/api/v1/gestion/usuarios',headers=d['headers']['admin'],json=u)
     assert r.status_code == 201,r.text
     sesion = d['api'].post('/api/v1/auth/login',json={'usuario':nombre,'contrasena':u['contrasena']})

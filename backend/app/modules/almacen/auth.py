@@ -77,13 +77,15 @@ def obtener_actor(
             permiso = 'cerrar-caja' if 'cerrar-caja' in (usuario['acciones'] or []) else 'reabrir-caja'
             # La solicitud se permite desde la consulta, aun cuando esta sea de solo lectura.
         elif ruta.endswith('/cerrar'):
-            pantallas, permiso = ['empaque/confirmar-cierre-de-caja', 'embarques/cierre-de-caja-escaneo', 'embarques/confirmacion-de-cierre-de-caja'], 'cerrar-caja'
+            pantallas, permiso = ['empaque/confirmar-cierre-de-caja', 'empaque/formar-caja'], 'cerrar-caja'
+        elif ruta.endswith('/estiba'):
+            pantallas = ['embarques/paquetes-en-embarcacion']
         elif ruta.endswith('/salida'):
-            pantallas, permiso = ['embarques/armar-embarque', 'embarques/paquetes-en-embarcacion'], 'confirmar-salida-de-embarque'
+            pantallas, permiso = ['embarques/armar-embarque'], 'confirmar-salida-de-embarque'
         elif '/embarques' in ruta:
-            pantallas = ['embarques/armar-embarque', 'embarques/paquetes-en-embarcacion']
+            pantallas = ['embarques/armar-embarque']
         elif ruta.endswith('/incidencias'):
-            pantallas = ['empaque/consultar-caja', 'embarques/cierre-de-caja-escaneo']
+            pantallas = ['empaque/consultar-caja']
         else:
             pantallas = ['empaque/formar-caja']
         permitido = False
@@ -107,7 +109,7 @@ def exigir_almacen(actor: Actor) -> None:
         return
     # Calidad y producción no deben poder modificar cajas mediante sus propias cuentas.
     if actor.rol.strip().casefold() not in {
-        "administrador", "almacén/empaque", "almacén", "almacen", "empaque", "supervisor de almacén", "supervisor almacen"
+        "administrador", "almacén/empaque", "almacén", "almacen", "empaque", "supervisor de almacén", "supervisor almacen", "embarques"
     }:
         raise HTTPException(status_code=403, detail="Se requiere rol de Almacén o Administrador")
 
@@ -118,7 +120,7 @@ def exigir_supervisor(actor: Actor) -> None:
             raise HTTPException(403, 'Se requiere permiso para reabrir cajas.')
         return
     if actor.rol.strip().casefold() not in {
-        "administrador", "supervisor de almacén", "supervisor almacen"
+        "administrador", "supervisor de almacén", "supervisor almacen", "embarques"
     }:
         raise HTTPException(status_code=403, detail="Se requiere supervisor de Almacén")
 
@@ -128,5 +130,5 @@ def exigir_operador(actor: Actor) -> None:
         if not any(p.startswith(('empaque/', 'embarques/')) and v == 'acciona' for p, v in actor.permisos.items()):
             raise HTTPException(403, 'Se requiere permiso de escritura en Almacén.')
         return
-    if actor.rol.strip().casefold() not in {'administrador', 'almacén/empaque', 'almacén', 'almacen', 'empaque'}:
+    if actor.rol.strip().casefold() not in {'administrador', 'almacén/empaque', 'almacén', 'almacen', 'empaque', 'embarques'}:
         raise HTTPException(status_code=403, detail='Se requiere un operador de Almacén para esta acción.')

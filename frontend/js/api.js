@@ -144,6 +144,11 @@ export const reporteCalidad = (filtros) => (sesionReal() ? calidadReal.reportes(
 
 // ---------------------------------------------------------------- Tickets de soporte
 // Se llama SIN sesión (la persona no puede entrar). Devuelve { id }.
+export const empleadoParaTicket = (numero, modo) => {
+  const ruta = `/tickets/empleado?numero=${encodeURIComponent(numero)}`;
+  return ['real', 'almacen'].includes(modo) ? gestion(ruta, { publico: true })
+    : USE_MOCKS ? mock.empleadoParaTicket(numero) : pedir(ruta, { publico: true });
+};
 export const levantarTicket = (datos, modo = 'demo') =>
   ['real', 'almacen'].includes(modo) ? gestion('/tickets', { metodo: 'POST', cuerpo: datos, publico: true }) : USE_MOCKS ? mock.levantarTicket(datos) : pedir('/tickets', { metodo: 'POST', cuerpo: datos, publico: true });
 export const tickets = () => (sesionReal() ? gestion('/tickets') : USE_MOCKS ? mock.tickets() : pedir('/tickets'));
@@ -167,6 +172,15 @@ export const guardarRol = (nombre, datos) =>
 // ---------------------------------------------------------------- Catálogos y parámetros
 // { modelos: { nombre: 'Modelos', items: [{codigo, nombre, estado}] }, lineas: {...}, … }
 export const catalogos = (area = 'sistemas') => (sesionReal() ? (area === 'sistemas' ? gestion('/catalogos') : calidadReal.catalogos()) : USE_MOCKS ? mock.catalogos() : pedir('/catalogos'));
+export const guardarRolCatalogo = (datos, codigo = null) => {
+  const ruta = '/catalogos/roles' + (codigo ? `/${encodeURIComponent(codigo)}` : '');
+  const opciones = { metodo: codigo ? 'PUT' : 'POST', cuerpo: datos };
+  return sesionReal() ? gestion(ruta, opciones) : USE_MOCKS ? mock.guardarRolCatalogo(datos, codigo) : pedir(ruta, opciones);
+};
+export const eliminarRolCatalogo = codigo => {
+  const ruta = `/catalogos/roles/${encodeURIComponent(codigo)}`;
+  return sesionReal() ? gestion(ruta, { metodo: 'DELETE' }) : USE_MOCKS ? mock.eliminarRolCatalogo(codigo) : pedir(ruta, { metodo: 'DELETE' });
+};
 export const guardarElementoCatalogo = (tipo, elemento) =>
   sesionReal() ? gestion(`/catalogos/${encodeURIComponent(tipo)}`, { metodo: 'POST', cuerpo: elemento }) : USE_MOCKS ? mock.guardarElementoCatalogo(tipo, elemento) : pedir(`/catalogos/${encodeURIComponent(tipo)}`, { metodo: 'POST', cuerpo: elemento });
 export const cambiarEstadoCatalogo = (tipo, codigo, estado) =>

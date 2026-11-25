@@ -1,5 +1,6 @@
 import { iniciarOperacion, campo, boton, tabla, tarjeta, formulario, valor, enlace, exportar, esc, chipUnidad, aviso } from './operacion-comun.js';
 import { indicador, preguntar, barra } from '../componentes.js';
+import { fechaCorta } from '../ui.js';
 
 const accion = (nombre, texto, atributos = '') => boton(texto, { tipo: 'secundario', extra: `data-accion="${nombre}" ${atributos}` });
 const opcionesOrden = d => d.ordenes.map(o => ({ valor: o.id, texto: `${o.id} · ${o.modelo} · ${o.cliente}` }));
@@ -10,9 +11,44 @@ const colsCaja = [
 const colsEmbarque = [{ titulo: 'Embarque', campo: 'id' }, { titulo: 'Orden', campo: 'orden' }, { titulo: 'Cliente', campo: 'cliente' }, { titulo: 'Destino', campo: 'destino' }, { titulo: 'Contenedor', campo: 'contenedor' }, { titulo: 'Estado', campo: 'estado' }, { titulo: 'Cajas', texto: e => e.cantidadCajas ?? e.cajas.length }, { titulo: 'Salida', campo: 'fechaSalida' }];
 const historial = r => tabla({ filas: [...(r.auditoria || [])].reverse(), columnas: [{ titulo: 'Fecha', campo: 'fecha' }, { titulo: 'Hora', campo: 'hora' }, { titulo: 'Responsable', campo: 'quien' }, { titulo: 'Evento', campo: 'que' }, { titulo: 'Motivo', campo: 'motivo' }] });
 
+function graficasPorEstado(embarques) {
+  const grupos = [
+    { nombre: 'Entregados', color: '#2E7D32', tono: 'exito', estados: ['ENTREGADO', 'ENTREGADOS'] },
+    { nombre: 'Devueltos', color: '#C62828', tono: 'peligro', estados: ['DEVUELTO', 'DEVUELTOS'] },
+    { nombre: 'Pendientes', color: '#C28A00', estados: ['PENDIENTE', 'PENDIENTES'] },
+    { nombre: 'En proceso', color: '#0E6B52', estados: ['EN PROCESO', 'EN_PROCESO', 'PREPARANDO', 'PREPARACION', 'PREPARACIÓN'] },
+  ].map(grupo => ({
+    ...grupo,
+    cantidad: embarques.filter(e => grupo.estados.includes(String(e.estado ?? '').trim().toUpperCase())).length,
+  }));
+  const pasteles = grupos.map(({ nombre, cantidad, color }) => {
+    const porcentaje = embarques.length ? cantidad / embarques.length * 100 : 0;
+    return `
+      <figure class="flex flex-col items-center gap-3 text-center">
+        <figcaption class="font-semibold">${nombre}</figcaption>
+        <div aria-hidden="true" class="size-28 rounded-full" style="background: conic-gradient(${color} ${porcentaje}%, #E6EBEF 0)"></div>
+        <p class="text-sm"><strong>${cantidad}</strong> de ${embarques.length} embarques · ${porcentaje.toFixed(1)} %</p>
+      </figure>`;
+  }).join('');
+  const comparados = grupos.slice(0, 2);
+  const maximo = Math.max(1, ...comparados.map(g => g.cantidad));
+  const barras = comparados.map(({ nombre, cantidad, tono }) => `
+    <li>
+      <div class="mb-1 flex justify-between gap-2 text-sm"><span>${nombre}</span><strong>${cantidad}</strong></div>
+      ${barra(cantidad / maximo * 100, tono)}
+    </li>`).join('');
+  return tarjeta('Embarques por estado', `
+    <div class="grid grid-cols-2 gap-4 xl:grid-cols-4">${pasteles}</div>
+    <p class="mt-4 text-sm text-suave">Cada pastel compara su estado con el total filtrado. Un embarque enviado cuenta como entregado cuando tiene registrado el estado Entregado.</p>
+  `) + tarjeta('Entregados y devueltos', `<ul class="space-y-4">${barras}</ul>`);
+}
+
 export function iniciarAlmacen(id) {
   const params = new URLSearchParams(location.search);
-  let cajaId = params.get('caja') || '', embarqueId = params.get('embarque') || '', busqueda = '', filtro = { desde: '', hasta: '', estado: '', modelo: '' };
+  let cajaId = params.get('caja') || '';
+  let embarqueId = params.get('embarque') || '';
+  let busqueda = id.endsWith('/rastreo-de-contenedor') ? params.get('buscar') || '' : '';
+  let filtro = { desde: '', hasta: '', estado: '', modelo: '' };
   iniciarOperacion(id, async c => {
     const d = c.datos, vista = id.split('/')[1];
     const editaCaja = c.permite('empaque/formar-caja', 'cerrar-caja');
@@ -35,7 +71,9 @@ export function iniciarAlmacen(id) {
     if (vista === 'formar-caja') {
       const b = d.cajas.find(b => b.id === cajaId);
       c.vista.innerHTML = `${editaCaja ? tarjeta('Crear caja para una orden', formulario('form-nueva-caja', campo({ id: 'orden', etiqueta: 'Orden', opciones: opcionesOrden(d) }), boton('Crear caja', { enviar: true, id: 'nueva-caja' }))) : aviso('info', 'Tu rol solo puede consultar esta pantalla.')}
-        ${tarjeta('Cajas abiertas', tablaCajas(d.cajas.filter(b => b.estado === 'Abierta'), r => enlace(`pages/empaque/formar-caja.html?caja=${encodeURIComponent(r.id)}`, 'Continuar')))}<div id="caja-activa" class="space-y-4"></div>`;
+        ${tarjeta('Cajas abiertas', tabla({ filas: d.cajas.filter(b => b.estado === 'Abierta'), columnas: [
+          { titulo: 'Caja', html: r => enlace(`pages/empaque/formar-caja.html?caja=${encodeURIComponent(r.id)}`, r.id) }, ...colsCaja.slice(1),
+        ] }))}<div id="caja-activa" class="space-y-4"></div>`;
       if (editaCaja) c.evento('#form-nueva-caja', 'submit', () => c.escribir('crearCaja', { orden: valor('orden') }, 'Caja creada.', setCaja));
       if (!b) return;
       const disponibles = d.unidades.filter(u => u.orden === b.orden && u.modelo === b.modelo && (b.mezclaColores || u.color === b.color) && u.estado === 'LIBERADA' && !u.caja);
@@ -53,13 +91,11 @@ export function iniciarAlmacen(id) {
       }
       return;
     }
-    if (['consultar-caja', 'cierre-de-caja-escaneo', 'confirmacion-de-cierre-de-caja'].includes(vista)) {
+    if (vista === 'consultar-caja') {
       const b = d.cajas.find(b => b.id === cajaId);
-      const puedeCerrar = c.puedeAccionar && c.puede('cerrar-caja') && vista !== 'consultar-caja';
       const puedeReabrir = c.permite('empaque/consultar-caja', 'reabrir-caja');
       c.vista.innerHTML = tarjeta('Buscar caja', formulario('form-buscar', campo({ id: 'id-caja', etiqueta: 'Id de la caja', valor: cajaId, requerido: true }), boton('Buscar', { enviar: true }))) + `<div id="resultado" class="space-y-4">${b ? renderCaja(b) : aviso('info', cajaId ? 'No se encontró ninguna caja con ese identificador.' : 'Escribe o escanea el identificador de una caja creada en Empaque.')}</div>`;
       if (b) {
-        if (puedeCerrar && b.estado === 'Abierta') c.vista.insertAdjacentHTML('beforeend', accion('cerrar', 'Confirmar cierre de caja', `data-caja="${esc(b.id)}"`));
         if (puedeReabrir && !d.real && b.estado === 'Cerrada' && !b.embarque) c.vista.insertAdjacentHTML('beforeend', boton('Reabrir caja', { id: 'reabrir' }));
         if (d.real && b.estado === 'Cerrada' && !b.embarque) {
           const puedeSolicitar = c.puede('cerrar-caja') || c.puede('reabrir-caja');
@@ -69,7 +105,6 @@ export function iniciarAlmacen(id) {
             { titulo: 'Acción', html: s => puedeReabrir && s.estado === 'PENDIENTE' && s.id_usuario_solicita !== c.sesion.usuario.id ? boton('Autorizar reapertura', { extra: `data-autorizar-reapertura="${s.id_autorizacion}"` }) : '' },
           ] })));
         }
-        if (b.estado === 'Abierta' && editaCaja) c.vista.insertAdjacentHTML('beforeend', enlace(`pages/empaque/formar-caja.html?caja=${encodeURIComponent(b.id)}`, 'Continuar empaque'));
       }
       c.evento('#form-buscar', 'submit', () => { cajaId = valor('id-caja').toUpperCase(); history.replaceState(null, '', `?caja=${encodeURIComponent(cajaId)}`); return c.refrescar(); });
       conectarCierre();
@@ -98,7 +133,7 @@ export function iniciarAlmacen(id) {
       const asignadas = d.cajas.filter(b => e.cajas.includes(b.id));
       document.getElementById('embarque-activo').innerHTML = `${tarjeta(`Embarque ${e.id}`, tabla({ filas: [e], columnas: colsEmbarque }))}
         ${tarjeta('Cajas cerradas disponibles', tablaCajas(libres, b => editaEmbarque && preparando ? accion('asignar', 'Asignar caja', `data-caja="${esc(b.id)}"`) : ''))}
-        ${tarjeta('Cajas del embarque', tablaCajas(asignadas, b => verCaja(b) + (editaEmbarque && preparando ? accion('retirar', 'Retirar', `data-caja="${esc(b.id)}"`) : '')), { acciones: editaEmbarque && preparando ? boton('Confirmar salida de embarque', { id: 'btn-confirmar-emb' }) : '' })}${tarjeta('Historial del embarque', historial(e))}`;
+        ${tarjeta('Cajas del embarque', tablaCajas(asignadas, editaEmbarque && preparando ? b => accion('retirar', 'Retirar', `data-caja="${esc(b.id)}"`) : null), { acciones: editaEmbarque && preparando ? boton('Confirmar salida de embarque', { id: 'btn-confirmar-emb' }) : '' })}${tarjeta('Historial del embarque', historial(e))}`;
       if (editaEmbarque && preparando) {
         c.evento('[data-accion="asignar"]', 'click', (_ev, el) => c.escribir('asignarCaja', { caja: el.dataset.caja, embarque: e.id }, 'Caja asignada.'));
         c.evento('[data-accion="retirar"]', 'click', (_ev, el) => c.escribir('quitarCaja', { caja: el.dataset.caja, embarque: e.id }, 'Caja retirada del embarque.'));
@@ -106,26 +141,68 @@ export function iniciarAlmacen(id) {
       } return;
     }
     if (vista === 'rastreo-de-contenedor') {
-      const encontradas = busqueda ? d.embarques.filter(e => `${e.id} ${e.contenedor}`.toUpperCase().includes(busqueda.toUpperCase())) : [];
-      c.vista.innerHTML = tarjeta('Rastrear contenedor o embarque', formulario('form-rastreo', campo({ id: 'busqueda-contenedor', etiqueta: 'Contenedor o embarque', valor: busqueda, requerido: true }), boton('Buscar', { enviar: true }))) +
-        (busqueda ? tarjeta('Resultado del rastreo', tabla({ filas: encontradas, columnas: colsEmbarque })) + encontradas.map(e => tarjeta(`Eventos de ${e.id}`, historial(e))).join('') : aviso('info', 'Busca una referencia registrada al crear el embarque.'));
-      c.evento('#form-rastreo', 'submit', () => { busqueda = valor('busqueda-contenedor'); return c.refrescar(); }); return;
+      const exacto = d.embarques.find(e => e.id === busqueda);
+      const encontradas = exacto ? [exacto] : busqueda
+        ? d.embarques.filter(e => e.contenedor?.toUpperCase().includes(busqueda.toUpperCase()))
+        : [];
+      const rutas = encontradas.map(e => tarjeta(`Embarque ${e.id}`, `
+        <ol aria-label="Recorrido del embarque" class="relative grid grid-cols-2 gap-6 text-sm">
+          <li class="relative border-t-2 border-marca pt-3 before:absolute before:-top-1.5 before:left-0 before:size-2.5 before:rounded-full before:bg-marca">
+            <strong>Partida</strong><p>${e.fechaSalida ? fechaCorta(e.fechaSalida) : 'Salida pendiente'}</p>
+          </li>
+          <li class="relative border-t-2 border-borde pt-3 text-right before:absolute before:-top-1.5 before:right-0 before:size-2.5 before:rounded-full before:border-2 before:border-marca before:bg-white">
+            <strong>Destino</strong><p>${esc(e.destino || 'Sin destino registrado')}</p>
+          </li>
+        </ol>`)).join('');
+      c.vista.innerHTML = tarjeta('Rastrear contenedor o embarque', formulario('form-rastreo',
+        campo({ id: 'busqueda-contenedor', etiqueta: 'Contenedor o embarque', valor: busqueda, requerido: true }),
+        boton('Buscar', { enviar: true }))) + (rutas || aviso('info', busqueda ? 'No se encontró ese contenedor o embarque.' : 'Busca una referencia registrada al crear el embarque.'));
+      c.evento('#form-rastreo', 'submit', () => { busqueda = valor('busqueda-contenedor'); return c.refrescar(); });
+      return;
+    }
+    if (vista === 'inicio-de-empaque-panel-de-control') {
+      const abiertas = d.cajas.filter(b => b.estado === 'Abierta');
+      const cerradas = d.panel?.cajas_cerradas ?? d.cajas.filter(b => b.estado === 'Cerrada').length;
+      const pendientes = d.panel?.unidades_pendientes ?? d.unidades.filter(u => u.estado === 'LIBERADA' && !u.caja).length;
+      const columnas = [
+        { titulo: 'Caja', campo: 'id' }, { titulo: 'Cliente', campo: 'cliente' }, { titulo: 'Modelo', campo: 'modelo' },
+        { titulo: 'Progreso', texto: b => `${b.cantidad ?? b.unidades.length} / ${b.capacidad}` },
+        { titulo: 'Estado', campo: 'estado' }, { titulo: 'Acción', html: verCaja },
+      ];
+      c.vista.innerHTML = `
+        <div class="grid gap-3 sm:grid-cols-3">
+          ${indicador({ titulo: 'Cajas cerradas', valor: cerradas, tono: 'exito' })}
+          ${indicador({ titulo: 'Cajas en proceso', valor: d.panel?.cajas_en_proceso ?? abiertas.length })}
+          ${indicador({ titulo: 'Pendientes de empaque', valor: pendientes, tono: 'aviso' })}
+        </div>
+        ${tarjeta('Cajas en proceso', tabla({ filas: abiertas, columnas }))}
+        <div class="flex flex-wrap gap-2">
+          ${editaCaja ? enlace('pages/empaque/formar-caja.html', 'Formar caja') : ''}
+          ${c.sesion.permisos['empaque/consultar-caja'] ? enlace('pages/empaque/consultar-caja.html', 'Consultar caja') : ''}
+        </div>`;
+      return;
     }
     // Paneles, historial, reportes y gráficas consultan los mismos registros.
     const esEmbarque = id.startsWith('embarques/');
-    const lista = esEmbarque ? (vista === 'paquetes-en-embarcacion' ? d.cajas.filter(b => b.embarque) : d.embarques) : d.cajas;
+    const lista = esEmbarque ? d.embarques : d.cajas;
     const filas = lista.filter(r => (!busqueda || `${r.id} ${r.cliente} ${r.orden} ${r.embarque || ''}`.toLowerCase().includes(busqueda.toLowerCase())) && (!filtro.estado || r.estado === filtro.estado) && (!filtro.modelo || r.modelo === filtro.modelo) && (!filtro.desde || r.fecha >= filtro.desde) && (!filtro.hasta || r.fecha <= filtro.hasta));
-    const sonCajas = !esEmbarque || vista === 'paquetes-en-embarcacion';
-    const cols = sonCajas ? colsCaja : colsEmbarque;
+    const sonCajas = !esEmbarque;
+    const cols = sonCajas
+      ? vista === 'historial-de-cajas' ? [...colsCaja, { titulo: 'Fecha', campo: 'fecha' }, { titulo: 'Hora', texto: b => b.hora || b.auditoria?.[0]?.hora || '' }] : colsCaja
+      : vista === 'estado-del-embarque'
+        ? [{ titulo: 'Embarque', campo: 'id', html: e => c.sesion.permisos['embarques/rastreo-de-contenedor'] ? enlace(`pages/embarques/rastreo-de-contenedor.html?buscar=${encodeURIComponent(e.id)}`, e.id) : esc(e.id) }, ...colsEmbarque.slice(1)]
+        : colsEmbarque;
     const campos = campo({ id: 'f-buscar', etiqueta: 'Identificador, orden o cliente', valor: busqueda }) +
       campo({ id: 'f-estado', etiqueta: 'Estado', valor: filtro.estado, opciones: [{ valor: '', texto: 'Todos' }, ...(sonCajas ? ['Abierta', 'Cerrada', 'Embarcada'] : ['Preparando', 'Enviado'])] }) +
       campo({ id: 'f-desde', etiqueta: 'Desde', tipo: 'date', valor: filtro.desde }) + campo({ id: 'f-hasta', etiqueta: 'Hasta', tipo: 'date', valor: filtro.hasta }) +
       (sonCajas ? campo({ id: 'f-modelo', etiqueta: 'Modelo', valor: filtro.modelo, opciones: [{ valor: '', texto: 'Todos' }, ...Object.keys(d.parametros.capacidadCaja)] }) : '');
     c.vista.innerHTML = `${tarjeta('Filtros', formulario('form-filtros', campos, boton('Filtrar', { enviar: true }) + boton('Limpiar', { id: 'limpiar' }) + boton('Exportar CSV', { id: 'exportar' })))}
       <div class="grid gap-3 sm:grid-cols-3">${indicador({ titulo: 'Cajas abiertas', valor: d.cajas.filter(b => b.estado === 'Abierta').length })}${indicador({ titulo: 'Cajas cerradas', valor: d.cajas.filter(b => b.estado === 'Cerrada').length, tono: 'exito' })}${indicador({ titulo: 'Embarques enviados', valor: d.embarques.filter(e => e.estado === 'Enviado').length, tono: 'exito' })}</div>
-      ${tarjeta('Registros', sonCajas ? tablaCajas(filas, verCaja) : tabla({ filas, columnas: cols }))}`;
-    if (vista === 'inicio-de-empaque-panel-de-control' && editaCaja) c.vista.insertAdjacentHTML('beforeend', enlace('pages/empaque/formar-caja.html', 'Formar una caja'));
+      ${tarjeta('Registros', tabla({ filas, columnas: sonCajas ? [...cols, { titulo: 'Acción', html: verCaja }] : cols }))}`;
     if (vista === 'historial-de-cajas' && cajaId) { const b = d.cajas.find(b => b.id === cajaId); if (b) c.vista.insertAdjacentHTML('beforeend', tarjeta(`Historial de ${b.id}`, historial(b))); }
+    if (vista === 'grafica-de-embarques') {
+      c.vista.insertAdjacentHTML('beforeend', graficasPorEstado(filas));
+    }
     if (vista === 'grafica-de-embarques' || vista === 'reportes-de-empaque') {
       const grupos = [...new Set(filas.map(f => f.cliente))].map(cliente => ({ cliente, cantidad: filas.filter(f => f.cliente === cliente).length }));
       const max = Math.max(1, ...grupos.map(g => g.cantidad));
