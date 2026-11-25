@@ -1,4 +1,5 @@
 import { iniciarOperacion, campo, boton, tabla, tarjeta, formulario, valor, enlace, columnasUnidad, exportar, esc, chipUnidad, aviso } from './operacion-comun.js';
+import { consultarOperacion } from '../api.js';
 import { indicador } from '../componentes.js';
 import { fechaRelativa } from '../ui.js';
 
@@ -6,14 +7,24 @@ const PRUEBAS = { encendido: 'Encendido', audio: 'Audio', carga: 'Carga', blueto
 export function iniciarPruebas(id) {
   let consulta = new URLSearchParams(location.search).get('unidad') || '';
   let filtros = { serie: '', modelo: '', estado: '', desde: '', hasta: '' };
+  const vista = id.split('/')[1];
+  let pagina = 1;
   iniciarOperacion(id, async c => {
-    const d = c.datos, vista = id.split('/')[1];
+    const d = c.datos;
+    const navegacion = d.real && (d.total > d.limite || pagina > 1) ? `<nav aria-label="Páginas de pruebas" class="flex items-center gap-3">
+      ${boton('Anterior', { id: 'pag-ant', extra: pagina > 1 ? '' : 'disabled' })}
+      <span>Página ${pagina}</span>
+      ${boton('Siguiente', { id: 'pag-sig', extra: pagina * d.limite < d.total ? '' : 'disabled' })}
+    </nav>` : '';
     const linkPrueba = u => c.sesion.permisos['prueba-funcional/registro-de-pruebas-funcionales'] && ['ENSAMBLADA', 'FALLA_FUNCIONAL'].includes(u.estado) ? enlace(`pages/prueba-funcional/registro-de-pruebas-funcionales.html?unidad=${encodeURIComponent(u.serie)}`, 'Registrar prueba') : '';
     const buscar = () => formulario('form-buscar', campo({ id: 'pf-buscar', etiqueta: 'Serie o lote', valor: consulta, requerido: true, placeholder: 'Escanea o escribe el código' }), boton('Buscar', { enviar: true }));
     if (vista === 'escanear-pieza-o-lote') {
       const encontradas = consulta ? d.unidades.filter(u => u.serie.toUpperCase() === consulta.toUpperCase() || u.lote.toUpperCase() === consulta.toUpperCase()) : [];
-      c.vista.innerHTML = `${tarjeta('Escanear pieza o lote', buscar())}${consulta ? tarjeta('Unidades encontradas', tabla({ filas: encontradas, columnas: [...columnasUnidad, { titulo: 'Acción', html: linkPrueba }], vacio: 'No se encontró ese código. Registra primero la unidad en Producción.' })) : aviso('info', 'Las unidades registradas en Producción aparecen aquí automáticamente.')}`;
-      c.evento('#form-buscar', 'submit', () => { consulta = valor('pf-buscar'); return c.refrescar(); }); return;
+      c.vista.innerHTML = `${tarjeta('Escanear pieza o lote', buscar())}${consulta ? tarjeta('Unidades encontradas', tabla({ filas: encontradas, columnas: [...columnasUnidad, { titulo: 'Acción', html: linkPrueba }], vacio: 'No se encontró ese código. Registra primero la unidad en Producción.' })) : aviso('info', 'Las unidades registradas en Producción aparecen aquí automáticamente.')}${navegacion}`;
+      c.evento('#form-buscar', 'submit', () => { pagina = 1; consulta = valor('pf-buscar'); return c.refrescar(); });
+      c.evento('#pag-ant', 'click', () => { pagina -= 1; return c.refrescar(); });
+      c.evento('#pag-sig', 'click', () => { pagina += 1; return c.refrescar(); });
+      return;
     }
     if (vista === 'registro-de-pruebas-funcionales') {
       const u = d.unidades.find(u => u.serie.toUpperCase() === consulta.toUpperCase());
@@ -36,20 +47,33 @@ export function iniciarPruebas(id) {
       }); return;
     }
     const esCola = vista === 'unidades-por-probar';
-    const iniciales = d.unidades.filter(u => Object.keys(u.prueba || {}).length && !d.pruebas.some(p => p.serie === u.serie)).map(u => {
+    const iniciales = d.real ? [] : d.unidades.filter(u => Object.keys(u.prueba || {}).length && !d.pruebas.some(p => p.serie === u.serie)).map(u => {
       const h = u.historial.find(h => h.area === 'Prueba funcional');
       return { serie: u.serie, lote: u.lote, modelo: u.modelo, linea: u.linea, fecha: h?.fecha || fechaRelativa(-(h?.dia ?? u.dia)), hora: h?.hora || u.hora, usuario: h?.usuario || 'Registro de ejemplo', resultado: Object.values(u.prueba).includes('Falla') ? 'Rechazada' : 'Aprobada' };
     });
     const lista = esCola ? d.unidades.filter(u => ['ENSAMBLADA', 'FALLA_FUNCIONAL'].includes(u.estado)) : [...iniciales, ...d.pruebas].reverse();
-    const filas = lista.filter(u => (!filtros.serie || `${u.serie} ${u.lote}`.toLowerCase().includes(filtros.serie.toLowerCase())) && (!filtros.modelo || u.modelo === filtros.modelo) && (!filtros.estado || (u.estado || u.resultado) === filtros.estado) && (!filtros.desde || u.fecha >= filtros.desde) && (!filtros.hasta || u.fecha <= filtros.hasta));
+    const filas = d.real ? (esCola ? d.unidades : d.pruebas) : lista.filter(u => (!filtros.serie || `${u.serie} ${u.lote}`.toLowerCase().includes(filtros.serie.toLowerCase())) && (!filtros.modelo || u.modelo === filtros.modelo) && (!filtros.estado || (u.estado || u.resultado) === filtros.estado) && (!filtros.desde || u.fecha >= filtros.desde) && (!filtros.hasta || u.fecha <= filtros.hasta));
     const cols = esCola ? [...columnasUnidad, { titulo: 'Acción', html: linkPrueba }] : [{ titulo: 'Fecha', campo: 'fecha' }, { titulo: 'Hora', campo: 'hora' }, { titulo: 'Serie', campo: 'serie' }, { titulo: 'Modelo', campo: 'modelo' }, { titulo: 'Lote', campo: 'lote' }, { titulo: 'Resultado', campo: 'resultado' }, { titulo: 'Responsable', campo: 'usuario' }, { titulo: 'Observaciones', campo: 'observaciones' }];
     const campos = campo({ id: 'f-serie', etiqueta: 'Serie o lote', valor: filtros.serie }) + campo({ id: 'f-modelo', etiqueta: 'Modelo', valor: filtros.modelo, opciones: [{ valor: '', texto: 'Todos' }, ...Object.keys(d.parametros.capacidadCaja)] }) +
       campo({ id: 'f-estado', etiqueta: 'Estado', valor: filtros.estado, opciones: [{ valor: '', texto: 'Todos' }, ...(esCola ? ['ENSAMBLADA', 'FALLA_FUNCIONAL'] : ['Aprobada', 'Rechazada'])] }) +
       (esCola ? '' : campo({ id: 'f-desde', etiqueta: 'Desde', tipo: 'date', valor: filtros.desde }) + campo({ id: 'f-hasta', etiqueta: 'Hasta', tipo: 'date', valor: filtros.hasta }));
     c.vista.innerHTML = `${tarjeta('Filtros', formulario('form-filtros', campos, boton('Filtrar', { enviar: true }) + boton('Limpiar', { id: 'limpiar' }) + boton('Exportar CSV', { id: 'exportar' })))}
-      <div class="grid gap-3 sm:grid-cols-3">${indicador({ titulo: esCola ? 'Pendientes' : 'Pruebas listadas', valor: filas.length })}${indicador({ titulo: d.real ? 'Pruebas aprobadas' : 'Aprobadas en esta demo', valor: d.pruebas.filter(p => p.resultado === 'Aprobada').length, tono: 'exito' })}${indicador({ titulo: 'Con falla funcional', valor: d.unidades.filter(u => u.estado === 'FALLA_FUNCIONAL').length, tono: 'aviso' })}</div>${tarjeta(esCola ? 'Unidades por probar' : 'Historial de pruebas', tabla({ filas, columnas: cols }))}`;
-    c.evento('#form-filtros', 'submit', () => { if (valor('f-desde') && valor('f-hasta') && valor('f-desde') > valor('f-hasta')) throw new Error('La fecha inicial no puede ser posterior a la final.'); filtros = { serie: valor('f-serie'), modelo: valor('f-modelo'), estado: valor('f-estado'), desde: valor('f-desde'), hasta: valor('f-hasta') }; return c.refrescar(); });
-    c.evento('#limpiar', 'click', () => { filtros = { serie: '', modelo: '', estado: '', desde: '', hasta: '' }; return c.refrescar(); });
-    c.evento('#exportar', 'click', () => exportar('pruebas-funcionales.csv', filas, cols.filter(c => c.campo)));
-  });
+      <div class="grid gap-3 sm:grid-cols-3">${indicador({ titulo: esCola ? 'Pendientes' : 'Pruebas listadas', valor: d.total ?? filas.length })}${indicador({ titulo: d.real ? 'Pruebas aprobadas' : 'Aprobadas en esta demo', valor: d.resumen?.aprobadas ?? d.pruebas.filter(p => p.resultado === 'Aprobada').length, tono: 'exito' })}${indicador({ titulo: 'Con falla funcional', valor: d.resumen?.fallas ?? d.unidades.filter(u => u.estado === 'FALLA_FUNCIONAL').length, tono: 'aviso' })}</div>${tarjeta(esCola ? 'Unidades por probar' : 'Historial de pruebas', tabla({ filas, columnas: cols }))}
+      ${navegacion}`;
+    c.evento('#form-filtros', 'submit', () => { if (valor('f-desde') && valor('f-hasta') && valor('f-desde') > valor('f-hasta')) throw new Error('La fecha inicial no puede ser posterior a la final.'); pagina = 1; filtros = { serie: valor('f-serie'), modelo: valor('f-modelo'), estado: valor('f-estado'), desde: valor('f-desde'), hasta: valor('f-hasta') }; return c.refrescar(); });
+    c.evento('#limpiar', 'click', () => { pagina = 1; filtros = { serie: '', modelo: '', estado: '', desde: '', hasta: '' }; return c.refrescar(); });
+    c.evento('#pag-ant', 'click', () => { pagina -= 1; return c.refrescar(); });
+    c.evento('#pag-sig', 'click', () => { pagina += 1; return c.refrescar(); });
+    c.evento('#exportar', 'click', async () => {
+      const registros = d.real ? [] : filas;
+      if (d.real) {
+        const criterios = { ...filtros, limite: 1000 };
+        for (let n = 1; (n - 1) * criterios.limite < d.total; n += 1) {
+          const lote = await consultarOperacion('prueba-funcional', { vista, filtros: { ...criterios, pagina: n } });
+          registros.push(...(esCola ? lote.unidades : lote.pruebas));
+        }
+      }
+      exportar('pruebas-funcionales.csv', registros, cols.filter(c => c.campo));
+    });
+  }, { contexto: () => ({ vista, filtros: { ...filtros, consulta, pagina } }) });
 }

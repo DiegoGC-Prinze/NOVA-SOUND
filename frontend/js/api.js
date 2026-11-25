@@ -194,5 +194,9 @@ export const guardarParametros = (datos) => (sesionReal() ? gestion('/parametros
 
 // Contrato común de las pantallas operativas. La demo funciona sin servidor de API.
 const almacenReal = area => sesionReal() && ['empaque', 'embarques'].includes(area);
-export const consultarOperacion = (area, contexto = {}) => almacenReal(area) ? consultarAlmacen(contexto) : sesionReal() && area === 'prueba-funcional' ? pedir('/api/v1/pruebas/operacion') : sesionReal() && area === 'produccion' ? gestion('/operacion') : USE_MOCKS ? mockOperacion.consultarOperacion() : pedir('/operacion');
+export const consultarOperacion = (area, contexto = {}) => almacenReal(area) ? consultarAlmacen(contexto) : sesionReal() && area === 'prueba-funcional' ? (
+  contexto.vista
+    ? pedir(`/api/v1/pruebas/vista/${encodeURIComponent(contexto.vista)}?${new URLSearchParams(Object.entries(contexto.filtros || {}).filter(([, valor]) => valor !== ''))}`)
+    : pedir('/api/v1/pruebas/operacion')
+) : sesionReal() && area === 'produccion' ? gestion('/operacion') : USE_MOCKS ? mockOperacion.consultarOperacion() : pedir('/operacion');
 export const operar = (accion, datos, area) => almacenReal(area) ? operarAlmacen(accion, datos) : sesionReal() && area === 'prueba-funcional' ? (accion === 'guardarPrueba' ? pedir('/api/v1/pruebas/resultado', { metodo: 'POST', cuerpo: datos }) : Promise.reject(new ErrorApi('Operacion de pruebas no valida.', 404))) : sesionReal() && area === 'produccion' ? gestion(`/operacion/${encodeURIComponent(accion)}`, { metodo: 'POST', cuerpo: datos }) : USE_MOCKS ? mockOperacion.operar(accion, datos) : pedir(`/operacion/${encodeURIComponent(accion)}`, { metodo: 'POST', cuerpo: datos });
