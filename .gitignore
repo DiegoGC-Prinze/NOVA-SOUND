@@ -239,3 +239,9 @@ dist/
 
 # Resultados generados por el simulador
 /resultados/
+
+# Archivos locales y respaldos sensibles
+/respaldos/
+*.dump
+*.zip
+.env.simulacion
