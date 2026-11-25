@@ -52,3 +52,15 @@ def test_endpoint_antiguo_delega_en_almacen(monkeypatch):
     api = TestClient(main.app)
     assert api.get("/api/cajas/7").json() == {"id_caja": 7, "unidades": []}
     assert api.get("/api/cajas/CX-invalida").status_code == 422
+
+
+def test_frontend_revalida_html_y_modulos_en_cada_carga():
+    api = TestClient(main.app)
+    for ruta in ('/', '/pages/sistemas/catalogos.html', '/js/api.js?v=roles-catalogo-1'):
+        respuesta = api.get(ruta)
+        assert respuesta.status_code == 200
+        assert respuesta.headers['cache-control'] == 'no-cache'
+        sin_cambios = api.get(ruta, headers={'If-None-Match': respuesta.headers['etag']})
+        assert sin_cambios.status_code == 304
+        assert sin_cambios.headers['cache-control'] == 'no-cache'
+    assert 'cache-control' not in api.get('/api/v1').headers

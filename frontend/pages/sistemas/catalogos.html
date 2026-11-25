@@ -8,7 +8,26 @@
 </head>
 <body>
   <header id="barra-superior" class="sticky top-0 z-30"></header>
-  <main id="contenido" class="mx-auto w-full max-w-[1400px] px-6 py-5"></main>
-  <script type="module" src="../../js/pantallas/sistemas-catalogos.js"></script>
+  <main id="contenido" class="mx-auto w-full max-w-[1400px] px-6 py-5">
+    <p role="status">Cargando Catálogos…</p>
+    <noscript>Activa JavaScript en el navegador para consultar los catálogos.</noscript>
+  </main>
+  <script type="module">
+    try {
+      await import('../../js/pantallas/sistemas-catalogos.js');
+    } catch (error) {
+      console.error('No se pudo iniciar Catálogos.', error);
+      const contenido = document.getElementById('contenido');
+      contenido.innerHTML = `
+        <section class="tarjeta p-6" role="alert">
+          <h1>No se pudo cargar Catálogos</h1>
+          <p class="mt-2">Recarga la página. Si el problema continúa, comparte este mensaje con Sistemas:</p>
+          <p id="error-carga" class="mt-3 break-words"></p>
+          <button id="reintentar-carga" type="button" class="btn btn-principal mt-4">Reintentar</button>
+        </section>`;
+      document.getElementById('error-carga').textContent = error.message || 'Error al cargar la pantalla.';
+      document.getElementById('reintentar-carga').addEventListener('click', () => location.reload());
+    }
+  </script>
 </body>
 </html>

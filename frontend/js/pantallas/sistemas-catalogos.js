@@ -4,7 +4,7 @@
 // Un elemento no se borra: se desactiva, para no perder el historial.
 
 import { montarPagina } from '../layout.js';
-import { catalogos, guardarElementoCatalogo, cambiarEstadoCatalogo, guardarRolCatalogo, eliminarRolCatalogo } from '../api.js';
+import { catalogos, guardarElementoCatalogo, cambiarEstadoCatalogo, guardarRolCatalogo, eliminarRolCatalogo } from '../api.js?v=roles-catalogo-1';
 import { encabezado, tarjeta, tabla, chip, campo, marcarError, boton, aviso, cargarEn, mostrarAviso, preguntar } from '../componentes.js';
 import { esc } from '../ui.js';
 

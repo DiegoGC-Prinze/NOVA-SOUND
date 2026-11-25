@@ -124,7 +124,16 @@ if os.getenv("NOVA_SIMULATION_MODE") == "1":
             request.state.sim_fecha = dia
         return await call_next(request)
 
+class ArchivosFrontend(StaticFiles):
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        # Los archivos no tienen nombres con hash: revalidar en cada carga.
+        if Path(path).suffix in {'', '.html', '.js', '.mjs', '.css'}:
+            response.headers['Cache-Control'] = 'no-cache'
+        return response
+
+
 # Registrar el frontend AL FINAL para conservar la prioridad de /api y /docs.
 FRONTEND_DIR = Path(os.getenv("FRONTEND_DIR", str(Path(__file__).resolve().parents[2] / "frontend")))
 if FRONTEND_DIR.is_dir():
-    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
+    app.mount("/", ArchivosFrontend(directory=FRONTEND_DIR, html=True), name="frontend")
