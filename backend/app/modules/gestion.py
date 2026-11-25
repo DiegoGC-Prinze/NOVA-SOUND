@@ -210,6 +210,16 @@ def catalogo_activo(cx, tipo, valor):
     return item
 
 
+def reservar_serie(cx, fecha):
+    # La secuencia de PostgreSQL reserva un numero distinto incluso entre estaciones.
+    while True:
+        uid = ejecutar(cx, "SELECT nextval(pg_get_serial_sequence('unidades','id_unidad'))").scalar_one()
+        serie = f'NS-{fecha:%Y%m%d}-{uid:08d}'
+        ejecutar(cx, 'SELECT pg_advisory_xact_lock(hashtextextended(:clave,0))', clave='serie:'+serie.casefold())
+        if not ejecutar(cx, 'SELECT 1 FROM unidades WHERE upper(numero_serie)=upper(:s)', s=serie).first():
+            return uid, serie
+
+
 @router.post('/operacion/{accion}')
 def operar_produccion(accion: str, datos: dict, request: Request, actor=Depends(actor_actual)):
     reglas = {'registrarUnidad': ('registrar-produccion', 'registrar-produccion'),
@@ -254,11 +264,15 @@ def operar_produccion(accion: str, datos: dict, request: Request, actor=Depends(
                 error(409, 'El turno está cerrado. Solicita su reapertura a Gerencia.')
             catalogo_activo(cx, 'modelos', orden['id_modelo'])
             catalogo_activo(cx, 'clientes', orden['id_cliente'])
-            serie = requerido(datos, 'serie', 100)
-            ejecutar(cx, 'SELECT pg_advisory_xact_lock(hashtextextended(:clave,0))', clave='serie:'+serie.casefold())
-            if ejecutar(cx, 'SELECT 1 FROM unidades WHERE upper(numero_serie)=upper(:s)', s=serie).first():
-                error(409, 'Ya existe una unidad con ese número de serie.')
-            codigo = requerido(datos, 'lote', 100)
+            id_reservado = None
+            if str(datos.get('serie') or '').strip():
+                serie = requerido(datos, 'serie', 100)
+                ejecutar(cx, 'SELECT pg_advisory_xact_lock(hashtextextended(:clave,0))', clave='serie:'+serie.casefold())
+                if ejecutar(cx, 'SELECT 1 FROM unidades WHERE upper(numero_serie)=upper(:s)', s=serie).first():
+                    error(409, 'Ya existe una unidad con ese número de serie.')
+            else:
+                id_reservado, serie = reservar_serie(cx, today)
+            codigo = requerido(datos, 'lote', 100) if str(datos.get('lote') or '').strip() else f'L-{today:%Y%m%d}-OP{orden["id_orden"]}-T{turno}'
             # Bloqueo adicional: el mismo código no puede crearse para órdenes diferentes.
             ejecutar(cx, 'SELECT pg_advisory_xact_lock(hashtextextended(:clave,0))', clave='lote:'+codigo.casefold())
             lote = uno(cx, 'SELECT * FROM lote WHERE lower(codigo)=lower(:c) FOR UPDATE', c=codigo)
@@ -272,13 +286,15 @@ def operar_produccion(accion: str, datos: dict, request: Request, actor=Depends(
                 lid = ejecutar(cx, '''INSERT INTO lote(id_orden,cantidad_acordada,estado,codigo,fecha_creacion)
                     VALUES (:o,:n,'EN_PROCESO',:c,''' + fecha_sql + ') RETURNING id_lote',
                     o=orden['id_orden'], n=orden['cantidad'], c=codigo, fecha_operativa=fecha_operativa).scalar_one()
-            uid = ejecutar(cx, '''INSERT INTO unidades(id_color,id_linea,id_turno,id_lote,estado,numero_serie,id_usuario_registro,fecha_hora)
-                VALUES (:color,:linea,:turno,:lote,'ENSAMBLADA',:serie,:u,''' + fecha_sql + ') RETURNING id_unidad',
-                color=orden['id_color'], linea=linea['id'], turno=turno, lote=lid, serie=serie, u=actor['id_usuario'], fecha_operativa=fecha_operativa).scalar_one()
+            uid = ejecutar(cx, '''INSERT INTO unidades(id_unidad,id_color,id_linea,id_turno,id_lote,estado,numero_serie,id_usuario_registro,fecha_hora)
+                VALUES (COALESCE(:id_reservado,nextval(pg_get_serial_sequence('unidades','id_unidad'))),
+                :color,:linea,:turno,:lote,'ENSAMBLADA',:serie,:u,''' + fecha_sql + ') RETURNING id_unidad',
+                id_reservado=id_reservado, color=orden['id_color'], linea=linea['id'], turno=turno, lote=lid,
+                serie=serie, u=actor['id_usuario'], fecha_operativa=fecha_operativa).scalar_one()
             ejecutar(cx, '''INSERT INTO ensamble(id_usuario,id_turno,id_linea,id_lote,cantidad,fecha_ensamble)
                 VALUES (:u,:t,:l,:lo,1,''' + fecha_sql + ')', u=actor['id_usuario'], t=turno, l=linea['id'], lo=lid, fecha_operativa=fecha_operativa)
             auditar(cx, actor, 'unidades', uid, 'REGISTRAR_PRODUCCION', despues={'serie': serie, 'estado': 'ENSAMBLADA'})
-            return {'ok': True, 'id': uid, 'serie': serie}
+            return {'ok': True, 'id': uid, 'serie': serie, 'lote': codigo}
         if accion == 'cerrarTurno':
             if cierre and cierre['estado'] == 'Cerrado':
                 error(409, 'Este turno ya está cerrado.')

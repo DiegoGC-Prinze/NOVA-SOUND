@@ -60,7 +60,7 @@ try {
   await ir('index.html');
   await evaluar('localStorage.clear(); sessionStorage.clear()'.replace(';', ','));
   const completo = { encendido: 'Aprobada', audio: 'Aprobada', carga: 'Aprobada', bluetooth: 'Aprobada' };
-  let caja, embarque, solicitud;
+  let caja, embarque, solicitud, serieRegistrada;
   await prueba('Login desde formulario y rechazo de cuentas inválidas', async () => {
     await ir('index.html');
     await llenar('#modo-login', 'demo');
@@ -85,27 +85,34 @@ try {
   });
   await prueba('Registro desde formulario, persistencia y cola compartida', async () => {
     await entrar('1001'); await ir('pages/produccion/registrar-produccion.html');
-    await llenar('#rp-lote', 'L-TEST'); await llenar('#rp-serie', 'NOVA-TEST-001'); await click('#btn-guardar-prod');
-    await esperar("document.querySelector('tbody')?.innerText.includes('NOVA-TEST-001')");
-    await ir('pages/prueba-funcional/unidades-por-probar.html'); assert.match(await texto(), /NOVA-TEST-001/);
-    await ir('pages/produccion/registrar-produccion.html'); assert.match(await texto(), /NOVA-TEST-001/);
-    assert.equal((await api('unidadPorSerie','NOVA-TEST-001')).estado, 'ENSAMBLADA');
+    assert.ok(await evaluar("document.querySelector('#rp-serie').readOnly && document.querySelector('#rp-lote').readOnly"));
+    await click('#btn-guardar-prod');
+    await esperar("document.querySelector('#rp-serie')?.value.startsWith('NS-')");
+    serieRegistrada=await evaluar("document.querySelector('#rp-serie').value");
+    assert.match(serieRegistrada,/^NS-\d{8}-\d{8,}$/);
+    const lote=await evaluar("document.querySelector('#rp-lote').value");
+    await click('#btn-guardar-prod');
+    await esperar(`!!document.querySelector('#rp-serie')?.value && document.querySelector('#rp-serie').value!==${JSON.stringify(serieRegistrada)}`);
+    assert.equal(await evaluar("document.querySelector('#rp-lote').value"),lote);
+    await ir('pages/prueba-funcional/unidades-por-probar.html'); assert.ok((await texto()).includes(serieRegistrada));
+    await ir('pages/produccion/registrar-produccion.html'); assert.ok((await texto()).includes(serieRegistrada));
+    assert.equal((await api('unidadPorSerie',serieRegistrada)).estado, 'ENSAMBLADA');
   });
   await prueba('Validaciones visibles, serie duplicada y escritura simultánea', async () => {
-    await click('#btn-guardar-prod'); await esperar("!!document.querySelector('#error-operacion')?.innerText");
-    assert.equal((await rechazo('operar', 'registrarUnidad', { serie:'NOVA-TEST-001', lote:'L-TEST', orden:'OP-1041', turno:1 })).estado, 409);
+    assert.equal((await rechazo('operar','registrarUnidad',{orden:'OP-1041',turno:0})).estado,400);
+    assert.equal((await rechazo('operar', 'registrarUnidad', { serie:serieRegistrada, lote:'L-TEST', orden:'OP-1041', turno:1 })).estado, 409);
     const r = await evaluar("Promise.allSettled([1,2].map(()=>import('/js/api.js').then(a=>a.operar('registrarUnidad',{serie:'NOVA-TEST-RACE',lote:'L-TEST',orden:'OP-1041',turno:1})))).then(rs=>rs.map(r=>r.status))");
     assert.equal(r.filter(s=>s==='fulfilled').length,1);
   });
   await prueba('Pruebas incompletas rechazadas; aprobación llega a Calidad', async () => {
-    await rechazo('operar','guardarPrueba',{serie:'NOVA-TEST-001',prueba:{encendido:'Aprobada'}});
-    await ir('pages/prueba-funcional/registro-de-pruebas-funcionales.html?unidad=NOVA-TEST-001');
+    await rechazo('operar','guardarPrueba',{serie:serieRegistrada,prueba:{encendido:'Aprobada'}});
+    await ir('pages/prueba-funcional/registro-de-pruebas-funcionales.html?unidad='+encodeURIComponent(serieRegistrada));
     for (const k of Object.keys(completo)) await click(`input[name="prueba-${k}"][value="Aprobada"]`);
     await click('#btn-guardar'); await esperar("document.querySelector('#vista-operacion')?.innerText.includes('Resultado registrado')");
-    await entrar('3001'); assert.ok((await api('resumenCalidad',{})).pendientes.some(u=>u.serie==='NOVA-TEST-001'));
-    await ir('pages/calidad/inspeccion-de-unidad.html?serie=NOVA-TEST-001',1000);
+    await entrar('3001'); assert.ok((await api('resumenCalidad',{})).pendientes.some(u=>u.serie===serieRegistrada));
+    await ir('pages/calidad/inspeccion-de-unidad.html?serie='+encodeURIComponent(serieRegistrada),1000);
     await click('input[name="disposicion"][value="LIBERADA"]'); await click('#guardar'); await sleep(650);
-    assert.equal((await api('unidadPorSerie','NOVA-TEST-001')).estado,'LIBERADA');
+    assert.equal((await api('unidadPorSerie',serieRegistrada)).estado,'LIBERADA');
   });
   await prueba('Fallas funcionales persisten y exigen observaciones', async () => {
     await entrar('1001'); await api('operar','registrarUnidad',{serie:'NOVA-TEST-FAIL',lote:'L-TEST',orden:'OP-1041',turno:1});
@@ -120,15 +127,15 @@ try {
     await entrar('9001'); const p=await api('parametros'); await api('guardarParametros',{capacidadCaja:{...p.capacidadCaja,'NS-MINI':1},motivo:'Prueba de capacidad compartida'});
     await entrar('4001'); caja=await api('operar','crearCaja',{orden:'OP-1041'}); assert.equal(caja.capacidad,1);
     await ir('pages/empaque/formar-caja.html?caja='+caja.id); assert.match(await texto(),new RegExp(caja.id));
-    await llenar('#buscar','NOVA-TEST-001'); await click('#form-agregar button[type=submit]');
-    await esperar("document.querySelector('#en-caja')?.innerText.includes('NOVA-TEST-001')");
-    await ir('pages/empaque/formar-caja.html?caja='+caja.id); assert.match(await evaluar("document.querySelector('#en-caja').innerText"),/NOVA-TEST-001/);
+    await llenar('#buscar',serieRegistrada); await click('#form-agregar button[type=submit]');
+    await esperar(`document.querySelector('#en-caja')?.innerText.includes(${JSON.stringify(serieRegistrada)})`);
+    await ir('pages/empaque/formar-caja.html?caja='+caja.id); assert.ok((await evaluar("document.querySelector('#en-caja').innerText")).includes(serieRegistrada));
     await rechazo('operar','agregarUnidad',{caja:caja.id,serie:'NOVA-TEST-FAIL'});
   });
   await prueba('Cerrar caja desde formulario y consultar el mismo registro', async () => {
     await click('#cerrar'); await click('dialog button[type=submit]'); await esperar("document.querySelector('#vista-operacion')?.innerText.includes('Cerrada')");
-    await ir('pages/empaque/consultar-caja.html?caja='+caja.id); assert.match(await texto(),/NOVA-TEST-001/); assert.match(await texto(),/Cerrada/);
-    await rechazo('operar','quitarUnidad',{caja:caja.id,serie:'NOVA-TEST-001'});
+    await ir('pages/empaque/consultar-caja.html?caja='+caja.id); assert.ok((await texto()).includes(serieRegistrada)); assert.match(await texto(),/Cerrada/);
+    await rechazo('operar','quitarUnidad',{caja:caja.id,serie:serieRegistrada});
   });
   await prueba('Embarque respeta orden y caja; salida actualiza trazabilidad', async () => {
     await entrar('4002');
@@ -139,7 +146,7 @@ try {
     await rechazo('operar','asignarCaja',{embarque:embarque.id,caja:caja.id});
     await ir('pages/embarques/armar-embarque.html?embarque='+embarque.id); await click('#btn-confirmar-emb'); await click('dialog button[type=submit]');
     await esperar("document.querySelector('#embarque-activo')?.innerText.includes('Enviado')");
-    const u=await api('unidadPorSerie','NOVA-TEST-001'); assert.equal(u.estado,'EMBARCADA'); assert.equal(u.embarque.referencia,embarque.id); assert.ok(u.historial.some(e=>e.area==='Embarques'&&e.evento.includes('Salida')));
+    const u=await api('unidadPorSerie',serieRegistrada); assert.equal(u.estado,'EMBARCADA'); assert.equal(u.embarque.referencia,embarque.id); assert.ok(u.historial.some(e=>e.area==='Embarques'&&e.evento.includes('Salida')));
     await ir('pages/embarques/rastreo-de-contenedor.html'); await llenar('#busqueda-contenedor','CONT-TEST'); await click('#form-rastreo button[type=submit]'); await esperar(`document.querySelector('#vista-operacion')?.innerText.includes('${embarque.id}')`);
     assert.deepEqual(await evaluar("[...document.querySelectorAll('[aria-label=\"Recorrido del embarque\"] li strong')].map(e=>e.textContent)"), ['Partida', 'Destino']);
   });
@@ -178,7 +185,7 @@ try {
     await entrar('1001'); await api('operar','registrarUnidad',{serie:'NOVA-PARTIAL',lote:'L-PARTIAL',orden:'OP-1042',turno:1}); await api('operar','guardarPrueba',{serie:'NOVA-PARTIAL',prueba:completo});
     await entrar('3001'); await api('guardarInspeccion','NOVA-PARTIAL',{disposicion:'LIBERADA'});
     await entrar('4001'); const b=await api('operar','crearCaja',{orden:'OP-1042'});
-    await rechazo('operar','agregarUnidad',{caja:b.id,serie:'NOVA-TEST-001'});
+    await rechazo('operar','agregarUnidad',{caja:b.id,serie:serieRegistrada});
     await api('operar','agregarUnidad',{caja:b.id,serie:'NOVA-PARTIAL'});
     await rechazo('operar','cerrarCaja',{caja:b.id,validado:true});
     await api('operar','cerrarCaja',{caja:b.id,validado:true,motivo:'Fin de pedido'});
@@ -259,6 +266,17 @@ try {
       ws.removeEventListener('message',responder);
       await entrar('5002');
     }
+  });
+  await prueba('El registro automatico conserva la orden y el turno elegidos', async () => {
+    await entrar('1001'); await ir('pages/produccion/registrar-produccion.html');
+    await llenar('#rp-orden','OP-1042'); await llenar('#rp-turno','2');
+    await click('#btn-guardar-prod');
+    await esperar("document.querySelector('#rp-serie')?.value.startsWith('NS-')");
+    assert.equal(await evaluar("document.querySelector('#rp-orden').value"),'OP-1042');
+    assert.equal(await evaluar("document.querySelector('#rp-turno').value"),'2');
+    const serie=await evaluar("document.querySelector('#rp-serie').value");
+    const unidad=(await api('consultarOperacion')).unidades.find(u=>u.serie===serie);
+    assert.equal(unidad.orden,'OP-1042'); assert.equal(unidad.turno,2);
   });
   await prueba('No hubo excepciones JavaScript sin manejar', async () => assert.deepEqual(erroresJS, []));
 } catch (e) { resultados.push({ nombre: 'Ejecutor de pruebas', ok: false, error: e.stack }); console.error(e); }

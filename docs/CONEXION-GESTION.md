@@ -24,7 +24,7 @@ Los tickets se pueden enviar desde **¿Olvidó la contraseña?**, seleccionando 
 
 ## Captura, cierre y autorización
 
-1. Elige una orden existente, un turno activo, un código de lote y una serie única. La línea, el modelo, el color y el cliente proceden de la orden real.
+1. Elige una orden existente y un turno activo y pulsa **Registrar unidad**. PostgreSQL genera una serie única para cada pieza y asigna el lote de esa orden, turno y día; los identificadores se muestran al guardar. La línea, el modelo, el color y el cliente proceden de la orden real.
 2. El registro crea una unidad `ENSAMBLADA`, su ensamble y la bitácora. Debe aprobar Pruebas funcionales y recibir una liberación de Calidad antes de estar disponible para empacar.
 3. El Líder confirma el cierre con una nota. Se guarda la foto de los conteos y se bloquea la captura para esa fecha, línea y turno, incluso si se intenta llamar directamente a la API.
 4. El Líder solicita una corrección de conteo o una reapertura sobre el cierre de ese día, con un motivo de al menos diez caracteres.

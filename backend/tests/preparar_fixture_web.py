@@ -31,7 +31,11 @@ def main():
             assert row['estado'] == row['caja'] == 'EMBARCADA'
             assert row['embarque'] == 'ENVIADO'
             assert row['destino'] == 'Destino QA real' and row['contenedor'] == 'CONT-QA-REAL'
-            produccion = cx.execute(text("SELECT id_unidad,estado,id_caja FROM unidades WHERE numero_serie IN ('QA-PROD-WEB-001','QA-PROD-WEB-002')")).mappings().all()
+            produccion = cx.execute(text('''SELECT id_unidad,estado,id_caja FROM unidades
+                WHERE numero_serie='QA-PROD-WEB-002' OR (numero_serie LIKE 'NS-%'
+                    AND id_usuario_registro=(SELECT id_usuario FROM usuarios WHERE usuario='990102')
+                    AND id_lote IN (SELECT id_lote FROM lote WHERE id_orden=:orden))'''),
+                {'orden': fixture['orden']}).mappings().all()
             assert len(produccion) == 2 and all(u['estado'] == 'ENSAMBLADA' and u['id_caja'] is None for u in produccion)
             for u in produccion:
                 assert scalar('SELECT count(*) FROM pruebas WHERE id_unidad=:id', id=u['id_unidad']) == 0

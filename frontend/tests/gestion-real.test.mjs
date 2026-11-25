@@ -93,11 +93,15 @@ try {
   await api('cerrarTicket',t.id,{comentarios:'Cuenta verificada por Sistemas'});assert.equal((await api('ticket',t.id)).estado,'Cerrado');
   paso('Ticket público llega a Sistemas y su cierre persiste');
   await login('990102',fixture.passwordGeneral);
-  await go('pages/produccion/registrar-produccion.html');await fill('#rp-orden',String(fixture.orden));await fill('#rp-turno','1');await fill('#rp-lote','QA-PROD-WEB');await fill('#rp-serie','QA-PROD-WEB-001');await click('#btn-guardar-prod');
-  await wait("document.querySelector('#vista-operacion').innerText.includes('QA-PROD-WEB-001')");
-  await go('pages/produccion/registrar-produccion.html');assert.match(await text(),/QA-PROD-WEB-001/);
+  await go('pages/produccion/registrar-produccion.html');await fill('#rp-orden',String(fixture.orden));await fill('#rp-turno','1');
+  assert.ok(await evaluate("document.querySelector('#rp-serie').readOnly && document.querySelector('#rp-lote').readOnly"));
+  await click('#btn-guardar-prod');
+  await wait("document.querySelector('#rp-serie')?.value.startsWith('NS-')");
+  const serieProducida=await evaluate("document.querySelector('#rp-serie').value");
+  assert.match(serieProducida,/^NS-\d{8}-\d{8,}$/);
+  await go('pages/produccion/registrar-produccion.html');assert.ok((await text()).includes(serieProducida));
   let d=await api('consultarOperacion','produccion');const orden=d.ordenes.find(o=>o.id===String(fixture.orden));const linea=orden.linea;
-  assert.equal(d.unidades.find(u=>u.serie==='QA-PROD-WEB-001').estado,'ENSAMBLADA');
+  assert.equal(d.unidades.find(u=>u.serie===serieProducida).estado,'ENSAMBLADA');
   await login('990103',fixture.passwordGeneral);
   await go('pages/produccion/registrar-incidencia.html');await fill('#inc-linea',linea);await fill('#inc-paro','7');await fill('#inc-motivo','Paro QA real');await click('#btn-inc');await wait("document.querySelector('#vista-operacion').innerText.includes('Paro QA real')");
   paso('Producción registra unidad e incidencia reales sin liberar por Calidad');
@@ -110,7 +114,7 @@ try {
   paso('El cierre bloquea nuevas capturas y el líder solicita reapertura');
   await login('990104',fixture.passwordGeneral);
   await go('pages/gerencia/autorizaciones.html');await click('[data-aprobar]');await click('dialog button[type=submit]');await wait("document.querySelector('#resultado').innerText.includes('Aprobada')");
-  await go('pages/gerencia/trazabilidad.html?serie=QA-PROD-WEB-001');await wait("document.querySelector('#resultado').innerText.includes('ENSAMBLADA')");assert.match(await text(),/Operador QA Web/);
+  await go('pages/gerencia/trazabilidad.html?serie='+encodeURIComponent(serieProducida));await wait("document.querySelector('#resultado').innerText.includes('ENSAMBLADA')");assert.match(await text(),/Operador QA Web/);
   await login('990102',fixture.passwordGeneral);
   await api('operar','registrarUnidad',{orden:String(fixture.orden),turno:1,lote:'QA-PROD-WEB',serie:'QA-PROD-WEB-002'},'produccion');
   assert.ok((await api('consultarOperacion','produccion')).unidades.some(u=>u.serie==='QA-PROD-WEB-002'));

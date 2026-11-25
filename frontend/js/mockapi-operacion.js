@@ -86,7 +86,15 @@ const pendientes = ['encendido', 'audio', 'carga', 'bluetooth'];
 const operaciones = {
   registrarUnidad(d, p) {
     exigir('produccion/registrar-produccion', 'registrar-produccion');
-    const serie = codigo(p.serie), lote = codigo(p.lote), orden = buscar(d.ordenes, p.orden);
+    const orden = buscar(d.ordenes, p.orden);
+    let serie = codigo(p.serie);
+    if (!serie) {
+      do {
+        d.op.secuenciaSerie = (d.op.secuenciaSerie || 0) + 1;
+        serie = `NS-${hoyISO().replaceAll('-', '')}-${String(d.op.secuenciaSerie).padStart(8, '0')}`;
+      } while (d.unidades.some(u => codigo(u.serie) === serie));
+    }
+    const lote = codigo(p.lote) || `L-${hoyISO().replaceAll('-', '')}-${orden.id}-T${Number(p.turno)}`;
     if (!/^[A-Z0-9][A-Z0-9_-]{2,79}$/.test(serie)) error('Ingresa una serie de 3 a 80 caracteres: letras, números, guion o guion bajo.');
     if (d.unidades.some(u => codigo(u.serie) === serie)) error('Ese número de serie ya está registrado.', 409);
     if (!lote) error('Ingresa el lote.');

@@ -1,5 +1,5 @@
 import { iniciarOperacion, campo, boton, tabla, tarjeta, formulario, valor, enlace, columnasUnidad, exportar, esc } from './operacion-comun.js';
-import { indicador, preguntar, chip, barra } from '../componentes.js';
+import { indicador, preguntar, chip, barra, aviso } from '../componentes.js';
 import { hoyISO, turnoPorHora, num, pct } from '../ui.js';
 
 const turnosDemo = [{ valor: 1, texto: 'Turno 1' }, { valor: 2, texto: 'Turno 2' }];
@@ -10,6 +10,7 @@ export function iniciarProduccion(id) {
   const esLider = id.endsWith('/tablero-de-linea-lider');
   const turnoActual = turnoPorHora();
   let filtros = { linea: '', turno: turnoActual ? String(turnoActual) : '' };
+  let seleccionRegistro = { orden: '', turno: '' }, ultimoRegistro = null;
   iniciarOperacion(id, async c => {
     const d = c.datos, vista = id.split('/')[1];
     const turnos = d.real ? d.catalogos.turnos.items.map(t => ({ valor: t.id, texto: t.nombre })) : turnosDemo;
@@ -19,17 +20,18 @@ export function iniciarProduccion(id) {
         c.vista.innerHTML = tarjeta('Registrar producción', 'Se requiere una orden de producción y al menos un turno activo en PostgreSQL.');
         return;
       }
-      c.vista.innerHTML = `${tarjeta('Nueva unidad ensamblada', formulario('form-produccion',
-        campo({ id: 'rp-orden', etiqueta: 'Orden de producción', opciones: opcionesOrden(d), requerido: true }) +
-        campo({ id: 'rp-turno', etiqueta: 'Turno', opciones: turnos }) +
-        campo({ id: 'rp-lote', etiqueta: 'Lote', requerido: true, placeholder: 'Ej. L-2026-01' }) +
-        campo({ id: 'rp-serie', etiqueta: 'N.º de serie', requerido: true, placeholder: 'Escanea o escribe una serie única' }) +
+      c.vista.innerHTML = `${ultimoRegistro ? aviso('exito', `Unidad registrada. Serie: ${ultimoRegistro.serie} · Lote: ${ultimoRegistro.lote}`) : ''}${tarjeta('Nueva unidad ensamblada', formulario('form-produccion',
+        campo({ id: 'rp-orden', etiqueta: 'Orden de producción', opciones: opcionesOrden(d), valor: seleccionRegistro.orden, requerido: true }) +
+        campo({ id: 'rp-turno', etiqueta: 'Turno', opciones: turnos, valor: seleccionRegistro.turno }) +
+        campo({ id: 'rp-lote', etiqueta: ultimoRegistro ? 'Último lote registrado' : 'Lote automático', valor: ultimoRegistro?.lote || '', extra: 'readonly', placeholder: 'Se asigna al registrar', ayuda: 'Las piezas de la misma orden, turno y día comparten lote.' }) +
+        campo({ id: 'rp-serie', etiqueta: ultimoRegistro ? 'Última serie generada' : 'N.º de serie automático', valor: ultimoRegistro?.serie || '', extra: 'readonly', placeholder: 'Se genera al registrar', ayuda: 'Cada pieza recibe una serie única.' }) +
         '<div id="datos-orden" class="text-sm text-suave"></div>',
         puede ? boton('Registrar unidad', { enviar: true, id: 'btn-guardar-prod' }) : 'Solo consulta'))}
         ${tarjeta('Unidades registradas', tabla({ filas: d.unidades.filter(u => u.nueva).reverse(), columnas: columnasUnidad.filter(c => c.titulo !== 'Estado') }))}`;
-      const datosOrden = () => { const o = d.ordenes.find(o => o.id === valor('rp-orden')); document.getElementById('datos-orden').textContent = `Línea: ${o.linea} · Modelo: ${o.modelo} · Color: ${o.color} · Cliente: ${o.cliente}`; };
-      datosOrden(); c.evento('#rp-orden', 'change', datosOrden);
-      if (puede) c.evento('#form-produccion', 'submit', () => c.escribir('registrarUnidad', { orden: valor('rp-orden'), turno: valor('rp-turno'), lote: valor('rp-lote'), serie: valor('rp-serie') }, 'Unidad registrada. Ya está disponible en Prueba funcional.'));
+      const datosOrden = () => { seleccionRegistro = { orden: valor('rp-orden'), turno: valor('rp-turno') }; const o = d.ordenes.find(o => o.id === seleccionRegistro.orden); document.getElementById('datos-orden').textContent = `Línea: ${o.linea} · Modelo: ${o.modelo} · Color: ${o.color} · Cliente: ${o.cliente}`; };
+      datosOrden(); c.evento('#rp-orden,#rp-turno', 'change', datosOrden);
+      if (puede) c.evento('#form-produccion', 'submit', () => c.escribir('registrarUnidad', seleccionRegistro,
+        'Unidad registrada. Ya está disponible en Prueba funcional.', r => { ultimoRegistro = r; }));
       return;
     }
     if (vista === 'registrar-incidencia') {

@@ -39,7 +39,7 @@ En la pantalla de login hay un panel con estos mismos usuarios y un botón para 
 
 ## Probar el recorrido completo sin backend
 
-1. Como **1001**, abre Producción → Registrar producción. Elige una orden y un turno, escribe lote y serie única. La orden determina línea, modelo, cliente y color.
+1. Como **1001**, abre Producción → Registrar producción. Elige una orden y un turno y pulsa **Registrar unidad**. La serie se genera automáticamente para cada pieza; el lote se comparte por orden, turno y día. Ambos se muestran al guardar. La orden determina línea, modelo, cliente y color.
 2. Con el mismo usuario, cambia al área Prueba funcional → Unidades por probar. Abre Registrar prueba, evalúa encendido, audio, carga y Bluetooth y guarda. Una falla requiere observaciones y queda disponible para repetir la prueba; una aprobación pasa a Calidad.
 3. Cierra sesión y entra como **3001**. Cambia al área Calidad → Resumen de calidad o busca la serie en Inspección de unidad. Da la disposición **Liberada** para continuar. Retención, retrabajo y scrap impiden empacar.
 4. Como **4001**, abre Empaque → Formar caja. Crea una caja para la misma orden y agrega la serie. El contenido se conserva al cambiar de pantalla. Cierra la caja; si está incompleta es obligatorio indicar el motivo.
