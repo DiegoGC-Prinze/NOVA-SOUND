@@ -242,6 +242,4 @@ dist/
 
 # Archivos locales y respaldos sensibles
 /respaldos/
-*.dump
 *.zip
-.env.simulacion

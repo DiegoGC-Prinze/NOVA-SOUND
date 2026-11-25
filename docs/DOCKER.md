@@ -100,6 +100,27 @@ docker compose up -d --wait
 
 No uses `down -v` si quieres conservar los datos: esa opción elimina el volumen.
 
+## Restaurar un archivo .dump en el contenedor principal
+
+Con Docker Desktop y el servicio `db` iniciados, ejecuta desde la raíz del repositorio:
+
+```powershell
+python scripts/restaurar_dump.py --verificar
+python scripts/restaurar_dump.py
+```
+
+El script usa `compose.yaml`, el proyecto principal `nova-sound` y el `.env` de la raíz. Por defecto carga `database/demo/nova_sound_presentacion.dump`. Para elegir otro respaldo:
+
+```powershell
+python scripts/restaurar_dump.py "C:\respaldos\mi_base.dump"
+```
+
+`--verificar` comprueba conexión y formato sin modificar la base. Al restaurar, muestra el destino y pide escribir `RESTAURAR` seguido del nombre de la base. Pausa `app` si estaba ejecutándose, guarda una copia de la base actual en `respaldos/`, restaura y vuelve a iniciar `app`. `--si` permite confirmar desde un proceso sin entrada interactiva.
+
+La restauración **reemplaza los objetos y datos incluidos en el dump**; los objetos ajenos al respaldo permanecen. Usa una transacción: si PostgreSQL rechaza la restauración, revierte sus cambios. No crea la base con el nombre del archivo de origen: utiliza `DB_NAME`, `DB_USER` y `DB_PASSWORD` del `.env`, y comprueba que coincidan con el contenedor. Las contraseñas no se imprimen ni se pasan como argumentos del proceso. Requiere Python y Docker Compose, sin instalar PostgreSQL en Windows ni paquetes de Python adicionales.
+
+Los usuarios y sus contraseñas provienen del respaldo. Al reiniciar, la aplicación aplica las reglas habituales de la cuenta inicial de Sistemas; cambiar `.env` no restablece la contraseña de un usuario existente. Vuelve a iniciar sesión en el navegador al terminar.
+
 ## Credenciales para desarrollo sin Docker
 
 El archivo `backend/.env.example` sirve para ejecutar Python directamente en Windows. En ese caso se copia a `backend/.env` y se configura el host/puerto de una base accesible desde Windows.

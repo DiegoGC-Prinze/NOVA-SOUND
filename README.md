@@ -19,6 +19,17 @@ Abre **http://localhost:8000** para el frontend y **http://localhost:8000/docs**
 
 Todas las áreas operan con PostgreSQL seleccionando **Sistema conectado a PostgreSQL** en el login: Producción, Pruebas funcionales, Calidad, cierres, Gerencia, Sistemas, Empaque y Embarques. Al arrancar se crea una cuenta inicial con rol **Sistemas** usando `SISTEMAS_USUARIO` y `SISTEMAS_PASSWORD` del `.env`, para dar de alta al personal. Los reinicios conservan sus cambios. Consulta [Calidad y Pruebas](docs/CONEXION-CALIDAD-PRUEBAS.md), [Gestión](docs/CONEXION-GESTION.md), [Almacén](docs/CONEXION-ALMACEN.md) y [Docker](docs/DOCKER.md). Las pruebas completas se ejecutan con `python scripts/probar_todo.py` en contenedores y bases temporales; la demostración sigue disponible por separado.
 
+## Restaurar un respaldo .dump
+
+Para cargar `database/demo/nova_sound_presentacion.dump` en el servicio `db` del proyecto principal usando el `.env` de la raíz:
+
+```powershell
+python scripts/restaurar_dump.py --verificar
+python scripts/restaurar_dump.py
+```
+
+La primera orden solo valida. La segunda pide confirmar el destino, guarda un respaldo previo en `respaldos/` y reemplaza los datos incluidos en el dump. También acepta la ruta de otro `.dump`. Consulta los detalles en [la guía de Docker](docs/DOCKER.md#restaurar-un-archivo-dump-en-el-contenedor-principal).
+
 ## Todas las pruebas
 
 ```powershell
