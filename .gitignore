@@ -150,10 +150,8 @@ activemq-data/
 *.sage.py
 
 # Environments
-.env
 .envrc
 .venv
-env/
 venv/
 ENV/
 env.bak/
@@ -219,8 +217,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 # Variables de entorno
-.env
-.env.*
 !.env.example
 
 # Python
