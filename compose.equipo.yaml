@@ -1,0 +1,9 @@
+# Restaura el respaldo de la rama al inicializar el volumen de nova-sound-equipo.
+name: nova-sound-equipo
+
+services:
+  db:
+    volumes: !override
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/demo/iniciar_equipo.sh:/docker-entrypoint-initdb.d/010_equipo.sh:ro
+      - ./database/demo/nova_sound_equipo.pgdump:/respaldo/nova_sound_equipo.pgdump:ro

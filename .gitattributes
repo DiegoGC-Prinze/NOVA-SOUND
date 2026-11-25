@@ -1,0 +1,2 @@
+# El inicializador de PostgreSQL se ejecuta en Linux, incluso desde Windows.
+database/demo/iniciar_equipo.sh text eol=lf
