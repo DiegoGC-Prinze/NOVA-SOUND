@@ -2,6 +2,9 @@
 name: nova-sound-equipo
 
 services:
+  app:
+    ports: !override
+      - "${EQUIPO_APP_PORT:-8002}:8000"
   db:
     volumes: !override
       - postgres_data:/var/lib/postgresql/data

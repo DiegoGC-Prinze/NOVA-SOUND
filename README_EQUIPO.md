@@ -6,16 +6,16 @@ Este paquete incorpora los scripts de simulación y un respaldo de PostgreSQL 16
 
 1. Usa la rama `feature/simulacion-industrial`, que integra este paquete de simulación.
 2. Si todavía no tienes un archivo `.env` en ese checkout, copia `.env.example` a `.env`.
-3. Completa `DB_PASSWORD` y `SISTEMAS_PASSWORD` con contraseñas locales. La contraseña de Sistemas debe tener al menos ocho caracteres. El número de empleado inicial predeterminado es **9001**. Ajusta `APP_PORT` si el puerto 8000 ya está ocupado.
+3. Completa `DB_PASSWORD` y `SISTEMAS_PASSWORD` con contraseñas locales. La contraseña de Sistemas debe tener al menos ocho caracteres. El número de empleado inicial predeterminado es **9001**. Este perfil usa el puerto **8002**, separado de la aplicación principal del puerto 8000. Puedes cambiarlo con `EQUIPO_APP_PORT`.
 4. Con Docker iniciado, ejecuta desde la raíz:
 
    ```bash
    docker compose -f compose.yaml -f compose.equipo.yaml up -d --build --wait
    ```
 
-5. Abre **http://localhost:8000** o el puerto que configuraste. Elige **Sistema conectado a PostgreSQL** e inicia sesión con el número y contraseña de Sistemas de tu `.env`.
+5. Abre **http://localhost:8002** o el puerto que configuraste con `EQUIPO_APP_PORT`. Elige **Sistema conectado a PostgreSQL** e inicia sesión con el número y contraseña de Sistemas de tu `.env`.
 
-El respaldo se restaura al inicializar el volumen de **nova-sound-equipo**. En arranques posteriores el volumen conserva los cambios. Para hacer otra instalación desde el respaldo y conservar tu instancia anterior, usa un nombre de proyecto y un puerto distintos con `-p` y `APP_PORT`.
+El respaldo se restaura al inicializar el volumen de **nova-sound-equipo**. En arranques posteriores el volumen conserva los cambios. Para hacer otra instalación desde el respaldo y conservar tu instancia anterior, usa un nombre de proyecto y un puerto distintos con `-p` y `EQUIPO_APP_PORT`.
 
 ## Accesos y verificación
 
