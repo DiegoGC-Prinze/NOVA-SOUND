@@ -21,6 +21,9 @@ import { obtenerSesion, cerrarSesion } from './session.js';
 import { AREAS, PANTALLAS, buscarPantalla } from './menu.js';
 import { esc, fechaLarga, hoyISO, horaActual, turnoPorHora } from './ui.js';
 import { mostrarAvisoPendiente } from './componentes.js';
+import { actualizarAccesoOrdenes } from './api.js?v=acceso-ordenes-1';
+
+await actualizarAccesoOrdenes();
 
 const RAIZ = new URL('../', import.meta.url);
 

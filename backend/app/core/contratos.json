@@ -100,10 +100,12 @@
         "gerencia/discrepancias": "ver",
         "gerencia/autorizaciones": "acciona",
         "gerencia/trazabilidad": "ver",
-        "gerencia/cierres-de-turno": "ver"
+        "gerencia/cierres-de-turno": "ver",
+        "gerencia/ordenes-de-produccion": "acciona"
       },
       "acciones": [
-        "aprobar-o-rechazar-ajustes-y-reaperturas"
+        "aprobar-o-rechazar-ajustes-y-reaperturas",
+        "enviar-orden-a-produccion"
       ]
     },
     {
@@ -215,6 +217,11 @@
       "id": "gerencia/dashboard",
       "area": "gerencia",
       "nombre": "Dashboard"
+    },
+    {
+      "id": "gerencia/ordenes-de-produccion",
+      "area": "gerencia",
+      "nombre": "Órdenes de producción"
     },
     {
       "id": "gerencia/discrepancias",
@@ -362,6 +369,10 @@
     {
       "id": "dar-disposicion-de-calidad-liberar-retener-retrabajo-scrap",
       "nombre": "Dar disposición de Calidad (liberar, retener, retrabajo, scrap)"
+    },
+    {
+      "id": "enviar-orden-a-produccion",
+      "nombre": "Enviar orden a Producción"
     }
   ],
   "version": 2

@@ -63,6 +63,17 @@ export async function coleccion(nombre) {
     });
     if (guardado) guardarColeccion(nombre, datos);
   }
+  if (nombre === 'roles-permisos' && !datos.pantallas.some(p => p.id === 'gerencia/ordenes-de-produccion')) {
+    const vigentes = await leerJSON(nombre);
+    const id = 'gerencia/ordenes-de-produccion', accion = 'enviar-orden-a-produccion';
+    datos.pantallas.push(vigentes.pantallas.find(p => p.id === id));
+    if (!datos.acciones.some(a => a.id === accion)) datos.acciones.push(vigentes.acciones.find(a => a.id === accion));
+    datos.roles.filter(r => r.nombre === 'Gerencia').forEach(r => {
+      r.permisos[id] = 'acciona';
+      if (!r.acciones.includes(accion)) r.acciones.push(accion);
+    });
+    if (guardado) guardarColeccion(nombre, datos);
+  }
   if (nombre === 'usuarios') {
     const { roles } = await coleccion('roles-permisos');
     const nombres = new Set(roles.map(r => r.nombre));

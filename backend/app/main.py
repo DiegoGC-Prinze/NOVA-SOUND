@@ -11,6 +11,7 @@ from app.modules.almacen.router import router as almacen_router
 from app.modules.almacen import service as almacen_service
 from app.core.sesiones import router as sesiones_router
 from app.modules.gestion import router as gestion_router
+from app.modules.ordenes_produccion import router as ordenes_router, incorporar_permiso as incorporar_ordenes
 from app.modules.calidad.router import router as calidad_router
 from app.modules.pruebas import router as pruebas_router
 from app.core.inicializacion import actualizar_roles_operativos, crear_sistemas_inicial, incorporar_manifiesto
@@ -23,6 +24,7 @@ async def ciclo_de_vida(app: FastAPI):
                            password=os.getenv('SISTEMAS_PASSWORD', ''))
     actualizar_roles_operativos(engine)
     incorporar_manifiesto(engine)
+    incorporar_ordenes(engine)
     yield
 
 app = FastAPI(
@@ -35,6 +37,7 @@ app = FastAPI(
 app.include_router(almacen_router)
 app.include_router(sesiones_router)
 app.include_router(gestion_router)
+app.include_router(ordenes_router)
 app.include_router(calidad_router)
 app.include_router(pruebas_router)
 

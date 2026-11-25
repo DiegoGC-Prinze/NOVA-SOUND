@@ -68,9 +68,9 @@ try {
     await llenar(selector, '1001'); await llenar('#contrasena', 'nova123'); await click('#entrar'); await esperar("location.pathname.includes('tablero-de-produccion')");
     await rechazo('iniciarSesion', '1001', 'incorrecta'); await rechazo('iniciarSesion', '1003', 'nova123');
   });
-  await prueba('Las 39 pantallas operativas cargan con sus roles', async () => {
+  await prueba('Las 40 pantallas operativas cargan con sus roles', async () => {
     const pantallas = await evaluar("(await import('/js/menu.js')).PANTALLAS.filter(p=>p.area!=='login')");
-    assert.equal(pantallas.length, 39);
+    assert.equal(pantallas.length, 40);
     const cuentas = ['1001','2001','3001','4001','4002','5002','9001'];
     const sesiones = [];
     for (const num of cuentas) sesiones.push(await entrar(num));
@@ -209,6 +209,56 @@ try {
     await click('#enviar'); await esperar("document.querySelector('h1')?.textContent === 'Ticket enviado'");
     await entrar('9001'); await ir('pages/sistemas/catalogos.html'); await llenar('#tipo','roles');
     assert.match(await texto(), /Roles \(7\)/);
+  });
+  await prueba('Gerencia envia ordenes que Produccion puede seleccionar', async () => {
+    await entrar('5002'); await ir('pages/gerencia/ordenes-de-produccion.html');
+    const d = await api('ordenesProduccion');
+    const body = { id_cliente:d.clientes[0].id, id_modelo:d.modelos[0].id, id_color:d.colores[0].id,
+      id_linea:d.lineas[0].id, cantidad:25, fecha_compromiso:d.fecha };
+    assert.equal((await rechazo('enviarOrdenProduccion', {...body,cantidad:0})).estado,422);
+    for (const key of ['cliente','modelo','color','linea']) await llenar('#orden-'+key,String(body['id_'+key]));
+    await llenar('#orden-cantidad','25'); await llenar('#orden-fecha',d.fecha);
+    await click('#enviar-orden');
+    await esperar("!document.querySelector('#enviar-orden')?.disabled");
+    const despues = await api('ordenesProduccion');
+    assert.equal(despues.ordenes.length,d.ordenes.length+1);
+    const orden = despues.ordenes.at(-1);
+    await entrar('1001'); await ir('pages/produccion/registrar-produccion.html');
+    assert.ok(await evaluar(`[...document.querySelector('#rp-orden').options].some(o=>o.value===${JSON.stringify(orden.id)})`));
+    assert.equal((await rechazo('enviarOrdenProduccion',body)).estado,403);
+    await entrar('5002'); await ir('pages/gerencia/ordenes-de-produccion.html');
+    assert.match(await evaluar("document.querySelector('#ordenes-listado').innerText"),new RegExp(orden.id));
+  });
+  await prueba('La sidebar actualiza el acceso a ordenes en sesiones anteriores de Gerencia y Administrador', async () => {
+    const responder = e => {
+      const m = JSON.parse(e.data);
+      if (m.method === 'Fetch.requestPaused') enviar('Fetch.fulfillRequest', {
+        requestId:m.params.requestId, responseCode:200,
+        responseHeaders:[{name:'Content-Type',value:'application/json'}],
+        body:Buffer.from(JSON.stringify({nivel:'acciona',puedeEnviar:true})).toString('base64'),
+      });
+    };
+    ws.addEventListener('message',responder);
+    await enviar('Fetch.enable',{patterns:[{urlPattern:'*/api/v1/gestion/ordenes-produccion/acceso'}]});
+    try {
+      for (const rol of ['Gerencia','Administrador']) {
+        const s = await entrar('5002');
+        s.usuario.rol=rol; s.modo='real';
+        delete s.permisos['gerencia/ordenes-de-produccion'];
+        s.acciones=s.acciones.filter(a=>a!=='enviar-orden-a-produccion');
+        await evaluar(`(await import('/js/session.js')).guardarSesion(${JSON.stringify(s)})`);
+        await ir('pages/gerencia/dashboard.html');
+        const actual=await evaluar("(await import('/js/session.js')).obtenerSesion()");
+        assert.equal(actual.permisos['gerencia/ordenes-de-produccion'],'acciona');
+        assert.ok(actual.acciones.includes('enviar-orden-a-produccion'));
+        assert.deepEqual(actual.permisos,{...s.permisos,'gerencia/ordenes-de-produccion':'acciona'});
+        assert.equal(await evaluar("document.querySelectorAll('#menu-lateral a[href$=\"/pages/gerencia/ordenes-de-produccion.html\"]').length"),1);
+      }
+    } finally {
+      await enviar('Fetch.disable');
+      ws.removeEventListener('message',responder);
+      await entrar('5002');
+    }
   });
   await prueba('No hubo excepciones JavaScript sin manejar', async () => assert.deepEqual(erroresJS, []));
 } catch (e) { resultados.push({ nombre: 'Ejecutor de pruebas', ok: false, error: e.stack }); console.error(e); }

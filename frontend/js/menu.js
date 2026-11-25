@@ -54,6 +54,7 @@ export const PANTALLAS = [
   {"id": "embarques/rastreo-de-contenedor", "area": "embarques", "nombre": "Rastreo de contenedor", "ruta": "pages/embarques/rastreo-de-contenedor.html", "lista": true, "enMenu": true},
   {"id": "embarques/grafica-de-embarques", "area": "embarques", "nombre": "Gráfica de embarques", "ruta": "pages/embarques/grafica-de-embarques.html", "lista": true, "enMenu": true},
   {"id": "gerencia/dashboard", "area": "gerencia", "nombre": "Dashboard", "ruta": "pages/gerencia/dashboard.html", "lista": true, "enMenu": true},
+  {"id": "gerencia/ordenes-de-produccion", "area": "gerencia", "nombre": "Órdenes de producción", "ruta": "pages/gerencia/ordenes-de-produccion.html", "lista": true, "enMenu": true},
   {"id": "gerencia/discrepancias", "area": "gerencia", "nombre": "Discrepancias", "ruta": "pages/gerencia/discrepancias.html", "lista": true, "enMenu": true},
   {"id": "gerencia/autorizaciones", "area": "gerencia", "nombre": "Autorizaciones", "ruta": "pages/gerencia/autorizaciones.html", "lista": true, "enMenu": true},
   {"id": "gerencia/trazabilidad", "area": "gerencia", "nombre": "Trazabilidad", "ruta": "pages/gerencia/trazabilidad.html", "lista": true, "enMenu": true},

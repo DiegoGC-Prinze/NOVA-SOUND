@@ -12,11 +12,12 @@
 // 401 = sin sesión (el front regresa al login), 403 = sin permiso, errores como {"detail": "mensaje"}.
 
 import { USE_MOCKS, API_BASE_URL, ALMACEN_API } from './config.js';
-import { obtenerSesion, cerrarSesion } from './session.js';
+import { obtenerSesion, guardarSesion, cerrarSesion } from './session.js';
 import { ErrorApi } from './errores.js';
 import * as mock from './mockapi.js';
 import * as mockCalidad from './mockapi-calidad.js';
 import * as mockOperacion from './mockapi-operacion.js';
+import * as mockOrdenes from './mockapi-ordenes.js';
 import { consultarAlmacen, operarAlmacen } from './almacen-backend.js';
 import { crearClienteCalidad } from '../integraciones/calidadApi.mjs';
 
@@ -86,6 +87,29 @@ export const seriesDeEjemplo = (area = 'calidad') => (sesionReal() ? Promise.res
 export const opciones = (area = 'gerencia') => (sesionReal() ? gestion('/opciones') : USE_MOCKS ? mock.opciones() : pedir('/opciones'));
 
 // ---------------------------------------------------------------- Gerencia
+// Actualiza solo el acceso nuevo en sesiones abiertas antes de incorporar la pantalla.
+export async function actualizarAccesoOrdenes() {
+  const sesion = obtenerSesion();
+  const pantalla = 'gerencia/ordenes-de-produccion', accion = 'enviar-orden-a-produccion';
+  if (!sesionReal() || sesion.ordenesAccesoVerificado || sesion.permisos?.[pantalla] ||
+      !Object.keys(sesion.permisos || {}).some(p => p.startsWith('gerencia/'))) return;
+  try {
+    const acceso = await gestion('/ordenes-produccion/acceso');
+    const permisos = { ...sesion.permisos };
+    const acciones = (sesion.acciones || []).filter(a => a !== accion);
+    if (['ver', 'acciona'].includes(acceso.nivel)) permisos[pantalla] = acceso.nivel;
+    if (acceso.nivel === 'acciona' && acceso.puedeEnviar) acciones.push(accion);
+    guardarSesion({ ...sesion, permisos, acciones, ordenesAccesoVerificado: true });
+  } catch {
+    // Una falla de red no impide abrir las pantallas que la sesion ya tenia.
+  }
+}
+
+export const ordenesProduccion = () => sesionReal() ? gestion('/ordenes-produccion') : USE_MOCKS ? mockOrdenes.ordenesProduccion() : pedir('/api/v1/gestion/ordenes-produccion');
+export const enviarOrdenProduccion = datos => sesionReal()
+  ? gestion('/ordenes-produccion', { metodo: 'POST', cuerpo: datos })
+  : USE_MOCKS ? mockOrdenes.enviarOrdenProduccion(datos) : pedir('/api/v1/gestion/ordenes-produccion', { metodo: 'POST', cuerpo: datos });
+
 // filtros: { turno, linea, modelo, orden } (vacío = todos)
 export const dashboard = (filtros) => (sesionReal() ? gestion(`/dashboard${consulta(filtros)}`) : USE_MOCKS ? mock.dashboard(filtros) : pedir(`/tableros/dashboard${consulta(filtros)}`));
 
