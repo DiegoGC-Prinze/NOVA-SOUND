@@ -6,7 +6,7 @@ Abre **http://localhost:8000**, cierra cualquier sesión anterior y selecciona *
 
 Usa el campo `usuario` de la tabla PostgreSQL `usuarios` y su contraseña. Si mantienes el seed original, existe `admin` con contraseña `pass123`. Si ya cambiaste esa cuenta, usa su contraseña vigente. Estas credenciales son distintas de `DB_USER` / `DB_PASSWORD` del `.env` y de las cuentas de demostración `4001` / `nova123`.
 
-El Administrador de la aplicación puede realizar las operaciones de Almacén. Los roles `Almacén/Empaque` y `Supervisor de almacén` tienen permisos operativos diferentes. Las sesiones reales muestran **Datos de PostgreSQL** en las pantallas. El acceso **Demostración (incluye Pruebas y Calidad)** conserva los flujos locales; muestra **Datos de demostración en este navegador**.
+El Administrador de la aplicación puede realizar las operaciones de Almacén. Los roles `Empaque` y `Supervisor de almacén` tienen permisos operativos diferentes. Las sesiones reales muestran **Datos de PostgreSQL** en las pantallas. El acceso **Demostración (incluye Pruebas y Calidad)** conserva los flujos locales; muestra **Datos de demostración en este navegador**.
 
 La conexión no importa las cajas o unidades del almacenamiento local del navegador. Las órdenes y unidades disponibles se obtienen de PostgreSQL, con sus IDs numéricos y sus estados reales.
 

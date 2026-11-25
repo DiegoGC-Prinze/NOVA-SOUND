@@ -351,7 +351,7 @@ def test_reapertura_por_dos_cuentas_reales_y_limites_de_supervisor(pg_test, esce
     app.dependency_overrides.clear()
     with pg_test.begin() as cx:
         cx.execute(text("UPDATE usuarios SET id_rol=(SELECT id_rol FROM roles WHERE nombre='Embarques' ORDER BY id_rol LIMIT 1) WHERE id_usuario=:id"), {'id': escenario['supervisor']})
-        cx.execute(text("UPDATE usuarios SET id_rol=(SELECT id_rol FROM roles WHERE nombre='Almacén/Empaque' ORDER BY id_rol LIMIT 1) WHERE id_usuario=:id"), {'id': escenario['usuario']})
+        cx.execute(text("UPDATE usuarios SET id_rol=(SELECT id_rol FROM roles WHERE nombre='Empaque' ORDER BY id_rol LIMIT 1) WHERE id_usuario=:id"), {'id': escenario['usuario']})
     with TestClient(app) as api, pg_test.connect() as cx:
         h, _ = login_real(api, cx, escenario['usuario'])
         hs, supervisor = login_real(api, cx, escenario['supervisor'])

@@ -13,7 +13,8 @@ const cacheArchivos = {};
 const memoria = {}; // por si el navegador bloquea localStorage
 
 const rolesAnteriores = {
-  Operador: 'Operador / Pruebas Funcionales',
+  'Operador / Pruebas Funcionales': 'Operador',
+  'Almacén/Empaque': 'Empaque',
   'Inspector de Calidad': 'Calidad',
   'Supervisor de almacén': 'Embarques',
   'Subgerente de Producción': 'Gerencia',
@@ -52,6 +53,11 @@ export async function coleccion(nombre) {
     const vigentes = await leerJSON(nombre);
     Object.assign(datos, vigentes);
     if (guardado) guardarColeccion(nombre, datos);
+  }
+  if (nombre === 'roles-permisos') {
+    const anteriores = datos.roles.filter(r => ['Operador / Pruebas Funcionales', 'Almacén/Empaque'].includes(r.nombre));
+    anteriores.forEach(r => { r.nombre = rolesAnteriores[r.nombre]; });
+    if (guardado && anteriores.length) guardarColeccion(nombre, datos);
   }
   if (nombre === 'roles-permisos' && !datos.pantallas.some(p => p.id === 'embarques/paquetes-en-embarcacion')) {
     const { pantallas } = await leerJSON(nombre);

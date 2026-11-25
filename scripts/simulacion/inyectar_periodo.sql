@@ -17,7 +17,7 @@ GROUP BY r.nombre;
 DO $$
 BEGIN
     IF (SELECT count(*) FROM responsables WHERE rol IN
-        ('Operador / Pruebas Funcionales','Líder de línea','Calidad','Almacén/Empaque','Embarques')) <> 5 THEN
+        ('Operador','Líder de línea','Calidad','Empaque','Embarques')) <> 5 THEN
         RAISE EXCEPTION 'La base de presentación debe tener cuentas activas en los cinco roles operativos';
     END IF;
 END $$;
@@ -55,7 +55,7 @@ INSERT INTO objetivo_unidades(id_orden,id_linea,id_turno,cantidad_objetivo,fecha
 SELECT id_orden,id_linea,turno,meta,fecha FROM lotes_plan;
 
 INSERT INTO ensamble(id_usuario,id_turno,id_linea,id_lote,cantidad,fecha_ensamble)
-SELECT (SELECT id FROM responsables WHERE rol='Operador / Pruebas Funcionales'),
+SELECT (SELECT id FROM responsables WHERE rol='Operador'),
        turno,id_linea,id_lote,cantidad,inicio FROM lotes_plan;
 
 CREATE TEMP TABLE produccion_plan AS
@@ -111,7 +111,7 @@ INSERT INTO unidades(id_unidad,id_color,id_linea,id_turno,id_caja,id_lote,estado
 SELECT p.id_unidad,o.id_color,p.id_linea,p.turno,c.id_caja,p.id_lote,
        CASE WHEN c.estado='EMBARCADA' THEN 'EMBARCADA' WHEN c.id_caja IS NOT NULL THEN 'EMPACADA' ELSE p.estado END,
        p.ensamblada,'SIM-NOV26-'||lpad(p.id_unidad::text,8,'0'),
-       (SELECT id FROM responsables WHERE rol='Operador / Pruebas Funcionales')
+       (SELECT id FROM responsables WHERE rol='Operador')
 FROM produccion_plan p JOIN ordenes o USING (id_orden)
 LEFT JOIN cajas_plan cp ON cp.id_lote=p.id_lote AND cp.posicion_caja=((p.posicion-1)/p.capacidad)::int
 LEFT JOIN cajas c ON c.id_caja=cp.id_caja;
@@ -125,7 +125,7 @@ SELECT id_unidad,ensamblada + interval '15 minutes',
            'carga',CASE WHEN estado='FALLA_FUNCIONAL' AND falla=2 THEN 'Falla' ELSE 'Aprobada' END,
            'bluetooth',CASE WHEN estado='FALLA_FUNCIONAL' AND falla=3 THEN 'Falla' ELSE 'Aprobada' END),
        CASE WHEN estado='FALLA_FUNCIONAL' THEN 'Falla funcional simulada' ELSE '' END,
-       (SELECT id FROM responsables WHERE rol='Operador / Pruebas Funcionales')
+       (SELECT id FROM responsables WHERE rol='Operador')
 FROM produccion_plan WHERE estado <> 'ENSAMBLADA';
 
 INSERT INTO calidad(id_calidad,id_unidad,id_usuario,estado,fecha)
@@ -169,7 +169,7 @@ FROM lotes_plan WHERE id_lote % 7=1;
 INSERT INTO tickets_web(num_empleado,nombre,motivo,fecha,estado)
 SELECT u.usuario,u.nombre,'Cuenta bloqueada',
        (SELECT min(fecha) FROM lotes_plan) + time '08:00','Abierto'
-FROM responsables r JOIN usuarios u ON u.id_usuario=r.id WHERE r.rol IN ('Operador / Pruebas Funcionales','Calidad');
+FROM responsables r JOIN usuarios u ON u.id_usuario=r.id WHERE r.rol IN ('Operador','Calidad');
 
 INSERT INTO autorizacion(id_usuario_solicita,id_referencia,tipo_referencia,motivo,estado,fecha_solicitud,datos)
 SELECT c.id_usuario,c.id_cierre,'PRODUCCION_WEB','Revisión de conteo del periodo simulado',

@@ -41,10 +41,10 @@ def leer_env(ruta):
 
 def registrar_usuarios(api,env,seed):
     perfiles={
-      'operador':('Operador / Pruebas Funcionales','SIM_OPERADOR_PASSWORD'),
+      'operador':('Operador','SIM_OPERADOR_PASSWORD'),
       'lider':('Líder de línea','SIM_LIDER_PASSWORD'),
       'calidad':('Calidad','SIM_CALIDAD_PASSWORD'),
-      'almacen':('Almacén/Empaque','SIM_ALMACEN_PASSWORD'),
+      'almacen':('Empaque','SIM_ALMACEN_PASSWORD'),
       'embarques':('Embarques','SIM_EMBARQUES_PASSWORD' if env.get('SIM_EMBARQUES_PASSWORD') else 'SIM_ALMACEN_PASSWORD'),
     }
     empleados = {}

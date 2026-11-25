@@ -44,7 +44,7 @@ try {
   await login(fixture.sistemas, fixture.passwordSistemas);
   assert.equal(await evaluate("JSON.parse(sessionStorage.getItem('novasound.sesion')).usuario.rol"),'Sistemas');
   await go('pages/sistemas/nuevo-o-editar-usuario.html');
-  await fill('#nombre','Operador desde Sistemas inicial');await fill('#numEmpleado','990101');await fill('#rol','Operador / Pruebas Funcionales');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
+  await fill('#nombre','Operador desde Sistemas inicial');await fill('#numEmpleado','990101');await fill('#rol','Operador');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
   await wait("location.pathname.endsWith('/usuarios.html')");
   assert.equal((await api('usuarios','990101')).length,1);
   await login('990101',fixture.passwordGeneral);
@@ -68,7 +68,7 @@ try {
   paso(`${report.pantallas.length} pantallas de Producción, Gerencia y Sistemas consultan datos reales`);
   // Crear el operador desde el formulario de Sistemas y comprobar que puede iniciar sesión.
   await go('pages/sistemas/nuevo-o-editar-usuario.html');
-  await fill('#nombre','Operador QA Web');await fill('#numEmpleado','990102');await fill('#rol','Operador / Pruebas Funcionales');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
+  await fill('#nombre','Operador QA Web');await fill('#numEmpleado','990102');await fill('#rol','Operador');await fill('#contrasena',fixture.passwordGeneral);await click('#guardar');
   await wait("location.pathname.endsWith('/usuarios.html')");
   const listado=await api('usuarios','990102');assert.equal(listado.length,1);assert.ok(!('contrasena' in listado[0]));
   paso('Sistemas crea usuarios persistentes con roles reales');

@@ -60,7 +60,8 @@ def crear_sistemas_inicial(db_engine, *, usuario='9001', nombre='Sistemas', pass
 
 ROLES_ACTUALES = {r['nombre']: r for r in CONTRATOS['roles']}
 ROLES_ANTERIORES = {
-    'Operador': 'Operador / Pruebas Funcionales',
+    'Operador / Pruebas Funcionales': 'Operador',
+    'Almacén/Empaque': 'Empaque',
     'Inspector Calidad': 'Calidad',
     'Inspector de Calidad': 'Calidad',
     'Supervisor de almacén': 'Embarques',
@@ -93,6 +94,33 @@ def actualizar_roles_operativos(db_engine):
                 {'rid': rid, 'anteriores': anteriores})
         cx.execute(text("""INSERT INTO configuracion_web(clave,valor,motivo)
             VALUES (:clave,'true'::jsonb,'Matriz de roles operativos')"""), {'clave': marcador})
+
+
+def actualizar_nombres_roles(db_engine):
+    """Renombra los roles en las bases que ya aplicaron la matriz anterior."""
+    with db_engine.begin() as cx:
+        cx.execute(text("SELECT pg_advisory_xact_lock(hashtextextended('administracion-usuarios-roles',0))"))
+        for anterior, nuevo in (('Operador / Pruebas Funcionales', 'Operador'), ('Almacén/Empaque', 'Empaque')):
+            filas = cx.execute(text("""SELECT id_rol, nombre FROM roles
+                WHERE lower(regexp_replace(nombre,'[[:space:]]','','g')) =
+                      lower(regexp_replace(:anterior,'[[:space:]]','','g'))
+                   OR nombre=:nuevo ORDER BY id_rol"""),
+                {'anterior': anterior, 'nuevo': nuevo}).mappings().all()
+            antiguos = [r['id_rol'] for r in filas if r['nombre'] != nuevo]
+            if not antiguos:
+                continue
+            rid = antiguos[0]
+            duplicados = [r['id_rol'] for r in filas if r['id_rol'] != rid]
+            if duplicados:
+                cx.execute(text('UPDATE usuarios SET id_rol=:id WHERE id_rol=ANY(:otros)'),
+                           {'id': rid, 'otros': duplicados})
+                cx.execute(text("""UPDATE roles SET nombre=:nuevo||' (anterior '||id_rol||')'
+                    WHERE id_rol=ANY(:otros)"""), {'nuevo': nuevo, 'otros': duplicados})
+                cx.execute(text("DELETE FROM catalogos_web WHERE tipo='roles' AND id_original=ANY(:otros)"),
+                           {'otros': duplicados})
+            cx.execute(text('UPDATE roles SET nombre=:nuevo WHERE id_rol=:id'), {'nuevo': nuevo, 'id': rid})
+            cx.execute(text("UPDATE catalogos_web SET nombre=:nuevo WHERE tipo='roles' AND id_original=:id"),
+                       {'nuevo': nuevo, 'id': rid})
 
 
 def incorporar_manifiesto(db_engine):

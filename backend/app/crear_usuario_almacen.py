@@ -19,7 +19,7 @@ def main():
     password = getpass.getpass('Contraseña nueva (mínimo 8 caracteres): ')
     if len(password) < 8 or len(password) > 255 or password != getpass.getpass('Repetir contraseña: '):
         parser.error('La contraseña debe tener 8-255 caracteres y ambas capturas deben coincidir.')
-    rol = 'Almacén/Empaque' if args.rol == 'almacen' else 'Embarques'
+    rol = 'Empaque' if args.rol == 'almacen' else 'Embarques'
     with engine.begin() as cx:
         cx.execute(text('LOCK TABLE usuarios IN SHARE ROW EXCLUSIVE MODE'))
         if cx.execute(text('SELECT 1 FROM usuarios WHERE usuario=:usuario'), {'usuario': usuario}).first():

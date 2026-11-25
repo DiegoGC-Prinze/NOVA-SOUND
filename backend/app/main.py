@@ -13,7 +13,7 @@ from app.core.sesiones import router as sesiones_router
 from app.modules.gestion import router as gestion_router
 from app.modules.calidad.router import router as calidad_router
 from app.modules.pruebas import router as pruebas_router
-from app.core.inicializacion import actualizar_roles_operativos, crear_sistemas_inicial, incorporar_manifiesto
+from app.core.inicializacion import actualizar_nombres_roles, actualizar_roles_operativos, crear_sistemas_inicial, incorporar_manifiesto
 
 
 @asynccontextmanager
@@ -21,6 +21,7 @@ async def ciclo_de_vida(app: FastAPI):
     crear_sistemas_inicial(engine, usuario=os.getenv('SISTEMAS_USUARIO', '9001'),
                            nombre=os.getenv('SISTEMAS_NOMBRE', 'Sistemas'),
                            password=os.getenv('SISTEMAS_PASSWORD', ''))
+    actualizar_nombres_roles(engine)
     actualizar_roles_operativos(engine)
     incorporar_manifiesto(engine)
     yield

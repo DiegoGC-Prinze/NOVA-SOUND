@@ -29,7 +29,7 @@ No sirve abrir `index.html` con doble clic: el navegador bloquea los módulos de
 | 1001 | Operador | Producción |
 | 2001 | Líder de línea | Producción |
 | 3001 | Inspector de Calidad | Prueba funcional |
-| 4001 | Almacén/Empaque | Empaque |
+| 4001 | Empaque | Empaque |
 | 4002 | Supervisor de almacén | Empaque |
 | 1003 | Operador con cuenta **bloqueada** (para probar el aviso y «Levantar ticket») | — |
 

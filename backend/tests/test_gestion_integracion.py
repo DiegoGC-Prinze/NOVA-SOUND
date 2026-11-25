@@ -22,7 +22,7 @@ def datos(pg_test, escenario, monkeypatch):
     sufijo = uuid4().hex[:10]
     cuentas = {}
     with pg_test.begin() as cx:
-        for key, rol in [('operador', 'Operador / Pruebas Funcionales'), ('lider', 'Líder de línea'), ('gerente', 'Gerencia')]:
+        for key, rol in [('operador', 'Operador'), ('lider', 'Líder de línea'), ('gerente', 'Gerencia')]:
             login = f'95{int(sufijo, 16)}{len(cuentas)}'
             rid = sqlval(cx, 'SELECT id_rol FROM roles WHERE nombre=:r LIMIT 1', r=rol)
             uid = sqlval(cx, 'INSERT INTO usuarios(id_rol,nombre,usuario,contrasena) VALUES (:r,:n,:n,:p) RETURNING id_usuario', r=rid, n=login, p=hash_password('Test-gestion-2026'))
@@ -183,7 +183,7 @@ def test_usuario_bloqueado_revoca_token_y_no_expone_password(datos):
 
 def test_permisos_cambian_en_servidor_sin_relogin(datos):
     d = datos
-    rol = next(r for r in llamar(d, 'GET', '/roles').json()['roles'] if r['nombre'] == 'Operador / Pruebas Funcionales')
+    rol = next(r for r in llamar(d, 'GET', '/roles').json()['roles'] if r['nombre'] == 'Operador')
     try:
         cambio = dict(permisos={k: v for k, v in rol['permisos'].items() if k != 'produccion/registrar-produccion'}, acciones=rol['acciones'])
         assert llamar(d, 'PUT', '/roles/'+rol['nombre'], json=cambio).status_code == 200

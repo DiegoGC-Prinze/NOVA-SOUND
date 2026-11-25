@@ -2,21 +2,21 @@
  {
   "numEmpleado": "1001",
   "nombre": "Luis Hernández",
-  "rol": "Operador / Pruebas Funcionales",
+  "rol": "Operador",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "1002",
   "nombre": "Karla Domínguez",
-  "rol": "Operador / Pruebas Funcionales",
+  "rol": "Operador",
   "estado": "Activo",
   "contrasena": "nova123"
  },
  {
   "numEmpleado": "1003",
   "nombre": "Tomás Reyes",
-  "rol": "Operador / Pruebas Funcionales",
+  "rol": "Operador",
   "estado": "Bloqueado",
   "contrasena": "nova123"
  },
@@ -51,7 +51,7 @@
  {
   "numEmpleado": "4001",
   "nombre": "Julián Ortega",
-  "rol": "Almacén/Empaque",
+  "rol": "Empaque",
   "estado": "Activo",
   "contrasena": "nova123"
  },

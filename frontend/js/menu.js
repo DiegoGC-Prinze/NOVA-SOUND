@@ -7,7 +7,7 @@
 // la manda a pages/pendiente.html en vez de a un archivo que aún no existe.
 // (Archivo generado el primer día; ya se puede editar a mano.)
 
-export const ROLES = ["Operador / Pruebas Funcionales", "Líder de línea", "Calidad", "Almacén/Empaque", "Embarques", "Gerencia", "Sistemas"];
+export const ROLES = ["Operador", "Líder de línea", "Calidad", "Empaque", "Embarques", "Gerencia", "Sistemas"];
 
 // Áreas, en el orden en que se muestran.
 export const AREAS = {

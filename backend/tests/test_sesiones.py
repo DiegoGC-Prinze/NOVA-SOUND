@@ -15,7 +15,7 @@ def test_password_scrypt_y_compatibilidad_seed():
 
 
 def test_permisos_operador_supervisor_y_roles_no_operativos():
-    permisos, acciones = permisos_almacen('Almacén/Empaque')
+    permisos, acciones = permisos_almacen('Empaque')
     assert permisos['empaque/formar-caja'] == 'acciona'
     assert 'cerrar-caja' in acciones and 'reabrir-caja' not in acciones
     permisos, acciones = permisos_almacen('Supervisor de almacén')

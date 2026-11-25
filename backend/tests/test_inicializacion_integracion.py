@@ -139,7 +139,7 @@ def test_sistemas_inicial_puede_dar_de_alta_usuarios(contexto):
     assert api.get('/api/v1/gestion/operacion', headers=headers).status_code == 403
     usuario = c['usuario']+'01'
     r = api.post('/api/v1/gestion/usuarios', headers=headers, json=dict(numEmpleado=usuario, nombre='Operador creado por Sistemas',
-        rol='Operador / Pruebas Funcionales', estado='Activo', contrasena='Operador-Nuevo-2026'))
+        rol='Operador', estado='Activo', contrasena='Operador-Nuevo-2026'))
     assert r.status_code == 201, r.text
     assert api.post('/api/v1/auth/login', json={'usuario': usuario, 'contrasena': 'Operador-Nuevo-2026'}).status_code == 200
 

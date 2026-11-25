@@ -54,7 +54,7 @@ def main():
             print('SQL verificado: embarque enviado; producción, incidencia y reapertura persistidas; unidades nuevas sin pruebas ni inspecciones inventadas.')
             return
         ids = []
-        for key, password, role in [('usuario', 'password', 'Almacén/Empaque'), ('supervisor', 'passwordSupervisor', 'Embarques'), ('admin', 'passwordAdmin', 'Sistemas')]:
+        for key, password, role in [('usuario', 'password', 'Empaque'), ('supervisor', 'passwordSupervisor', 'Embarques'), ('admin', 'passwordAdmin', 'Sistemas')]:
             if cx.execute(text('SELECT 1 FROM usuarios WHERE usuario=:usuario'), {'usuario': fixture[key]}).first():
                 raise SystemExit('La cuenta QA ya existe; se requiere un volumen nuevo de pruebas.')
             rid = scalar('SELECT id_rol FROM roles WHERE nombre=:nombre ORDER BY id_rol LIMIT 1', nombre=role)
