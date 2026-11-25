@@ -149,16 +149,6 @@ activemq-data/
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
-.envrc
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -219,9 +209,6 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 # Variables de entorno
-.env
-.env.*
-!.env.example
 
 # Python
 .venv/
